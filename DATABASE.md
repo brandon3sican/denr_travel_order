@@ -5,14 +5,41 @@
 ### Tables
 
 #### 1. `users`
-- **Description**: Stores user account information
+- **Description**: Stores user authentication information
 - **Source**: Laravel's default users table
+- **Fields**:
+  - `id` (bigint, primary key)
+  - `name` (string)
+  - `email` (string, unique)
+  - `email_verified_at` (timestamp, nullable)
+  - `password` (string)
+  - `remember_token` (string, nullable)
+  - `created_at` (timestamp)
+  - `updated_at` (timestamp)
 - **Relationships**:
+  - Has one `employee`
   - Has many `travel_orders`
   - Has many `approvals` (as recommender or approver)
   - Has many `notifications`
 
-#### 2. `roles`
+#### 2. `employees`
+- **Description**: Stores detailed employee information
+- **Fields**:
+  - `id` (bigint, primary key)
+  - `email` (string, unique, foreign key to `users.email`)
+  - `first_name` (string)
+  - `middle_name` (string, nullable)
+  - `last_name` (string)
+  - `position` (string, nullable)
+  - `department` (string, nullable)
+  - `created_at` (timestamp)
+  - `updated_at` (timestamp)
+- **Relationships**:
+  - Belongs to `users` (via `email`)
+  - Has many `travel_orders`
+  - Has many `approvals` (as recommender or approver)
+
+#### 3. `roles`
 - **Description**: Defines user roles in the system
 - **Fields**:
   - `id` (bigint, primary key)
@@ -21,7 +48,7 @@
   - `created_at` (timestamp)
   - `updated_at` (timestamp)
 
-#### 3. `travel_status`
+#### 4. `travel_status`
 - **Description**: Tracks the status of travel orders
 - **Fields**:
   - `id` (bigint, primary key)
@@ -36,7 +63,7 @@
   - Cancelled
   - Completed
 
-#### 4. `travel_orders`
+#### 5. `travel_orders`
 - **Description**: Main table for travel order requests
 - **Fields**:
   - `id` (bigint, primary key)
@@ -58,7 +85,7 @@
   - Has one `approval`
   - Has many `notifications`
 
-#### 5. `approvals`
+#### 6. `approvals`
 - **Description**: Tracks the approval workflow for travel orders
 - **Fields**:
   - `id` (bigint, primary key)
@@ -77,7 +104,7 @@
   - Belongs to `users` (as recommender)
   - Belongs to `users` (as approver)
 
-#### 6. `notifications`
+#### 7. `notifications`
 - **Description**: System notifications for users
 - **Fields**:
   - `id` (bigint, primary key)
@@ -96,24 +123,32 @@
 
 ```
 +-------------+       +------------------+       +-----------------+
-|    users    |       |   travel_orders  |       |  travel_status  |
+|   users     |       |   employees      |       |  travel_orders  |
 +-------------+       +------------------+       +-----------------+
-| email (PK)  |<------| user_email (FK)  |       | id (PK)         |
-| name        |       | status_id (FK)   |------>| name            |
-| password    |       | ...              |       | created_at      |
-| ...         |       +------------------+       | updated_at      |
-+-------------+                 |                +-----------------+
-       ^                        |
-       |                        |
-       |                        |
-+-------------+        +------------------+
-| approvals  |        |  notifications   |
-+-------------+        +------------------+
-| travel_order_id (FK)| user_email (FK)  |
-| recommender_email (FK)| travel_order_id (FK)|
-| approver_email (FK) | ...              |
-| ...                 +------------------+
-+-------------+
+| email (PK)  |<------| email (FK)       |<------| user_email (FK) |
+| ...         |       | first_name      |       | status_id (FK)  |
++-------------+       | last_name       |       | ...             |
+       ^             | ...             |       +-----------------+
+       |             +-----------------+                |
+       |                       ^                        |
+       |                       |                        |
+       |             +-----------------+       +-----------------+
+       |             |  approvals      |       |  notifications  |
+       |             +-----------------+       +-----------------+
+       |             | travel_order_id |<------| travel_order_id |
+       |             | recommender_email|       | user_email (FK) |
+       |             | approver_email  |       | ...             |
+       |             | ...             |       +-----------------+
+       |             +-----------------+
+       |
++-----------------+
+|  travel_status  |
++-----------------+
+| id (PK)         |
+| name            |
+| created_at      |
+| updated_at      |
++-----------------+
 ```
 
 ## Indexes
@@ -122,14 +157,16 @@
 - All tables have an auto-incrementing `id` as primary key
 
 ### Foreign Keys
-1. `travel_orders`:
+1. `employees`:
+   - `email` references `users(email)`
+2. `travel_orders`:
    - `user_email` references `users(email)`
    - `status_id` references `travel_status(id)`
-2. `approvals`:
+3. `approvals`:
    - `travel_order_id` references `travel_orders(id)`
    - `recommender_email` references `users(email)`
    - `approver_email` references `users(email)`
-3. `notifications`:
+4. `notifications`:
    - `user_email` references `users(email)`
    - `travel_order_id` references `travel_orders(id)`
 
@@ -137,6 +174,7 @@
 
 The database includes seeders for initial data:
 - `TravelStatusSeeder`: Populates the `travel_status` table with default status values
+- `DatabaseSeeder`: Main seeder that calls other seeders in order
 
 ## Migration Notes
 
