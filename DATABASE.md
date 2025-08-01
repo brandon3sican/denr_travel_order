@@ -48,7 +48,7 @@
   - `created_at` (timestamp)
   - `updated_at` (timestamp)
 
-#### 4. `travel_status`
+#### 4. `travel_order_status`
 - **Description**: Tracks the status of travel orders
 - **Fields**:
   - `id` (bigint, primary key)
@@ -67,7 +67,7 @@
 - **Description**: Main table for travel order requests
 - **Fields**:
   - `id` (bigint, primary key)
-  - `user_email` (string, foreign key to `users.email`)
+  - `employee_email` (string, foreign key to `employees.email`)
   - `destination` (string)
   - `purpose` (text)
   - `departure_date` (date)
@@ -76,12 +76,12 @@
   - `per_diem` (decimal(10,2), nullable)
   - `laborer_assistant` (string, nullable)
   - `remarks` (text, nullable)
-  - `status_id` (bigint, foreign key to `travel_status.id`)
+  - `status_id` (bigint, foreign key to `travel_order_status.id`)
   - `created_at` (timestamp)
   - `updated_at` (timestamp)
 - **Relationships**:
-  - Belongs to `users` (via `user_email`)
-  - Belongs to `travel_status`
+  - Belongs to `employees` (via `employee_email`)
+  - Belongs to `travel_order_status`
   - Has one `approval`
   - Has many `notifications`
 
@@ -110,6 +110,7 @@
   - `id` (bigint, primary key)
   - `user_email` (string, foreign key to `users.email`)
   - `travel_order_id` (bigint, foreign key to `travel_orders.id`)
+  - `status_id` (bigint, foreign key to `travel_order_status.id`)
   - `type` (enum: 'Approved', 'Disapproved', 'Cancelled')
   - `message` (text)
   - `is_read` (boolean, default: false)
@@ -118,6 +119,7 @@
 - **Relationships**:
   - Belongs to `users`
   - Belongs to `travel_orders`
+  - Belongs to `travel_order_status`
 
 ## Entity Relationship Diagram (ERD)
 
@@ -125,7 +127,7 @@
 +-------------+       +------------------+       +-----------------+
 |   users     |       |   employees      |       |  travel_orders  |
 +-------------+       +------------------+       +-----------------+
-| email (PK)  |<------| email (FK)       |<------| user_email (FK) |
+| email (PK)  |<------| email (FK)       |<------| employee_email  |
 | ...         |       | first_name      |       | status_id (FK)  |
 +-------------+       | last_name       |       | ...             |
        ^             | ...             |       +-----------------+
@@ -137,18 +139,18 @@
        |             +-----------------+       +-----------------+
        |             | travel_order_id |<------| travel_order_id |
        |             | recommender_email|       | user_email (FK) |
-       |             | approver_email  |       | ...             |
-       |             | ...             |       +-----------------+
-       |             +-----------------+
+       |             | approver_email  |       | status_id (FK)  |
+       |             | ...             |       | ...             |
+       |             +-----------------+       +-----------------+
        |
-+-----------------+
-|  travel_status  |
-+-----------------+
-| id (PK)         |
-| name            |
-| created_at      |
-| updated_at      |
-+-----------------+
++---------------------+
+|  travel_order_status|
++---------------------+
+| id (PK)             |
+| name                |
+| created_at          |
+| updated_at          |
++---------------------+
 ```
 
 ## Indexes
@@ -160,8 +162,8 @@
 1. `employees`:
    - `email` references `users(email)`
 2. `travel_orders`:
-   - `user_email` references `users(email)`
-   - `status_id` references `travel_status(id)`
+   - `employee_email` references `employees(email)`
+   - `status_id` references `travel_order_status(id)`
 3. `approvals`:
    - `travel_order_id` references `travel_orders(id)`
    - `recommender_email` references `users(email)`
@@ -169,11 +171,12 @@
 4. `notifications`:
    - `user_email` references `users(email)`
    - `travel_order_id` references `travel_orders(id)`
+   - `status_id` references `travel_order_status(id)`
 
 ## Data Seeding
 
 The database includes seeders for initial data:
-- `TravelStatusSeeder`: Populates the `travel_status` table with default status values
+- `TravelOrderStatusSeeder`: Populates the `travel_order_status` table with default status values
 - `DatabaseSeeder`: Main seeder that calls other seeders in order
 
 ## Migration Notes
