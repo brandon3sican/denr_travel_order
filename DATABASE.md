@@ -134,51 +134,48 @@
 | password    |       | last_name       |       | purpose         |
 | ...         |       | position        |       | departure_date  |
 +-------------+       | department      |       | arrival_date    |
-       ^             | recommender_email|       | appropriation   |
-       |             | approver_email   |       | per_diem        |
-       |             | ...             |       | laborer_assistant
-       |             +-----------------+       | remarks         |
-       |                   ^                   | status_id (FK)  |
-       |                   |                   | ...             |
-       |             +-----------------+       +-----------------+  +---------------------+
-       |             |  approvals      |               ^  ^         |  travel_order_status|
-       |             +-----------------+               |  |         +---------------------+
-       |             | travel_order_id |<--------------+  +---------| id (PK)             |
-       |             | recommender_email|                  |         | name                |
-       |             | approver_email  |       +-----------------+  | created_at          |
-       |             | rec_status      |       |  notifications  |  | updated_at          |
-       |             | appr_status     |       +-----------------+  +---------------------+
-       |             | rec_date        |<------| travel_order_id |
+       ^             | ...             |       | appropriation   |
+       |             +-----------------+       | per_diem        |
+       |                   ^                   | laborer_assistant
+       |                   |                   | remarks         |
+       |                   |                   | status_id (FK)  |
+       |             +-----------------+       | ...             |
+       |             |  approvals      |       +-----------------+  +---------------------+
+       |             +-----------------+               ^  ^         |  travel_order_status|
+       |             | travel_order_id |<--------------+  |         +---------------------+
+       |             | recommender_email|                  +---------| id (PK)             |
+       |             | approver_email  |                  |         | name                |
+       |             | rec_status      |       +-----------------+  | created_at          |
+       |             | appr_status     |       |  notifications  |  | updated_at          |
+       |             | rec_date        |<------| travel_order_id |  +---------------------+
        |             | appr_date       |       | user_email (FK) |
        |             | remarks         |       | status_id (FK)  |
        |             | ...             |       | type            |
        |             +-----------------+       | message         |
-       |                                       | is_read         |
-       |                                       | ...             |
-       |                                       +-----------------+
-       |
-+-----------------+
-|      roles     |
-+-----------------+
-| id (PK)        |
-| name           |
-| description    |
-| created_at     |
-| updated_at     |
-+-----------------+
+       |                   ^                   | is_read         |
+       |                   |                   | ...             |
+       |                   |                   +-----------------+
+       |                   |
+       |             +-----------------+
+       |             |      roles     |
+       |             +-----------------+
+       +-------------| id (PK)        |
+                     | name           |
+                     | description    |
+                     | created_at     |
+                     | updated_at     |
+                     +-----------------+
 
 Key Relationships:
 - users 1:1 employees (users.email = employees.email)
-- employees 1:N travel_orders (employees.email = travel_orders.employee_email)
-- employees 1:1 recommenders (employees.recommender_email = employees.email)
-- employees 1:1 approvers (employees.approver_email = employees.email)
+- users 1:N travel_orders (users.email = travel_orders.employee_email)
 - travel_orders 1:1 approvals (travel_orders.id = approvals.travel_order_id)
+- users 1:N approvals as recommender (users.email = approvals.recommender_email)
+- users 1:N approvals as approver (users.email = approvals.approver_email)
 - travel_orders 1:N notifications (travel_orders.id = notifications.travel_order_id)
 - travel_order_status 1:N travel_orders (travel_order_status.id = travel_orders.status_id)
 - travel_order_status 1:N notifications (travel_order_status.id = notifications.status_id)
 - users 1:N notifications (users.email = notifications.user_email)
-- employees 1:N approvals as recommender (employees.email = approvals.recommender_email)
-- employees 1:N approvals as approver (employees.email = approvals.approver_email)
 ```
 
 ## Indexes
