@@ -32,6 +32,8 @@
   - `last_name` (string)
   - `position` (string, nullable)
   - `department` (string, nullable)
+  - `recommender_email` (string, foreign key to `employees.email`)
+  - `approver_email` (string, foreign key to `employees.email`)
   - `created_at` (timestamp)
   - `updated_at` (timestamp)
 - **Relationships**:
@@ -128,29 +130,55 @@
 |   users     |       |   employees      |       |  travel_orders  |
 +-------------+       +------------------+       +-----------------+
 | email (PK)  |<------| email (FK)       |<------| employee_email  |
-| ...         |       | first_name      |       | status_id (FK)  |
-+-------------+       | last_name       |       | ...             |
-       ^             | ...             |       +-----------------+
-       |             +-----------------+                |
-       |                       ^                        |
-       |                       |                        |
-       |             +-----------------+       +-----------------+
-       |             |  approvals      |       |  notifications  |
-       |             +-----------------+       +-----------------+
-       |             | travel_order_id |<------| travel_order_id |
-       |             | recommender_email|       | user_email (FK) |
-       |             | approver_email  |       | status_id (FK)  |
-       |             | ...             |       | ...             |
-       |             +-----------------+       +-----------------+
+| name        |       | first_name      |       | destination     |
+| password    |       | last_name       |       | purpose         |
+| ...         |       | position        |       | departure_date  |
++-------------+       | department      |       | arrival_date    |
+       ^             | recommender_email|       | appropriation   |
+       |             | approver_email   |       | per_diem        |
+       |             | ...             |       | laborer_assistant
+       |             +-----------------+       | remarks         |
+       |                   ^                   | status_id (FK)  |
+       |                   |                   | ...             |
+       |             +-----------------+       +-----------------+  +---------------------+
+       |             |  approvals      |               ^  ^         |  travel_order_status|
+       |             +-----------------+               |  |         +---------------------+
+       |             | travel_order_id |<--------------+  +---------| id (PK)             |
+       |             | recommender_email|                  |         | name                |
+       |             | approver_email  |       +-----------------+  | created_at          |
+       |             | rec_status      |       |  notifications  |  | updated_at          |
+       |             | appr_status     |       +-----------------+  +---------------------+
+       |             | rec_date        |<------| travel_order_id |
+       |             | appr_date       |       | user_email (FK) |
+       |             | remarks         |       | status_id (FK)  |
+       |             | ...             |       | type            |
+       |             +-----------------+       | message         |
+       |                                       | is_read         |
+       |                                       | ...             |
+       |                                       +-----------------+
        |
-+---------------------+
-|  travel_order_status|
-+---------------------+
-| id (PK)             |
-| name                |
-| created_at          |
-| updated_at          |
-+---------------------+
++-----------------+
+|      roles     |
++-----------------+
+| id (PK)        |
+| name           |
+| description    |
+| created_at     |
+| updated_at     |
++-----------------+
+
+Key Relationships:
+- users 1:1 employees (users.email = employees.email)
+- employees 1:N travel_orders (employees.email = travel_orders.employee_email)
+- employees 1:1 recommenders (employees.recommender_email = employees.email)
+- employees 1:1 approvers (employees.approver_email = employees.email)
+- travel_orders 1:1 approvals (travel_orders.id = approvals.travel_order_id)
+- travel_orders 1:N notifications (travel_orders.id = notifications.travel_order_id)
+- travel_order_status 1:N travel_orders (travel_order_status.id = travel_orders.status_id)
+- travel_order_status 1:N notifications (travel_order_status.id = notifications.status_id)
+- users 1:N notifications (users.email = notifications.user_email)
+- employees 1:N approvals as recommender (employees.email = approvals.recommender_email)
+- employees 1:N approvals as approver (employees.email = approvals.approver_email)
 ```
 
 ## Indexes
@@ -161,6 +189,8 @@
 ### Foreign Keys
 1. `employees`:
    - `email` references `users(email)`
+   - `recommender_email` references `employees(email)`
+   - `approver_email` references `employees(email)`
 2. `travel_orders`:
    - `employee_email` references `employees(email)`
    - `status_id` references `travel_order_status(id)`
