@@ -5,9 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class TravelStatusSeeder extends Seeder {
+class TravelOrderStatusSeeder extends Seeder {
     public function run() {
-        DB::table('travel_status')->insert([
+        DB::table('travel_order_status')->insert([
             ['name' => 'For Recommendation'],
             ['name' => 'For Approval'],
             ['name' => 'Approved'],

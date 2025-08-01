@@ -12,7 +12,7 @@ return new class extends Migration
     public function up() {
         Schema::create('travel_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('user_email'); // FK to users.email
+            $table->string('employee_email'); // FK to employees.email
             $table->string('destination');
             $table->text('purpose');
             $table->date('departure_date');
@@ -21,15 +21,16 @@ return new class extends Migration
             $table->decimal('per_diem', 10, 2)->nullable();
             $table->string('laborer_assistant')->nullable();
             $table->text('remarks')->nullable();
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('status_id'); // FK to travel_status
             $table->timestamps();
         });
 
         Schema::table('travel_orders', function (Blueprint $table) {
-            $table->foreign('user_email')->references('email')->on('users')->onDelete('cascade');
-            $table->foreign('status_id')->references('id')->on('travel_status')->onDelete('cascade');
+            $table->foreign('employee_email')->references('email')->on('employees')->onDelete('cascade');
+            $table->foreign('status_id')->references('id')->on('travel_order_status')->onDelete('cascade');
         });
     }
+
     public function down() {
         Schema::dropIfExists('travel_orders');
     }

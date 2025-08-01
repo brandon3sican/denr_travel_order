@@ -10,13 +10,13 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up() {
-        Schema::create('travel_status', function (Blueprint $table) {
+        Schema::create('travel_order_status', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->timestamps();
         });
     }
     public function down() {
-        Schema::dropIfExists('travel_status');
+        Schema::dropIfExists('travel_order_status');
     }
 };
