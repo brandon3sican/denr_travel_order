@@ -1,15 +1,21 @@
-# DENR Travel Order System
+# DENR Travel Order Information System (DENR-TOIS)
 
-A web-based Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel and Tailwind CSS.
+A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 10 and Tailwind CSS 3. This system streamlines the process of creating, managing, and tracking travel orders within the organization.
 
-## Features
+## ✨ Features
 
-- User authentication and role-based access control
-- Create and manage travel orders
-- Multi-level approval workflow
-- Email notifications
-- Responsive design for all devices
-- Dashboard with travel order statistics
+- **Modern Dashboard** - Overview of travel orders with key statistics
+- **Travel Order Management**
+  - Create new travel orders with detailed information
+  - View and track existing travel orders
+  - Filter and search functionality
+- **User Management**
+  - Manage user accounts and permissions
+  - Role-based access control
+  - User activity tracking
+- **Responsive Design** - Fully responsive interface for desktop and mobile devices
+- **Real-time Updates** - Dynamic UI with real-time status changes
+- **Intuitive UI/UX** - Clean and user-friendly interface built with Tailwind CSS
 
 ## Prerequisites
 
@@ -25,8 +31,8 @@ A web-based Travel Order Management System for the Department of Environment and
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/denr-travel-order-system.git
-cd denr-travel-order-system/travel-order
+git clone https://github.com/brandon3sican/denr_travel_order.git
+cd denr_travel_order
 ```
 
 ### 2. Install PHP Dependencies
@@ -85,57 +91,116 @@ php artisan migrate --seed
 php artisan storage:link
 ```
 
-### 7. Start the Development Server
+## 🚀 Running the Project
 
-```bash
-php artisan serve
-```
+### Development Environment
 
-Visit `http://localhost:8000` in your browser.
+1. **Start the Laravel development server**:
+   ```bash
+   php artisan serve
+   ```
+   This will start the server at `http://127.0.0.1:8000`
 
-## Default Login Credentials
+2. **Run Vite development server** (for hot-reloading of assets):
+   ```bash
+   npm run dev
+   ```
+   This will start Vite's development server for hot module replacement.
 
-- **Admin User**
-  - Email: admin@denr.gov.ph
-  - Password: password
+3. **Access the application**:
+   - Frontend: http://localhost:8000
+   - Vite dev server: http://localhost:5173 (for assets)
 
-- **Regular User**
-  - Email: user@denr.gov.ph
-  - Password: password
+### Production Environment
+
+1. **Build assets for production**:
+   ```bash
+   npm run build
+   ```
+
+2. **Optimize the application**:
+   ```bash
+   php artisan optimize
+   php artisan view:cache
+   php artisan route:cache
+   php artisan config:cache
+   ```
+
+3. **Configure your web server**:
+   - Point your web server (Apache/Nginx) to the `/public` directory
+   - Set the document root to the `public` directory
+   - Configure URL rewriting as per Laravel's documentation
+
+4. **Set proper permissions**:
+   ```bash
+   chmod -R 755 storage
+   chmod -R 755 bootstrap/cache
+   ```
+
+### Using Laravel Sail (Docker)
+
+If you have Docker installed, you can use Laravel Sail:
+
+1. Install dependencies:
+   ```bash
+   docker run --rm \
+     -u "$(id -u):$(id -g)" \
+     -v $(pwd):/var/www/html \
+     -w /var/www/html \
+     laravelsail/php82-composer:latest \
+     composer install --ignore-platform-reqs
+   ```
+
+2. Start the Sail environment:
+   ```bash
+   ./vendor/bin/sail up -d
+   ```
+
+3. Run database migrations:
+   ```bash
+   ./vendor/bin/sail artisan migrate --seed
+   ```
+
+4. Access the application at: http://localhost
 
 ## Project Structure
 
 ```
-travel-order-system/
-├── travel-order/              # Laravel application
-│   ├── app/                   # Application code
-│   ├── bootstrap/             # Framework bootstrap files
-│   ├── config/                # Configuration files
-│   ├── database/              # Database migrations and seeders
-│   ├── public/                # Publicly accessible files
-│   ├── resources/             # Views and assets
-│   ├── routes/                # Application routes
-│   └── storage/               # Storage for logs, cache, etc.
-├── public/                    # Public files for the frontend
-│   ├── css/                   # Compiled CSS
-│   ├── js/                    # Frontend JavaScript
-│   └── images/                # Image assets
-└── README.md                  # This file
+resources/views/
+├── dashboard/              # Dashboard views
+├── layout/                 # Main layout templates
+├── travel-order/           # Travel order related views
+│   ├── create-travel-order.blade.php
+│   └── my-travel-orders.blade.php
+└── user-management/        # User management views
 ```
+
+## Available Routes
+
+- `/` - Login page
+- `/dashboard` - Main dashboard
+- `/travel-order/create` - Create new travel order
+- `/travel-order/my-orders` - View my travel orders
+- `/user-management` - User management console
 
 ## Development
 
-### Compiling Assets
+### Frontend Assets
 
+Compile assets with:
 ```bash
 npm run dev
+# or for production
+npm run build
 ```
 
-### Running Tests
+### Contributing
 
-```bash
-php artisan test
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## Environment Variables
 
@@ -147,17 +212,19 @@ php artisan test
 | `DB_*` | Database connection settings |
 | `MAIL_*` | Email configuration |
 
-## Contributing
+## Default Login Credentials
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- **Admin User**
+  - Email: admin@denr.gov.ph
+  - Password: password
+
+- **Regular User**
+  - Email: user@denr.gov.ph
+  - Password: password
 
 ## License
 
-This project is open-sourced under the [MIT License](LICENSE).
+This project is open-source and available under the [MIT License](LICENSE).
 
 ## Contact
 
