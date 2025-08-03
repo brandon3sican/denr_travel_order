@@ -32,9 +32,9 @@
                     <span>My Travel Orders</span>
                 </a>
                 @if (auth()->user()->is_admin)
-                <a href="{{ route('user-management') }}" class="nav-item {{ Request::routeIs('user-management') ? 'active' : '' }}">
+                <a href="{{ route('role-management') }}" class="nav-item {{ Request::routeIs('role-management') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
-                    <span>User Management</span>
+                    <span>Role Management</span>
                 </a>
                 @endif
             </nav>

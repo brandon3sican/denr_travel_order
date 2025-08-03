@@ -34,9 +34,9 @@ Route::middleware('auth')->group(function () {
             return view('travel-order.my-travel-orders');
         })->name('my-travel-orders');
 
-        Route::get('/user-management', function () {
-            return view('user-management.user-management');
-        })->name('user-management');
+        Route::get('/role-management', function () {
+            return view('role-management.role-management');
+        })->name('role-management');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

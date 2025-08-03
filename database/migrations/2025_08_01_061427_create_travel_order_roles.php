@@ -12,7 +12,6 @@ return new class extends Migration
     public function up() {
         Schema::create('travel_order_roles', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->timestamps();
