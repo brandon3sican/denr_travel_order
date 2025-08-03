@@ -18,7 +18,6 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
         'is_admin',
@@ -44,6 +43,14 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_admin' => 'boolean',
     ];
+
+    /**
+     * Get the employee record associated with the user.
+     */
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'email', 'email');
+    }
 
     /**
      * Get the attributes that should be cast.

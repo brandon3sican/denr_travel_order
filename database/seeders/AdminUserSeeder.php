@@ -15,7 +15,6 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Admin User',
             'email' => 'admin@denr.gov.ph',
             'password' => Hash::make('password'), // Change this to a secure password
             'is_admin' => true,

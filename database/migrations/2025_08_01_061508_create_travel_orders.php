@@ -17,10 +17,10 @@ return new class extends Migration
             $table->text('purpose');
             $table->date('departure_date');
             $table->date('arrival_date');
-            $table->string('appropriation')->nullable();
-            $table->decimal('per_diem', 10, 2)->nullable();
-            $table->string('laborer_assistant')->nullable();
-            $table->text('remarks')->nullable();
+            $table->string('appropriation');
+            $table->decimal('per_diem', 10, 2);
+            $table->decimal('laborer_assistant', 10, 0);
+            $table->string('remarks');
             $table->unsignedBigInteger('status_id'); // FK to travel_status
             $table->timestamps();
         });

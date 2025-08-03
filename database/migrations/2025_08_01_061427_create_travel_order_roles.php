@@ -10,14 +10,15 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up() {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('travel_order_roles', function (Blueprint $table) {
             $table->id();
+            $table->string('email')->unique();
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->timestamps();
         });
     }
     public function down() {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('travel_order_roles');
     }
 };

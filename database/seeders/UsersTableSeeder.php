@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UsersTableSeeder extends Seeder
 {
@@ -14,56 +15,61 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // Regular users
-        $regularUsers = [
+        // Clear existing users (except the one you're logged in with)
+        DB::table('users')->whereNotIn('email', ['admin@denr.gov.ph'])->delete();
+
+        // Define all users
+        $users = [
+            // Admin users (2)
             [
-                'name' => 'Juan Dela Cruz',
+                'email' => 'admin@denr.gov.ph',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password123'),
+                'is_admin' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'email' => 'admin2@denr.gov.ph',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password123'),
+                'is_admin' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            // Regular users (3)
+            [
                 'email' => 'juan.delacruz@denr.gov.ph',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'is_admin' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'name' => 'Maria Santos',
                 'email' => 'maria.santos@denr.gov.ph',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'is_admin' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'name' => 'Jose Reyes',
                 'email' => 'jose.reyes@denr.gov.ph',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'is_admin' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ];
 
-        // Additional admin users
-        $adminUsers = [
-            [
-                'name' => 'Admin Two',
-                'email' => 'admin2@denr.gov.ph',    
-                'email_verified_at' => now(),
-                'password' => Hash::make('password123'),
-                'is_admin' => true,
-            ],
-            [
-                'name' => 'Admin Three',
-                'email' => 'admin3@denr.gov.ph',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password123'),
-                'is_admin' => true,
-            ]
-        ];
-
-        // Create users
-        foreach ($regularUsers as $user) {
-            User::create($user);
-        }
-
-        foreach ($adminUsers as $admin) {
-            User::create($admin);
+        // Insert users
+        foreach ($users as $user) {
+            DB::table('users')->updateOrInsert(
+                ['email' => $user['email']],
+                $user
+            );
         }
     }
 }
