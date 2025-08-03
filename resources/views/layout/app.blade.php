@@ -31,23 +31,28 @@
                     <i class="fas fa-list"></i>
                     <span>My Travel Orders</span>
                 </a>
+                @if (auth()->user()->is_admin)
                 <a href="{{ route('user-management') }}" class="nav-item {{ Request::routeIs('user-management') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span>User Management</span>
                 </a>
+                @endif
             </nav>
             <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <div class="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-white font-semibold">U</div>
                         <div>
-                            <p class="text-sm font-medium">User Name</p>
-                            <p class="text-xs text-gray-400">user@denr.gov.ph</p>
+                            <p class="text-sm font-medium">{{ Auth::user()->name }}</p>
+                            <p class="text-xs text-gray-400">{{ Auth::user()->email }}</p>
                         </div>
                     </div>
-                    <button id="logoutBtn" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-gray-400 hover:text-white focus:outline-none">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -2,126 +2,95 @@
 
 ## Database Schema
 
-### Tables
+### Core Tables
 
-#### 1. `users`
-- **Description**: Stores user authentication information
-- **Source**: Laravel's default users table
-- **Fields**:
-  - `id` (bigint, primary key)
-  - `name` (string)
-  - `email` (string, unique)
-  - `email_verified_at` (timestamp, nullable)
-  - `password` (string)
-  - `remember_token` (string, nullable)
-  - `created_at` (timestamp)
-  - `updated_at` (timestamp)
-- **Relationships**:
-  - Has one `employee`
-  - Has many `travel_orders`
-  - Has many `approvals` (as recommender or approver)
-  - Has many `notifications`
+#### 1. `users` - User Accounts
+- **What it does**: Stores login information for all system users
+- **Key Fields**:
+  - `email` - Unique email address (also used as username)
+  - `name` - User's full name
+  - `password` - Encrypted password
 
-#### 2. `employees`
-- **Description**: Stores detailed employee information
-- **Fields**:
-  - `id` (bigint, primary key)
-  - `email` (string, unique, foreign key to `users.email`)
-  - `first_name` (string)
-  - `middle_name` (string, nullable)
-  - `last_name` (string)
-  - `position` (string, nullable)
-  - `department` (string, nullable)
-  - `recommender_email` (string, foreign key to `employees.email`)
-  - `approver_email` (string, foreign key to `employees.email`)
-  - `created_at` (timestamp)
-  - `updated_at` (timestamp)
-- **Relationships**:
-  - Belongs to `users` (via `email`)
-  - Has many `travel_orders`
-  - Has many `approvals` (as recommender or approver)
+- **Connections**:
+  - Each user has one employee profile
+  - Can create multiple travel orders
+  - Can be assigned as recommender/approver for travel orders
+  - Receives notifications about travel order updates
 
-#### 3. `roles`
-- **Description**: Defines user roles in the system
-- **Fields**:
-  - `id` (bigint, primary key)
-  - `name` (string, unique)
-  - `description` (text, nullable)
-  - `created_at` (timestamp)
-  - `updated_at` (timestamp)
+#### 2. `employees` - Employee Information
+- **What it does**: Stores detailed information about each employee
+- **Key Fields**:
+  - `email` - Links to the user account
+  - `first_name`, `last_name` - Employee's full name
+  - `position` - Job title/position
+  - `department` - Department/office
+  - `recommender_email` - Who recommends their travel requests
+  - `approver_email` - Who approves their travel requests
 
-#### 4. `travel_order_status`
-- **Description**: Tracks the status of travel orders
-- **Fields**:
-  - `id` (bigint, primary key)
-  - `name` (string, unique)
-  - `created_at` (timestamp)
-  - `updated_at` (timestamp)
-- **Default Statuses**:
-  - For Recommendation
-  - For Approval
-  - Approved
-  - Disapproved
-  - Cancelled
-  - Completed
+- **Connections**:
+  - Linked to one user account
+  - Can have multiple travel orders
+  - Can be assigned as recommender/approver for others
 
-#### 5. `travel_orders`
-- **Description**: Main table for travel order requests
-- **Fields**:
-  - `id` (bigint, primary key)
-  - `employee_email` (string, foreign key to `employees.email`)
-  - `destination` (string)
-  - `purpose` (text)
-  - `departure_date` (date)
-  - `arrival_date` (date)
-  - `appropriation` (string, nullable)
-  - `per_diem` (decimal(10,2), nullable)
-  - `laborer_assistant` (string, nullable)
-  - `remarks` (text, nullable)
-  - `status_id` (bigint, foreign key to `travel_order_status.id`)
-  - `created_at` (timestamp)
-  - `updated_at` (timestamp)
-- **Relationships**:
-  - Belongs to `employees` (via `employee_email`)
-  - Belongs to `travel_order_status`
-  - Has one `approval`
-  - Has many `notifications`
+#### 3. `roles` - User Permissions
+- **What it does**: Controls what users can do in the system
+- **Key Fields**:
+  - `name` - Role name (e.g., Admin, Employee, Approver)
+  - `description` - What this role can do
 
-#### 6. `approvals`
-- **Description**: Tracks the approval workflow for travel orders
-- **Fields**:
-  - `id` (bigint, primary key)
-  - `travel_order_id` (bigint, foreign key to `travel_orders.id`)
-  - `recommender_email` (string, foreign key to `users.email`)
-  - `approver_email` (string, foreign key to `users.email`)
-  - `recommender_status` (enum: 'Pending', 'Approved', 'Disapproved', default: 'Pending')
-  - `approver_status` (enum: 'Pending', 'Approved', 'Disapproved', default: 'Pending')
-  - `recommender_date` (datetime, nullable)
-  - `approver_date` (datetime, nullable)
-  - `remarks` (text, nullable)
-  - `created_at` (timestamp)
-  - `updated_at` (timestamp)
-- **Relationships**:
-  - Belongs to `travel_orders`
-  - Belongs to `users` (as recommender)
-  - Belongs to `users` (as approver)
+#### 4. `travel_order_status` - Request Status
+- **What it does**: Shows where a travel order is in the approval process
+- **Possible Statuses**:
+  - `For Recommendation` - Waiting for recommender's review
+  - `For Approval` - Waiting for final approval
+  - `Approved` - Travel order is approved
+  - `Disapproved` - Travel order is rejected
+  - `Cancelled` - Request was cancelled
+  - `Completed` - Travel is finished
 
-#### 7. `notifications`
-- **Description**: System notifications for users
-- **Fields**:
-  - `id` (bigint, primary key)
-  - `user_email` (string, foreign key to `users.email`)
-  - `travel_order_id` (bigint, foreign key to `travel_orders.id`)
-  - `status_id` (bigint, foreign key to `travel_order_status.id`)
-  - `type` (enum: 'Approved', 'Disapproved', 'Cancelled')
-  - `message` (text)
-  - `is_read` (boolean, default: false)
-  - `created_at` (timestamp)
-  - `updated_at` (timestamp)
-- **Relationships**:
-  - Belongs to `users`
-  - Belongs to `travel_orders`
-  - Belongs to `travel_order_status`
+#### 5. `travel_orders` - Travel Requests
+- **What it does**: Stores all travel order details
+- **Key Information**:
+  - `employee_email` - Who is traveling
+  - `destination` - Where they're going
+  - `purpose` - Why they're traveling
+  - `departure_date`/`arrival_date` - Travel dates
+  - `status_id` - Current status of the request
+  - `per_diem` - Daily allowance amount
+  - `laborer_assistant` - If bringing support staff
+
+- **Connections**:
+  - Linked to one employee (traveler)
+  - Has one approval record
+  - Can have multiple status updates
+
+#### 6. `approvals` - Approval Tracking
+- **What it does**: Manages who needs to approve each travel request
+- **Key Information**:
+  - `recommender_email` - First person to review
+  - `approver_email` - Final decision maker
+  - `recommender_status` - Recommender's decision
+  - `approver_status` - Approver's decision
+  - `remarks` - Any notes about the decision
+
+- **How it works**:
+  - Each travel order gets one approval record
+  - Tracks both recommender and approver decisions
+  - Records when each decision was made
+
+#### 7. `notifications` - System Alerts
+- **What it does**: Keeps users updated about their travel orders
+- **Key Information**:
+  - `user_email` - Who gets notified
+  - `travel_order_id` - Which request it's about
+  - `type` - What happened (approved, rejected, etc.)
+  - `message` - Details about the update
+  - `is_read` - Whether the user has seen it
+
+- **When sent**:
+  - When a travel order status changes
+  - When action is required (e.g., needs approval)
+  - When there's an important update
 
 ## Entity Relationship Diagram (ERD)
 
