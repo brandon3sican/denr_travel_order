@@ -96,7 +96,16 @@
                                     </tr>
                                 </thead>
                                 <tbody id="ordersTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Orders will be dynamically inserted here -->
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
+                                        @if (auth()->user()->is_admin)
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Employee</td>
+                                        @endif
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Destination</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Dates</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Status</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Actions</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

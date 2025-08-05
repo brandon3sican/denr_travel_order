@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Database\Seeders\AdminUserSeeder;
+use Database\Seeders\UsersTableSeeder;
+use Database\Seeders\EmployeesTableSeeder;
+use Database\Seeders\TravelOrderStatusSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,6 +19,10 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             UsersTableSeeder::class,
             EmployeesTableSeeder::class,
+            TravelOrderStatusSeeder::class,
+            TravelOrderRoleSeeder::class,
+            TravelOrderSeeder::class,
+            UserTravelOrderRoleSeeder::class,
         ]);
     }
 }
