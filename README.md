@@ -4,18 +4,42 @@ A comprehensive Travel Order Management System for the Department of Environment
 
 ## ✨ Features
 
-- **Modern Dashboard** - Overview of travel orders with key statistics
-- **Travel Order Management**
-  - Create new travel orders with detailed information
-  - View and track existing travel orders
-  - Filter and search functionality
+- **Modern Dashboard**
+  - Real-time statistics and key metrics
+  - Quick overview of pending and completed travel orders
+  - Interactive charts and visualizations
+
+- **Advanced Travel Order Management**
+  - Intuitive travel order creation wizard
+  - Comprehensive view of all travel orders
+  - Advanced filtering and search capabilities
+  - Status tracking with visual indicators
+  - Export functionality for reports
+
+- **Employee Management**
+  - Detailed employee profiles with contact information
+  - Department and position tracking
+  - Employee performance metrics
+
 - **User Management**
-  - Manage user accounts and permissions
-  - Role-based access control
-  - User activity tracking
-- **Responsive Design** - Fully responsive interface for desktop and mobile devices
-- **Real-time Updates** - Dynamic UI with real-time status changes
-- **Intuitive UI/UX** - Clean and user-friendly interface built with Tailwind CSS
+  - Role-based access control (Admin, Approver, Employee)
+  - User activity logging
+  - Password management and security
+
+- **Document Management**
+  - Digital document storage
+  - Version control for travel orders
+  - Document approval workflows
+
+- **Responsive Design**
+  - Mobile-first approach
+  - Optimized for all screen sizes
+  - Touch-friendly interface
+
+- **Real-time Updates**
+  - Live status updates
+  - Instant notifications
+  - Activity feed
 
 ## Prerequisites
 

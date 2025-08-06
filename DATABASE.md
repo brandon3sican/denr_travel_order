@@ -5,48 +5,85 @@
 ### Core Tables
 
 #### 1. `users` - User Accounts
-- **What it does**: Stores login information for all system users
+- **Purpose**: Central authentication and authorization
 - **Key Fields**:
-  - `email` - Unique email address (also used as username)
-  - `name` - User's full name
-  - `password` - Encrypted password
+  - `id` - Primary key (auto-increment)
+  - `email` - Unique email address (used as username)
+  - `password` - Encrypted password (bcrypt)
+  - `is_admin` - Boolean flag for admin privileges
+  - `email_verified_at` - Timestamp for email verification
+  - `remember_token` - For "remember me" functionality
+  - `created_at`, `updated_at` - Timestamps
 
-- **Connections**:
-  - Each user has one employee profile
-  - Can create multiple travel orders
-  - Can be assigned as recommender/approver for travel orders
-  - Receives notifications about travel order updates
+- **Relationships**:
+  - Has one `employee` profile
+  - Has many `travel_orders` (created)
+  - Has many `notifications`
+  - Belongs to many `roles`
 
 #### 2. `employees` - Employee Information
-- **What it does**: Stores detailed information about each employee
+- **Purpose**: Detailed employee profiles
 - **Key Fields**:
-  - `email` - Links to the user account
-  - `first_name`, `last_name` - Employee's full name
+  - `id` - Primary key (auto-increment)
+  - `email` - Foreign key to users table
+  - `first_name` - Employee's first name
+  - `middle_name` - Middle name or initial
+  - `last_name` - Employee's last name
   - `position` - Job title/position
   - `department` - Department/office
-  - `recommender_email` - Who recommends their travel requests
-  - `approver_email` - Who approves their travel requests
+  - `recommender_email` - Email of the recommender
+  - `approver_email` - Email of the approver
+  - `created_at`, `updated_at` - Timestamps
 
-- **Connections**:
-  - Linked to one user account
-  - Can have multiple travel orders
-  - Can be assigned as recommender/approver for others
+- **Indexes**:
+  - `email` (unique)
+  - `recommender_email`
+  - `approver_email`
 
 #### 3. `roles` - User Permissions
-- **What it does**: Controls what users can do in the system
+- **Purpose**: Role-based access control
 - **Key Fields**:
-  - `name` - Role name (e.g., Admin, Employee, Approver)
-  - `description` - What this role can do
+  - `id` - Primary key
+  - `name` - Role name (admin, approver, employee)
+  - `guard_name` - Laravel guard name
+  - `created_at`, `updated_at` - Timestamps
 
-#### 4. `travel_order_status` - Request Status
-- **What it does**: Shows where a travel order is in the approval process
-- **Possible Statuses**:
-  - `For Recommendation` - Waiting for recommender's review
-  - `For Approval` - Waiting for final approval
-  - `Approved` - Travel order is approved
-  - `Disapproved` - Travel order is rejected
-  - `Cancelled` - Request was cancelled
-  - `Completed` - Travel is finished
+#### 4. `travel_orders` - Travel Order Records
+- **Purpose**: Main travel order information
+- **Key Fields**:
+  - `id` - Primary key
+  - `employee_email` - Foreign key to employees
+  - `destination` - Travel destination
+  - `purpose` - Purpose of travel
+  - `departure_date` - Start date of travel
+  - `arrival_date` - End date of travel
+  - `status_id` - Current status
+  - `recommender` - Recommender's email
+  - `approver` - Approver's email
+  - `remarks` - Additional notes
+  - `created_at`, `updated_at` - Timestamps
+
+#### 5. `travel_order_status` - Status Tracking
+- **Purpose**: Track travel order status changes
+- **Status Flow**:
+  1. `Draft` - Initial draft status
+  2. `For Recommendation` - Awaiting recommender
+  3. `For Approval` - Awaiting approver
+  4. `Approved` - Travel approved
+  5. `Disapproved` - Travel rejected
+  6. `Cancelled` - Travel cancelled
+  7. `Completed` - Travel completed
+
+#### 6. `notifications` - System Notifications
+- **Purpose**: Track system notifications
+- **Key Fields**:
+  - `id` - Primary key
+  - `type` - Notification class
+  - `notifiable_type` - Related model
+  - `notifiable_id` - Related model ID
+  - `data` - JSON data
+  - `read_at` - When read
+  - `created_at`, `updated_at` - Timestamps
 
 #### 5. `travel_orders` - Travel Requests
 - **What it does**: Stores all travel order details
