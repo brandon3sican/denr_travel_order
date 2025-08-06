@@ -64,21 +64,97 @@
 
                     <!-- Recent Travel Orders -->
                     <div class="bg-white rounded-lg shadow overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                            <div class="mb-4 sm:mb-0">
-                                <h3 class="text-lg font-semibold text-gray-900">Recent Travel Orders</h3>
-                                <p class="text-sm text-gray-500">List of all recent travel orders and their status</p>
+                        <div class="px-6 py-4 border-b border-gray-200 bg-white rounded-t-lg">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h3 class="text-xl font-bold text-gray-800">Recent Travel Orders</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Track and manage all travel order requests</p>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <form id="filterForm" method="GET" class="flex space-x-2">
+                                            <select name="status" id="statusFilter" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                                <option value="" {{ request('status') == '' ? 'selected' : '' }}>All Status</option>
+                                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                                                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                                            </select>
+                                            @if(request('status') || request('search'))
+                                                <a href="{{ route('dashboard') }}" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                                    Clear Filters
+                                                </a>
+                                            @endif
+                                            <input type="hidden" name="search" value="{{ request('search') }}">
+                                        </form>
+                                    </div>
+                                    <div class="relative">
+                                        <div class="relative">
+                                            <input type="text" 
+                                                name="search" 
+                                                id="searchInput" 
+                                                value="{{ request('search') }}" 
+                                                placeholder="Search..." 
+                                                class="block w-full pl-4 pr-10 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                onkeypress="if(event.key === 'Enter') { document.getElementById('filterForm').submit(); }">
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                                <button type="submit" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="status" value="{{ request('status') }}">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm text-gray-500">
-                                    Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
-                                </span>
-                                <button id="prevPage" class="px-3 py-1 border rounded disabled:opacity-50" disabled>
-                                    &larr; Prev
-                                </button>
-                                <button id="nextPage" class="px-3 py-1 border rounded disabled:opacity-50">
-                                    Next &rarr;
-                                </button>
+                            <div class="mt-4 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                                <p class="text-sm text-gray-600">
+                                    @if($travelOrders->count() > 0)
+                                        Showing <span class="font-medium">{{ $travelOrders->firstItem() }}</span> to 
+                                        <span class="font-medium">{{ $travelOrders->lastItem() }}</span> of 
+                                        <span class="font-medium">{{ $travelOrders->total() }}</span> results
+                                    @else
+                                        No results found
+                                    @endif
+                                </p>
+                                @if($travelOrders->hasPages())
+                                    <div class="flex items-center space-x-1">
+                                        {{-- Previous Page Link --}}
+                                        @if ($travelOrders->onFirstPage())
+                                            <span class="px-3 py-1 border rounded-md text-sm font-medium text-gray-400 bg-white cursor-not-allowed">
+                                                <i class="fas fa-chevron-left"></i> Previous
+                                            </span>
+                                        @else
+                                            <a href="{{ $travelOrders->previousPageUrl() }}" class="px-3 py-1 border rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                                <i class="fas fa-chevron-left"></i> Previous
+                                            </a>
+                                        @endif
+
+                                        {{-- Pagination Elements --}}
+                                        @foreach ($travelOrders->getUrlRange(1, $travelOrders->lastPage()) as $page => $url)
+                                            @if ($page == $travelOrders->currentPage())
+                                                <span class="px-3 py-1 border rounded-md text-sm font-medium bg-blue-600 text-white border-blue-600">
+                                                    {{ $page }}
+                                                </span>
+                                            @else
+                                                <a href="{{ $url }}" class="px-3 py-1 border rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                                    {{ $page }}
+                                                </a>
+                                            @endif
+                                        @endforeach
+
+                                        {{-- Next Page Link --}}
+                                        @if ($travelOrders->hasMorePages())
+                                            <a href="{{ $travelOrders->nextPageUrl() }}" class="px-3 py-1 border rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                                Next <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        @else
+                                            <span class="px-3 py-1 border rounded-md text-sm font-medium text-gray-400 bg-white cursor-not-allowed">
+                                                Next <i class="fas fa-chevron-right"></i>
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -101,7 +177,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">TO-2025-{{ $order->id }}</td>
                                         @if($isAdmin)
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $order->employee_email }}
+                                            {{ $order->employee ? $order->employee->first_name . ' ' . $order->employee->last_name : 'N/A' }}
                                         </td>
                                         @endif
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

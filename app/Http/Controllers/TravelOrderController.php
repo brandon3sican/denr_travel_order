@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\TravelOrder;
+use App\Models\TravelOrder as TravelOrderModel;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TravelOrderRole;
 
@@ -12,7 +12,7 @@ class TravelOrderController extends Controller
     public function index()
     {
         return view('travel-order.index', [
-            'travelOrders' => TravelOrder::all(),
+            'travelOrders' => TravelOrderModel::all(),
         ]);
     }
 
@@ -69,7 +69,7 @@ class TravelOrderController extends Controller
         $validated['updated_by'] = $user->id;
 
         // Create the travel order
-        $travelOrder = TravelOrder::create($validated);
+        $travelOrder = TravelOrderModel::create($validated);
 
         // Send notification to recommender
         // You can implement this later using Laravel Notifications
@@ -82,14 +82,14 @@ class TravelOrderController extends Controller
     public function show($id)
     {
         return view('travel-order.show', [
-            'travelOrder' => TravelOrder::findOrFail($id),
+            'travelOrder' => TravelOrderModel::findOrFail($id),
         ]);
     }
 
     public function edit($id)
     {
         return view('travel-order.edit', [
-            'travelOrder' => TravelOrder::findOrFail($id),
+            'travelOrder' => TravelOrderModel::findOrFail($id),
         ]);
     }
 
@@ -108,7 +108,7 @@ class TravelOrderController extends Controller
             'status_id' => 'required',
         ]);
 
-        $travelOrder = TravelOrder::findOrFail($id);
+        $travelOrder = TravelOrderModel::findOrFail($id);
         $travelOrder->update($request->all());
 
         return redirect()->route('travel-orders.show', $travelOrder->id)->with('success', 'Travel Order updated successfully');
@@ -116,7 +116,7 @@ class TravelOrderController extends Controller
 
     public function destroy($id)
     {
-        $travelOrder = TravelOrder::findOrFail($id);
+        $travelOrder = TravelOrderModel::findOrFail($id);
         $travelOrder->delete();
 
         return redirect()->route('dashboard')->with('success', 'Travel Order deleted successfully');

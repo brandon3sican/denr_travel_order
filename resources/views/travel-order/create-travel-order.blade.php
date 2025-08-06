@@ -309,10 +309,6 @@
                         <h4 class="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">EMPLOYEE INFORMATION</h4>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <p class="text-xs text-gray-500 mb-0.5">Employee Name</p>
-                                <p class="font-medium text-gray-800">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</p>
-                            </div>
-                            <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Position</p>
                                 <p class="font-medium text-gray-800">{{ auth()->user()->employee->position ?? 'N/A' }}</p>
                             </div>
