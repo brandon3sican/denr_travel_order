@@ -25,20 +25,21 @@
 - **Purpose**: Detailed employee profiles
 - **Key Fields**:
   - `id` - Primary key (auto-increment)
-  - `email` - Foreign key to users table
+  - `email` - Foreign key to users table (unique)
   - `first_name` - Employee's first name
   - `middle_name` - Middle name or initial
   - `last_name` - Employee's last name
-  - `position` - Job title/position
-  - `department` - Department/office
-  - `recommender_email` - Email of the recommender
-  - `approver_email` - Email of the approver
+  - `position_name` - Job title/position (renamed from 'position')
+  - `assignment_name` - Current assignment/designation
+  - `div_sec_unit` - Division/Section/Unit
+  - `emp_status` - Employment status (Active/Inactive)
+  - `sex` - Gender (M/F)
   - `created_at`, `updated_at` - Timestamps
 
 - **Indexes**:
-  - `email` (unique)
-  - `recommender_email`
-  - `approver_email`
+  - `email` (unique, foreign key to users.email)
+  - `emp_status` (for filtering active/inactive employees)
+  - `position_name` (for role-based queries)
 
 #### 3. `roles` - User Permissions
 - **Purpose**: Role-based access control

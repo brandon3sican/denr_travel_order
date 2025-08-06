@@ -2,6 +2,23 @@
 
 A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 10 and Tailwind CSS 3. This system streamlines the process of creating, managing, and tracking travel orders within the organization.
 
+## 🚀 Recent Updates
+
+- **Database Seeding**
+  - Fixed duplicate email entries in user seeding
+  - Enhanced seeders with `updateOrCreate` to prevent duplicates
+  - Improved data consistency across related tables
+
+- **User Interface**
+  - Updated role management view for better user experience
+  - Improved display of user names in the interface
+  - Removed redundant modals for cleaner UI
+
+- **Security**
+  - Enhanced data validation in seeders
+  - Improved foreign key constraints
+  - Better error handling for database operations
+
 ## ✨ Features
 
 - **Modern Dashboard**
