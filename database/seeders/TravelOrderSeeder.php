@@ -14,6 +14,7 @@ class TravelOrderSeeder extends Seeder
     public function run(): void
     {
         TravelOrder::create([
+            'id' => 1,
             'employee_email' => 'jose.reyes@denr.gov.ph',
             'destination' => 'Destination',
             'purpose' => 'Purpose',
@@ -26,6 +27,7 @@ class TravelOrderSeeder extends Seeder
             'status_id' => 1,
         ]);
         TravelOrder::create([
+            'id' => 2,
             'employee_email' => 'jose.reyes@denr.gov.ph',
             'destination' => 'Destination2',
             'purpose' => 'Purpose2',
@@ -38,6 +40,7 @@ class TravelOrderSeeder extends Seeder
             'status_id' => 2,
         ]);
         TravelOrder::create([
+            'id' => 3,
             'employee_email' => 'juan.delacruz@denr.gov.ph',
             'destination' => 'Destination3',
             'purpose' => 'Purpose3',
@@ -50,6 +53,7 @@ class TravelOrderSeeder extends Seeder
             'status_id' => 1,
         ]);
         TravelOrder::create([
+            'id' => 4,
             'employee_email' => 'maria.santos@denr.gov.ph',
             'destination' => 'Destination4',
             'purpose' => 'Purpose4',

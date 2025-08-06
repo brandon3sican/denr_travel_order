@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\TravelOrderRole;
 
 class User extends Authenticatable
 {
@@ -22,6 +23,21 @@ class User extends Authenticatable
         'password',
         'is_admin',
     ];
+
+    /**
+     * Get the travel order roles for the user.
+     */
+    public function travelOrderRoles()
+    {
+        return $this->belongsToMany(
+            TravelOrderRole::class,
+            'user_travel_order_roles',
+            'user_email',  // Foreign key on the pivot table
+            'travel_order_role_id',  // Related key on the pivot table
+            'email',  // Local key on the users table
+            'id'      // Related key on the roles table
+        )->withTimestamps();
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('position');
-            $table->string('department');
+            $table->string('official_station');
+            $table->string('div_sec_unit');
             $table->timestamps();
         });
 

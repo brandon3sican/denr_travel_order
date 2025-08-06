@@ -26,6 +26,10 @@ class TravelOrderRoleSeeder extends Seeder
             'description' => 'Can approve travel orders',
         ]);
         TravelOrderRole::create([
+            'name' => 'Recommender and Approver',
+            'description' => 'Can recommend and approve travel orders',
+        ]);
+        TravelOrderRole::create([
             'name' => 'Admin',
             'description' => 'Super account',
         ]);

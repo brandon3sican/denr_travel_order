@@ -31,7 +31,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium opacity-90">Total Travel Orders</p>
-                                    <p class="text-2xl font-bold mt-1">0</p>
+                                    <p class="text-2xl font-bold mt-1">{{ $totalTravelOrders }}</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
                                     <i class="fas fa-plus text-xl"></i>
@@ -42,7 +42,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium opacity-90">Pending Requests</p>
-                                    <p class="text-2xl font-bold mt-1">0</p>
+                                    <p class="text-2xl font-bold mt-1">{{ $pendingRequests }}</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
                                     <i class="fas fa-clock text-xl"></i>
@@ -53,7 +53,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium opacity-90">Completed Requests</p>
-                                    <p class="text-2xl font-bold mt-1">0</p>
+                                    <p class="text-2xl font-bold mt-1">{{ $completedRequests }}</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
                                     <i class="fas fa-check-circle text-xl"></i>
@@ -95,17 +95,55 @@
                                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="ordersTableBody" class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @forelse($travelOrders as $index => $order)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
-                                        @if (auth()->user()->is_admin)
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Employee</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">TO-2025-{{ $order->id }}</td>
+                                        @if($isAdmin)
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {{ $order->employee_email }}
+                                        </td>
                                         @endif
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Destination</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Dates</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Status</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Actions</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {{ $order->destination ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }} - 
+                                            {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @php
+                                                $statusClass = [
+                                                    1 => 'bg-yellow-100 text-yellow-800', // Pending
+                                                    2 => 'bg-blue-100 text-blue-800',     // Approved
+                                                    3 => 'bg-green-100 text-green-800',   // Completed
+                                                    4 => 'bg-red-100 text-red-800'        // Rejected
+                                                ][$order->status_id] ?? 'bg-gray-100 text-gray-800';
+                                            @endphp
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                                {{ ['Pending', 'Approved', 'Completed', 'Rejected'][$order->status_id - 1] ?? 'Unknown' }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <a href="{{ route('travel-orders.show', $order->id) }}" 
+                                               class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                                View
+                                            </a>
+                                            @if($order->status_id == 1) {{-- Only show edit for pending orders --}}
+                                            <a href="{{ route('travel-orders.edit', $order->id) }}" 
+                                               class="text-yellow-600 hover:text-yellow-900">
+                                                Edit
+                                            </a>
+                                            @endif
+                                        </td>
                                     </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="{{ $isAdmin ? '6' : '5' }}" class="px-6 py-4 text-center text-sm text-gray-500">
+                                            No travel orders found.
+                                        </td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

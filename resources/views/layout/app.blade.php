@@ -15,8 +15,9 @@
         <div id="sidebar" class="w-64 bg-gray-800 text-white transition-all duration-300 ease-in-out">
             <div class="p-4 border-b border-gray-700">
                 <div class="flex items-center space-x-2">
+                    &nbsp;
                     <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-8 w-8">
-                    <h1 class="text-xl font-bold">DENR:TOIS</h1>
+                    <h1 class="text-xl font-bold">&nbsp;&nbsp;&nbsp;DENR:TOIS</h1>
                 </div>
             </div>
             <nav class="mt-4">
@@ -24,7 +25,8 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('create-travel-order') }}" class="nav-item {{ Request::routeIs('create-travel-order') ? 'active' : '' }}">
+                @if (!auth()->user()->is_admin)
+                <a href="{{ route('travel-orders.create') }}" class="nav-item {{ Request::routeIs('travel-orders.create') ? 'active' : '' }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Create Travel Order</span>
                 </a>
@@ -32,6 +34,7 @@
                     <i class="fas fa-list"></i>
                     <span>My Travel Orders</span>
                 </a>
+                @endif
                 @if (auth()->user()->is_admin)
                 <a href="{{ route('role-management') }}" class="nav-item {{ Request::routeIs('role-management') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
@@ -50,7 +53,7 @@
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-gray-400 hover:text-white focus:outline-none">
+                        <button type="submit" class="text-red-500 hover:text-white focus:outline-none">
                             <i class="fas fa-sign-out-alt"></i>
                         </button>
                     </form>
@@ -58,12 +61,11 @@
             </div>
         </div>
         @yield('content')
-
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/table-filters.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>
-
-    

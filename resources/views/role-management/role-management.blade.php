@@ -32,65 +32,150 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Office</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Role</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Change Role</th>
                                 </tr>
                             </thead>
-                            <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
-                                <!-- Users will be loaded here by JavaScript -->
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($users as $user)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-500">
+                                                    <span class="text-sm font-medium leading-none text-white">{{ substr($user->name, 0, 1) }}</span>
+                                                </span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                                <div class="text-sm text-gray-500">{{ $user->email }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $user->employee->position ?? 'N/A' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $user->employee->department ?? 'N/A' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if($user->travelOrderRoles->isNotEmpty())
+                                            @foreach($user->travelOrderRoles as $role)
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    {{ $role->name }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                No Role
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-blue-600">
+                                        <form action="{{ route('role-management.update-role', $user->id) }}" method="POST" class="flex items-center">
+                                            @csrf
+                                            <select name="role_id" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                                <option value="">Select Role</option>
+                                                @foreach($roles as $role)
+                                                    <option value="{{ $role->id }}" {{ $user->travelOrderRoles->contains('id', $role->id) ? 'selected' : '' }}>
+                                                        {{ $role->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        No users found.
+                                    </td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Pagination -->
+                    @if ($users->hasPages())
                     <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
                         <div class="flex-1 flex justify-between sm:hidden">
-                            <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                Previous
-                            </button>
-                            <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                Next
-                            </button>
+                            @if ($users->onFirstPage())
+                                <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-300 bg-white">
+                                    Previous
+                                </span>
+                            @else
+                                <a href="{{ $users->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    Previous
+                                </a>
+                            @endif
+
+                            @if ($users->hasMorePages())
+                                <a href="{{ $users->nextPageUrl() }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    Next
+                                </a>
+                            @else
+                                <span class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-300 bg-white">
+                                    Next
+                                </span>
+                            @endif
                         </div>
                         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
                                 <p class="text-sm text-gray-700">
-                                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">24</span> users
+                                    Showing <span class="font-medium">{{ $users->firstItem() }}</span>
+                                    to <span class="font-medium">{{ $users->lastItem() }}</span>
+                                    of <span class="font-medium">{{ $users->total() }}</span> results
                                 </p>
                             </div>
                             <div>
                                 <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                        <span class="sr-only">Previous</span>
-                                        <i class="fas fa-chevron-left h-5 w-5"></i>
-                                    </a>
-                                    <a href="#" aria-current="page" class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                                        1
-                                    </a>
-                                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                                        2
-                                    </a>
-                                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                                        3
-                                    </a>
-                                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                                        ...
-                                    </span>
-                                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                                        8
-                                    </a>
-                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                        <span class="sr-only">Next</span>
-                                        <i class="fas fa-chevron-right h-5 w-5"></i>
-                                    </a>
+                                    {{-- Previous Page Link --}}
+                                    @if ($users->onFirstPage())
+                                        <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-300">
+                                            <span class="sr-only">Previous</span>
+                                            <i class="fas fa-chevron-left h-5 w-5"></i>
+                                        </span>
+                                    @else
+                                        <a href="{{ $users->previousPageUrl() }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Previous</span>
+                                            <i class="fas fa-chevron-left h-5 w-5"></i>
+                                        </a>
+                                    @endif
+
+                                    {{-- Pagination Elements --}}
+                                    @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
+                                        @if ($page == $users->currentPage())
+                                            <span aria-current="page" class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                {{ $page }}
+                                            </span>
+                                        @else
+                                            <a href="{{ $url }}" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                {{ $page }}
+                                            </a>
+                                        @endif
+                                    @endforeach
+
+                                    {{-- Next Page Link --}}
+                                    @if ($users->hasMorePages())
+                                        <a href="{{ $users->nextPageUrl() }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Next</span>
+                                            <i class="fas fa-chevron-right h-5 w-5"></i>
+                                        </a>
+                                    @else
+                                        <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-300">
+                                            <span class="sr-only">Next</span>
+                                            <i class="fas fa-chevron-right h-5 w-5"></i>
+                                        </span>
+                                    @endif
                                 </nav>
                             </div>
                         </div>
                     </div>
+                    @endif
                 </div>
             </main>
         </div>

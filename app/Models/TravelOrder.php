@@ -13,6 +13,7 @@ class TravelOrder extends Model
 
     protected $fillable = [
         'employee_email',
+        'destination',
         'purpose',
         'departure_date',
         'arrival_date',
@@ -20,7 +21,11 @@ class TravelOrder extends Model
         'per_diem',
         'laborer_assistant',
         'remarks',
+        'recommender',
+        'approver',
         'status_id',
+        'created_by',
+        'updated_by'
     ];
 
     public function user(): BelongsTo

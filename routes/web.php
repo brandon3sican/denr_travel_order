@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TravelOrderController;
+use App\Http\Controllers\MyTravelOrderController;
+use App\Http\Controllers\RoleManagementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -20,23 +24,18 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
 // Protected Routes - Require Authentication
 Route::middleware('auth')->group(function () {
     // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Travel Order Routes
+    Route::resource('travel-orders', TravelOrderController::class)->except(['index']);
+    
+    // Additional custom routes for travel orders
     Route::prefix('travel-order')->group(function () {
-        Route::get('/create', function () {
-            return view('travel-order.create-travel-order');
-        })->name('create-travel-order');
+        Route::get('/create', [TravelOrderController::class, 'create'])->name('travel-orders.create');
+        Route::get('/my-orders', [MyTravelOrderController::class, 'index'])->name('my-travel-orders');
 
-        Route::get('/my-orders', function () {
-            return view('travel-order.my-travel-orders');
-        })->name('my-travel-orders');
-
-        Route::get('/role-management', function () {
-            return view('role-management.role-management');
-        })->name('role-management');
+        Route::get('/role-management', [RoleManagementController::class, 'index'])->name('role-management');
+        Route::post('/role-management/{user}/update-role', [RoleManagementController::class, 'updateRole'])->name('role-management.update-role');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
