@@ -63,14 +63,6 @@ class UsersTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'email' => 'jose.reyes@denr.gov.ph',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password123'),
-                'is_admin' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'email' => 'john.wick@denr.gov.ph',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),

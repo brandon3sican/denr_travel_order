@@ -34,8 +34,8 @@
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Div/Sec/Unit</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Official Station</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignment</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division/Section/Unit</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Role</th>
                                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Change Role</th>
                                 </tr>
@@ -47,23 +47,22 @@
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-500">
-                                                    <span class="text-sm font-medium leading-none text-white">{{ substr($user->name, 0, 1) }}</span>
+                                                    <span class="text-sm font-medium leading-none text-white">{{ substr($user->first_name, 0, 1) }}</span>
                                                 </span>
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $user->email }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $user->first_name }} {{ $user->last_name }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $user->employee->position ?? 'N/A' }}</div>
+                                        <div class="text-sm text-gray-900">{{ $user->employee->position_name ?? 'N/A' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $user->employee->assignment_name ?? 'N/A' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $user->employee->div_sec_unit ?? 'N/A' }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $user->employee->official_station ?? 'N/A' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($user->travelOrderRoles->isNotEmpty())
@@ -182,133 +181,6 @@
                     @endif
                 </div>
             </main>
-        </div>
-    </div>
-
-    <!-- Add/Edit User Modal -->
-    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-start">
-                    <h3 class="text-lg font-medium text-gray-900" id="modalTitle">Add New User</h3>
-                    <button id="closeUserModal" class="text-gray-400 hover:text-gray-500">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-                
-                <form id="userForm" class="mt-6 space-y-6">
-                    <input type="hidden" id="userId">
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                            <input type="text" id="firstName" name="firstName" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        </div>
-                        <div>
-                            <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        </div>
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" id="email" name="email" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        </div>
-                        <div>
-                            <label for="employeeId" class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
-                            <input type="text" id="employeeId" name="employeeId"
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        </div>
-                        <div>
-                            <label for="position" class="block text-sm font-medium text-gray-700 mb-1">Position</label>
-                            <input type="text" id="position" name="position" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        </div>
-                        <div>
-                            <label for="office" class="block text-sm font-medium text-gray-700 mb-1">Office</label>
-                            <select id="office" name="office" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <option value="">Select Office</option>
-                                <option value="central">Central Office</option>
-                                <option value="region1">Region 1</option>
-                                <option value="region2">Region 2</option>
-                                <!-- Add more options as needed -->
-                            </select>
-                        </div>
-                        <div>
-                            <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                            <select id="role" name="role" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <option value="">Select Role</option>
-                                <option value="admin">Administrator</option>
-                                <option value="approver">Approver</option>
-                                <option value="user">Regular User</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                            <select id="status" name="status" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="pending">Pending</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Password fields (only show for new users or password reset) -->
-                    <div id="passwordFields" class="border-t border-gray-200 pt-6">
-                        <h4 class="text-sm font-medium text-gray-700 mb-4">Set Password</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                                <input type="password" id="password" name="password"
-                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Leave blank to keep current">
-                            </div>
-                            <div>
-                                <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                                <input type="password" id="confirmPassword" name="confirmPassword"
-                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-6 border-t border-gray-200 flex justify-end space-x-3">
-                        <button type="button" id="cancelUserBtn" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Cancel
-                        </button>
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Save User
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full">
-            <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                    <i class="fas fa-exclamation text-red-600 text-xl"></i>
-                </div>
-                <h3 class="mt-3 text-lg font-medium text-gray-900">Are you sure?</h3>
-                <div class="mt-2 text-sm text-gray-500">
-                    <p>This action cannot be undone. This will <span id="actionText">deactivate</span> the user account.</p>
-                </div>
-                <div class="mt-5 sm:mt-6 flex justify-center space-x-3">
-                    <button type="button" id="cancelConfirm" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm">
-                        Cancel
-                    </button>
-                    <button type="button" id="confirmAction" class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
-                        <span id="confirmButtonText">Deactivate</span>
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 

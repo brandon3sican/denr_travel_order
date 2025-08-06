@@ -310,15 +310,15 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Position</p>
-                                <p class="font-medium text-gray-800">{{ auth()->user()->employee->position ?? 'N/A' }}</p>
+                                <p class="font-medium text-gray-800">{{ auth()->user()->employee->position_name ?? 'N/A' }}</p>
                             </div>
-                            <div>
-                                <p class="text-xs text-gray-500 mb-0.5">Div/Sec/Unit</p>
-                                <p class="font-medium text-gray-800">{{ auth()->user()->employee->div_sec_unit ?? 'N/A' }}</p>
-                            </div>
+                            // <div>
+                            //     <p class="text-xs text-gray-500 mb-0.5">Div/Sec/Unit</p>
+                            //     <p class="font-medium text-gray-800">{{ auth()->user()->employee->div_sec_unit ?? 'N/A' }}</p>
+                            // </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Official Station</p>
-                                <p class="font-medium text-gray-800">{{ auth()->user()->employee->official_station ?? 'N/A' }}</p>
+                                <p class="font-medium text-gray-800">{{ auth()->user()->employee->assignment_name ?? 'N/A' }}</p>
                             </div>
                             
                             <div>

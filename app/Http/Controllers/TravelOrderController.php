@@ -21,7 +21,7 @@ class TravelOrderController extends Controller
         $currentUser = Auth::user();
         
         // Fetch users with recommender or recommender and approver roles, excluding current user
-        $recommenders = \App\Models\User::select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position')
+        $recommenders = \App\Models\User::select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position')
             ->join('employees', 'users.email', '=', 'employees.email')
             ->join('user_travel_order_roles', 'users.email', '=', 'user_travel_order_roles.user_email')
             ->join('travel_order_roles', 'user_travel_order_roles.travel_order_role_id', '=', 'travel_order_roles.id')
@@ -31,7 +31,7 @@ class TravelOrderController extends Controller
             ->get();
 
         // Fetch users with approver or recommender and approver roles, excluding current user
-        $approvers = \App\Models\User::select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position')
+        $approvers = \App\Models\User::select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position')
             ->join('employees', 'users.email', '=', 'employees.email')
             ->join('user_travel_order_roles', 'users.email', '=', 'user_travel_order_roles.user_email')
             ->join('travel_order_roles', 'user_travel_order_roles.travel_order_role_id', '=', 'travel_order_roles.id')

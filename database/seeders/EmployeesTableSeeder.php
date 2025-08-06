@@ -85,7 +85,7 @@ class EmployeesTableSeeder extends Seeder
                 'Biologist V',
             ];
 
-            $officialStations = [
+            $assignments = [
                 'DENR - Regional Office',
                 'PENRO - Provincial Environment and Natural Resources Office',
                 'CENRO - Community Environment and Natural Resources Office',
@@ -120,12 +120,14 @@ class EmployeesTableSeeder extends Seeder
 
             // Create employee record
             Employee::create([
-                'email' => $user->email,
                 'first_name' => $firstName,
                 'middle_name' => $middleName,
                 'last_name' => $lastName,
-                'position' => $user->is_admin ? 'System Administrator' : $positions[array_rand($positions)],
-                'official_station' => $officialStations[array_rand($officialStations)],
+                'sex' => rand(0, 1) ? 'M' : 'F',
+                'email' => $user->email,
+                'emp_status' => rand(0, 1) ? 'Active' : 'Inactive',
+                'position_name' => $positions[array_rand($positions)],
+                'assignment_name' => $assignments[array_rand($assignments)],
                 'div_sec_unit' => $divisions[array_rand($divisions)],
             ]);
         }

@@ -13,25 +13,34 @@ class TravelOrderRoleSeeder extends Seeder
      */
     public function run(): void
     {
-        TravelOrderRole::create([
-            'name' => 'User',
-            'description' => 'Regular user',
-        ]);
-        TravelOrderRole::create([
-            'name' => 'Recommender',
-            'description' => 'Can recommend travel orders',
-        ]);
-        TravelOrderRole::create([
-            'name' => 'Approver',
-            'description' => 'Can approve travel orders',
-        ]);
-        TravelOrderRole::create([
-            'name' => 'Recommender and Approver',
-            'description' => 'Can recommend and approve travel orders',
-        ]);
-        TravelOrderRole::create([
-            'name' => 'Admin',
-            'description' => 'Super account',
-        ]);
+        $roles = [
+            [
+                'name' => 'User',
+                'description' => 'Regular user'
+            ],
+            [
+                'name' => 'Recommender',
+                'description' => 'Can recommend travel orders'
+            ],
+            [
+                'name' => 'Approver',
+                'description' => 'Can approve travel orders'
+            ],
+            [
+                'name' => 'Recommender and Approver',
+                'description' => 'Can recommend and approve travel orders'
+            ],
+            [
+                'name' => 'Admin',
+                'description' => 'Super account'
+            ]
+        ];
+
+        foreach ($roles as $role) {
+            TravelOrderRole::updateOrCreate(
+                ['name' => $role['name']],
+                $role
+            );
+        }
     }
 }

@@ -17,7 +17,7 @@ class RoleManagementController extends Controller
         // Get users with their roles and employee details
         $users = User::with(['travelOrderRoles'])
             ->join('employees', 'users.email', '=', 'employees.email')
-            ->select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position')
+            ->select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position')
             ->orderBy('employees.first_name')
             ->orderBy('employees.last_name')
             ->paginate($perPage);
