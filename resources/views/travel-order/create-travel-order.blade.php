@@ -12,6 +12,12 @@
                         </button>
                         <h2 class="text-xl font-semibold text-gray-800">Create Travel Order</h2>
                     </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="relative p-2 text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
+                    </div>
                 </div>
             </header>
 

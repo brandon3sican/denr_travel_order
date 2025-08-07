@@ -25,14 +25,10 @@
                                 <i class="fas fa-chevron-down text-xs"></i>
                             </div>
                         </div>
-                        <div class="relative">
-                            @if (auth()->user()->is_admin)
-                            <input type="text" id="searchOrders" placeholder="Search orders..." class="pl-8 pr-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                            @endif
-                        </div>
+                        <button class="relative p-2 text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
                     </div>
                 </div>
             </header>

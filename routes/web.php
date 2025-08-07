@@ -7,6 +7,7 @@ use App\Http\Controllers\MyTravelOrderController;
 use App\Http\Controllers\RoleManagementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\NotificationsController;
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -37,6 +38,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/role-management', [RoleManagementController::class, 'index'])->name('role-management');
         Route::post('/role-management/{user}/update-role', [RoleManagementController::class, 'updateRole'])->name('role-management.update-role');
     });
+
+    Route::get('/notifications', [NotificationsController::class, 'index'])->name('notifications');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

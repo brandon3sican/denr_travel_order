@@ -10,17 +10,36 @@ use Illuminate\Support\Facades\DB;
 
 class RoleManagementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $perPage = 10;
         
-        // Get users with their roles and employee details
-        $users = User::with(['travelOrderRoles'])
+        // Base query
+        $query = User::with(['travelOrderRoles'])
             ->join('employees', 'users.email', '=', 'employees.email')
-            ->select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position')
-            ->orderBy('employees.first_name')
-            ->orderBy('employees.last_name')
-            ->paginate($perPage);
+            ->select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position', 'employees.assignment_name');
+            
+        // Apply assignment filter if provided
+        if ($request->has('assignment') && !empty($request->assignment)) {
+            $query->where('employees.assignment_name', $request->assignment);
+        }
+        
+        // Apply search filter if provided
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('employees.first_name', 'like', $searchTerm)
+                  ->orWhere('employees.last_name', 'like', $searchTerm)
+                  ->orWhere('employees.email', 'like', $searchTerm)
+                  ->orWhere('employees.position_name', 'like', $searchTerm);
+            });
+        }
+        
+        // Order and paginate results
+        $users = $query->orderBy('employees.first_name')
+                      ->orderBy('employees.last_name')
+                      ->paginate($perPage)
+                      ->withQueryString();
             
         // Get all available roles
         $roles = TravelOrderRole::all();

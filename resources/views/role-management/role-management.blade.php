@@ -19,6 +19,30 @@
                                 <i class="fas fa-search text-gray-400"></i>
                             </div>
                         </div>
+                        
+                        <!-- Assignment/Division Filter -->
+                        <div class="relative">
+                            <select id="assignmentFilter" class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">All Assignments</option>
+                                @php
+                                    $assignments = \App\Models\Employee::select('assignment_name')
+                                        ->distinct()
+                                        ->whereNotNull('assignment_name')
+                                        ->orderBy('assignment_name')
+                                        ->pluck('assignment_name');
+                                @endphp
+                                @foreach($assignments as $assignment)
+                                    <option value="{{ $assignment }}">{{ $assignment }}</option>
+                                @endforeach
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                        <button class="relative p-2 text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
                     </div>
                 </div>
             </header>
@@ -183,5 +207,66 @@
             </main>
         </div>
     </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const assignmentFilter = document.getElementById('assignmentFilter');
+        const searchInput = document.getElementById('searchUsers');
+        let currentUrl = new URL(window.location.href);
+        
+        // Set initial filter value from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const assignmentParam = urlParams.get('assignment');
+        if (assignmentParam) {
+            assignmentFilter.value = assignmentParam;
+        }
+        
+        // Handle assignment filter change
+        assignmentFilter.addEventListener('change', function() {
+            const selectedAssignment = this.value;
+            const url = new URL(window.location.href);
+            
+            if (selectedAssignment) {
+                url.searchParams.set('assignment', selectedAssignment);
+            } else {
+                url.searchParams.delete('assignment');
+            }
+            
+            // Reset to first page when changing filters
+            url.searchParams.set('page', '1');
+            
+            window.location.href = url.toString();
+        });
+        
+        // Handle search input with debounce
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = this.value.trim();
+                const url = new URL(window.location.href);
+                
+                if (searchTerm) {
+                    url.searchParams.set('search', searchTerm);
+                } else {
+                    url.searchParams.delete('search');
+                }
+                
+                // Reset to first page when searching
+                url.searchParams.set('page', '1');
+                
+                window.location.href = url.toString();
+            }, 500);
+        });
+        
+        // Set initial search value from URL
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+            searchInput.value = searchParam;
+        }
+    });
+</script>
+@endpush
 
 @endsection
