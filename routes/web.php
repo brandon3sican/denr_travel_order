@@ -9,9 +9,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\NotificationsController;
 
+// Root route - redirects to dashboard if authenticated, otherwise to login
+Route::get('/', function () {
+    return \Illuminate\Support\Facades\Auth::check() 
+        ? redirect()->route('dashboard')
+        : view('login');
+})->name('home');
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthenticatedSessionController::class, 'create'])
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
     
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
@@ -38,8 +45,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/role-management', [RoleManagementController::class, 'index'])->name('role-management');
         Route::post('/role-management/{user}/update-role', [RoleManagementController::class, 'updateRole'])->name('role-management.update-role');
     });
-
-    Route::get('/notifications', [NotificationsController::class, 'index'])->name('notifications');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
