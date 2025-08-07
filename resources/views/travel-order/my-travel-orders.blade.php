@@ -14,6 +14,9 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <div class="relative">
+                            <a href="{{ route('travel-orders.create') }}" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <i class="fas fa-plus mr-2"></i> New Travel Order
+                            </a>
                             <select id="statusFilter" class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="all">All Status</option>
                                 <option value="pending">Pending</option>

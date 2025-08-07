@@ -26,10 +26,6 @@
                     <span>Dashboard</span>
                 </a>
                 @if (!auth()->user()->is_admin)
-                <a href="{{ route('travel-orders.create') }}" class="nav-item {{ Request::routeIs('travel-orders.create') ? 'active' : '' }}">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Create Travel Order</span>
-                </a>
                 <a href="{{ route('my-travel-orders') }}" class="nav-item {{ Request::routeIs('my-travel-orders') ? 'active' : '' }}">
                     <i class="fas fa-list"></i>
                     <span>My Travel Orders</span>

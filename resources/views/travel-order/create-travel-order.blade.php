@@ -13,10 +13,9 @@
                         <h2 class="text-xl font-semibold text-gray-800">Create Travel Order</h2>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <button class="relative p-2 text-gray-600 hover:text-gray-900">
-                            <i class="fas fa-bell text-xl"></i>
-                            <span class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                        </button>
+                        <a href="{{ route('my-travel-orders') }}" class="text-white hover:text-red-300 flex items-center space-x-3 font-semibold bg-red-600 px-4 py-2 rounded-md">
+                            Cancel
+                        </a>
                     </div>
                 </div>
             </header>
@@ -67,98 +66,145 @@
                             <!-- Travel Details -->
                             <div class="pt-6 border-t-2 border-gray-600">
                                 <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">Travel Details</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <!-- Fund Source -->
                                     <div class="md:col-span-1">
                                         <label for="fundSource" class="block text-sm font-medium text-gray-700 mb-1">Source of Fund</label>
-                                        <input type="text" id="fundSource" name="fundSource" required
+                                        <select id="fundSource" name="fundSource" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Source of fund">
+                                            onchange="toggleOtherFundSource(this.value)">
+                                            <option value="">Select source of fund</option>
+                                            <option value="Regular Fund">Regular Fund</option>
+                                            <option value="Others">Others</option>
+                                        </select>
+                                        <div id="otherFundSourceContainer" class="mt-2 hidden">
+                                            <label for="otherFundSource" class="block text-sm font-medium text-gray-700 mb-1">Please specify</label>
+                                            <input type="text" id="otherFundSource" name="otherFundSource"
+                                                class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                placeholder="Enter source of fund">
+                                        </div>
                                     </div>
+
+                                    <!-- Per Diem -->
                                     <div class="md:col-span-1">
                                         <label for="perDiem" class="block text-sm font-medium text-gray-700 mb-1">Per Diem</label>
                                         <input type="number" id="perDiem" name="perDiem" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                             placeholder="Per Diem">
                                     </div>
+
+                                    <!-- Number of Labor -->
                                     <div class="md:col-span-1">
-                                        <label for="noOfLabor" class="block text-sm font-medium text-gray-700 mb-1">Number of Labor or Assistant</label>
+                                        <label for="noOfLabor" class="block text-sm font-medium text-gray-700 mb-1">Number of Labor/Assistant</label>
                                         <input type="number" id="noOfLabor" name="noOfLabor" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Number of Labor or Assistant">
+                                            placeholder="Number of Labor/Assistant">
                                     </div>
-                                    <div class="md:col-span-1">
+                                </div>
+
+                                <script>
+                                    function toggleOtherFundSource(value) {
+                                        const otherContainer = document.getElementById('otherFundSourceContainer');
+                                        const otherInput = document.getElementById('otherFundSource');
+                                        if (value === 'Others') {
+                                            otherContainer.classList.remove('hidden');
+                                            otherInput.setAttribute('required', 'required');
+                                        } else {
+                                            otherContainer.classList.add('hidden');
+                                            otherInput.removeAttribute('required');
+                                            otherInput.value = '';
+                                        }
+                                    }
+                                    
+                                    // Handle form submission to combine values if 'Others' is selected
+                                    document.querySelector('form').addEventListener('submit', function(e) {
+                                        const fundSource = document.getElementById('fundSource');
+                                        const otherInput = document.getElementById('otherFundSource');
+                                        
+                                        if (fundSource.value === 'Others' && otherInput.value.trim() !== '') {
+                                            // Create a hidden input with the combined value
+                                            const hiddenInput = document.createElement('input');
+                                            hiddenInput.type = 'hidden';
+                                            hiddenInput.name = 'fundSource';
+                                            hiddenInput.value = 'Others: ' + otherInput.value.trim();
+                                            this.appendChild(hiddenInput);
+                                        }
+                                    });
+                                </script>
+                                    <div class="md:col-span-2">
                                         <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
                                         <input type="text" id="remarks" name="remarks" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                             placeholder="Remarks">
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Approvals -->
-                            <div class="pt-6 border-t-2 border-gray-600">
-                                <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">Approval Details</h3>
-                                <div class="space-y-6 p-4 bg-gray-50 rounded-md border border-gray-200">
-                                    <!-- Recommender Selection -->
-                                    <div class="relative">
-                                        <label for="recommender" class="block text-sm font-medium text-gray-700 mb-1">Recommender</label>
-                                        <div class="relative">
-                                            <select id="recommender" name="recommender" required
-                                                class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                                <option value="" disabled selected>Select recommender</option>
-                                                @foreach($recommenders as $recommender)
-                                                    <option value="{{ $recommender->email }}">
-                                                        {{ $recommender->first_name }}
-                                                         {{ $recommender->last_name }}
-                                                        @if($recommender->position)
-                                                            ({{ $recommender->position }})
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                                <i class="fas fa-chevron-down text-xs"></i>
+                                <!-- Approvals -->
+                                <div class="pt-6 border-t-2 border-gray-600">
+                                    <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">Approval Details</h3>
+                                    <div class="p-4 bg-gray-50 rounded-md border border-gray-200">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <!-- Recommender Selection -->
+                                            <div class="relative">
+                                                <label for="recommender" class="block text-sm font-medium text-gray-700 mb-1">Recommender</label>
+                                                <div class="relative">
+                                                    <select id="recommender" name="recommender" required
+                                                        class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                        <option value="" disabled selected>Select recommender</option>
+                                                        @foreach($recommenders as $recommender)
+                                                            <option value="{{ $recommender->email }}">
+                                                                {{ $recommender->first_name }} {{ $recommender->last_name }}
+                                                                @if($recommender->position)
+                                                                    ({{ $recommender->position }})
+                                                                @endif
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                                        <i class="fas fa-chevron-down text-xs"></i>
+                                                    </div>
+                                                </div>
+                                                <p class="mt-1 text-xs text-gray-500">The person who will recommend your travel order for approval</p>
+                                            </div>
+
+                                            <!-- Approver Selection -->
+                                            <div class="relative">
+                                                <label for="approver" class="block text-sm font-medium text-gray-700 mb-1">Approver</label>
+                                                <div class="relative">
+                                                    <select id="approver" name="approver" required
+                                                        class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                        <option value="" disabled selected>Select approver</option>
+                                                        @foreach($approvers as $approver)
+                                                            <option value="{{ $approver->email }}">
+                                                                {{ $approver->first_name }} {{ $approver->last_name }}
+                                                                @if($approver->position)
+                                                                    ({{ $approver->position }})
+                                                                @endif
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                                        <i class="fas fa-chevron-down text-xs"></i>
+                                                    </div>
+                                                </div>
+                                                <p class="mt-1 text-xs text-gray-500">The person who will approve your travel order</p>
                                             </div>
                                         </div>
-                                        <p class="mt-1 text-xs text-gray-500">The person who will recommend your travel order</p>
-                                    </div>
-
-                                    <!-- Approver Selection -->
-                                    <div class="relative">
-                                        <label for="approver" class="block text-sm font-medium text-gray-700 mb-1">Approver</label>
-                                        <div class="relative">
-                                            <select id="approver" name="approver" required
-                                                class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                                <option value="" disabled selected>Select approver</option>
-                                                @foreach($approvers as $approver)
-                                                    <option value="{{ $approver->email }}">
-                                                        {{ $approver->first_name }} {{ $approver->last_name }}
-                                                        @if($approver->position)
-                                                            ({{ $approver->position }})
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                                <i class="fas fa-chevron-down text-xs"></i>
-                                            </div>
-                                        </div>
-                                        <p class="mt-1 text-xs text-gray-500">The person who will approve your travel order</p>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Form Actions -->
-                            <div class="pt-6 border-t border-gray-200 flex justify-end space-x-3">
-                                <button type="button" class="bg-white py-2 px-4 border-2 border-gray-300 rounded-md shadow text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    Cancel
-                                </button>
-                                <button type="button" id="previewBtn" class="inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    Preview
-                                </button>
-                                <button type="submit" id="submitBtn" class="hidden inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                    Confirm Submission
-                                </button>
+                                <!-- Form Actions -->
+                                <div class="pt-6 border-t border-gray-200 flex justify-end space-x-3">
+                                    <button type="button" class="bg-white py-2 px-4 border-2 border-gray-300 rounded-md shadow text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        Cancel
+                                    </button>
+                                    <button type="button" id="previewBtn" class="inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        Preview
+                                    </button>
+                                    <button type="submit" id="submitBtn" class="hidden inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                        Confirm Submission
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -318,10 +364,10 @@
                                 <p class="text-xs text-gray-500 mb-0.5">Position</p>
                                 <p class="font-medium text-gray-800">{{ auth()->user()->employee->position_name ?? 'N/A' }}</p>
                             </div>
-                            // <div>
-                            //     <p class="text-xs text-gray-500 mb-0.5">Div/Sec/Unit</p>
-                            //     <p class="font-medium text-gray-800">{{ auth()->user()->employee->div_sec_unit ?? 'N/A' }}</p>
-                            // </div>
+                            <div>
+                                <p class="text-xs text-gray-500 mb-0.5">Div/Sec/Unit</p>
+                                <p class="font-medium text-gray-800">{{ auth()->user()->employee->div_sec_unit ?? 'N/A' }}</p>
+                            </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Official Station</p>
                                 <p class="font-medium text-gray-800">{{ auth()->user()->employee->assignment_name ?? 'N/A' }}</p>
