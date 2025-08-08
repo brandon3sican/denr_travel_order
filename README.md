@@ -2,6 +2,66 @@
 
 A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 10 and Tailwind CSS 3. This system streamlines the process of creating, managing, and tracking travel orders within the organization.
 
+## 📋 System Workflow
+
+### Travel Order Request Process
+
+1. **Request Creation**
+   - Any user can create a travel order request
+   - Each request requires:
+     - Basic travel details (dates, destination, purpose)
+     - Selection of one Recommender
+     - Selection of one Approver
+   - System validations:
+     - Recommender and Approver must be different users
+     - User cannot be both Recommender and Approver for the same request
+     - User cannot be Recommender/Approver for their own request
+   - Status: Set to "Pending/For Recommendation" upon creation
+
+2. **Recommendation Phase**
+   - The assigned Recommender receives the travel order
+   - Actions available:
+     - Review travel order details
+     - Attach e-signature to recommend
+     - Forward to Approver
+   - Status: Changes to "For Approval" after recommendation
+
+3. **Approval Phase**
+   - The assigned Approver receives the travel order
+   - Actions available:
+     - Review travel order and recommendation
+     - Attach e-signature to approve
+     - System automatically assigns an official travel order number upon approval
+   - Status: Changes to "Approved" with O.R. number
+
+### User Roles and Permissions
+
+- **Regular Users**
+  - Can create and manage their own travel orders
+  - Can be assigned as Recommender or Approver for other users' requests
+  - Cannot approve or recommend their own requests
+
+- **Recommenders**
+  - Can recommend travel orders assigned to them
+  - Must provide e-signature when recommending
+  - Cannot recommend their own travel orders
+
+- **Approvers**
+  - Can approve travel orders assigned to them
+  - Must provide e-signature when approving
+  - System assigns official travel order number upon approval
+  - Cannot approve their own travel orders
+
+- **Admins**
+  - Full system access
+  - Can manage users and roles
+  - Can override or reassign requests if needed
+
+### Status Flow
+1. Pending/For Recommendation → For Approval → Approved (with O.R. number)
+2. Can be Rejected at any stage with appropriate reason
+3. Special Status: Cancelled (for terminated requests)
+
 ## 🚀 Recent Updates
 
 - **Database Seeding**
@@ -57,6 +117,60 @@ A comprehensive Travel Order Management System for the Department of Environment
   - Live status updates
   - Instant notifications
   - Activity feed
+
+## ✅ To-Do List
+
+### 🚀 In Progress
+
+#### Travel Order Creation
+- [ ] Implement date validations:
+  - Departure date must be at least 1 day after current date
+  - Arrival date must be on or after departure date
+- [ ] Create navigation for users to view travel orders where they are:
+  - Requestor (their own requests)
+  - Recommender (assigned to them)
+  - Approver (assigned to them)
+- [ ] Implement e-signature requirements:
+  - Users must upload e-signature before creating requests
+  - Store e-signatures securely in personal storage
+  - Require e-signature verification for recommendations/approvals
+- [ ] Ensure successful data insertion with proper error handling
+- [ ] Comprehensive testing and UI/UX improvements
+
+#### Approval Workflow
+- [ ] Implement recommendation phase:
+  - Recommender receives notification of new travel order
+  - System requires e-signature for recommendation
+  - Forward to Approver after recommendation
+- [ ] Implement approval phase:
+  - Approver receives notification of pending approval
+  - System requires e-signature for approval
+  - Handle rejection workflow with reason
+
+### 📅 Upcoming
+
+- [ ] **Travel Order Number Assignment**
+  - Implement automatic generation of travel order numbers
+  - Format: TBD (To Be Decided)
+  - Ensure uniqueness and sequential numbering
+
+- [ ] **Document Generation**
+  - Create travel order document template
+  - Implement PDF generation with all details
+  - Include e-signatures and approval stamps
+
+- [ ] **Notification System**
+  - Email notifications for:
+    - New travel order assignment (to Recommender)
+    - Recommendation results (to Requestor and Approver)
+    - Approval/Rejection results (to Requestor)
+  - In-app notifications
+  - Status update alerts
+
+- [ ] **Reporting**
+  - Generate travel order reports
+  - Filter by date range, status, department
+  - Export to Excel/PDF
 
 ## Prerequisites
 
