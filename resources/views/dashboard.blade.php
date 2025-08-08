@@ -26,8 +26,8 @@
                 <!-- Dashboard Content -->
                 <div id="dashboardContent" class="page-content">
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                        <div class="bg-green-600 text-white p-6 rounded-lg shadow">
+                    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-blue-600 text-white p-6 rounded-lg shadow">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium opacity-90">Total Travel Orders</p>
@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-blue-600 text-white p-6 rounded-lg shadow">
+                        <div class="bg-green-600 text-white p-6 rounded-lg shadow">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium opacity-90">Completed Requests</p>
@@ -60,6 +60,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="bg-gray-600 text-white p-6 rounded-lg shadow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium opacity-90">Cancelled Requests</p>
+                                    <p class="text-2xl font-bold mt-1">{{ $cancelledRequests }}</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                                    <i class="fas fa-times-circle text-xl"></i>
+                                </div>
+                            </div>
+                        </div>                 
                     </div>
 
                     <!-- Recent Travel Orders -->
@@ -190,14 +201,26 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @php
                                                 $statusClass = [
-                                                    1 => 'bg-yellow-100 text-yellow-800', // Pending
-                                                    2 => 'bg-blue-100 text-blue-800',     // Approved
-                                                    3 => 'bg-green-100 text-green-800',   // Completed
-                                                    4 => 'bg-red-100 text-red-800'        // Rejected
+                                                    1 => 'bg-yellow-100 text-yellow-800', // For Recommendation
+                                                    2 => 'bg-blue-100 text-blue-800',     // For Approval
+                                                    3 => 'bg-green-100 text-green-800',   // Approved
+                                                    4 => 'bg-red-100 text-red-800',       // Disapproved
+                                                    5 => 'bg-gray-100 text-gray-800',     // Cancelled
+                                                    6 => 'bg-purple-100 text-purple-800'  // Completed
                                                 ][$order->status_id] ?? 'bg-gray-100 text-gray-800';
                                             @endphp
+                                            @php
+                                                $statusTexts = [
+                                                    1 => 'For Recommendation',
+                                                    2 => 'For Approval',
+                                                    3 => 'Approved',
+                                                    4 => 'Disapproved',
+                                                    5 => 'Cancelled',
+                                                    6 => 'Completed'
+                                                ];
+                                            @endphp
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
-                                                {{ ['Pending', 'Approved', 'Completed', 'Rejected'][$order->status_id - 1] ?? 'Unknown' }}
+                                                {{ $statusTexts[$order->status_id] ?? 'Unknown' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

@@ -39,6 +39,7 @@ class DashboardController extends Controller
                 'approved' => 2,
                 'rejected' => 3,
                 'completed' => 4,
+                'cancelled' => 5,
                 default => null
             };
             
@@ -47,13 +48,13 @@ class DashboardController extends Controller
             }
         }
 
-        // Get paginated travel orders for the user (10 per page) with employee data
+        // Get paginated travel orders for the user (5 per page) with employee data
         $travelOrders = (clone $baseQuery)
             ->with(['employee' => function($query) {
                 $query->select('id', 'email', 'first_name', 'last_name');
             }])
             ->latest()
-            ->paginate(10);
+            ->paginate(5);
 
         // Get all travel orders for statistics (without pagination)
         $allTravelOrders = (clone $baseQuery)->get();
@@ -62,13 +63,15 @@ class DashboardController extends Controller
         $totalTravelOrders = $allTravelOrders->count();
         $pendingRequests = $allTravelOrders->where('status_id', 1)->count();
         $completedRequests = $allTravelOrders->whereIn('status_id', [2, 3])->count(); // Assuming 2=Approved, 3=Completed
+        $cancelledRequests = $allTravelOrders->where('status_id', 5)->count();
 
         return view('dashboard', [
             'travelOrders' => $travelOrders,
             'isAdmin' => $user->is_admin,
             'totalTravelOrders' => $totalTravelOrders,
             'pendingRequests' => $pendingRequests,
-            'completedRequests' => $completedRequests
+            'completedRequests' => $completedRequests,
+            'cancelledRequests' => $cancelledRequests
         ]);
     }
 }

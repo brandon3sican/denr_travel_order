@@ -14,10 +14,10 @@ class RoleManagementController extends Controller
     {
         $perPage = 10;
         
-        // Base query
+        // Base query with eager loading and optimized selections
         $query = User::with(['travelOrderRoles'])
             ->join('employees', 'users.email', '=', 'employees.email')
-            ->select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position', 'employees.assignment_name');
+            ->select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position', 'employees.assignment_name', 'employees.div_sec_unit');
             
         // Apply assignment filter if provided
         if ($request->has('assignment') && !empty($request->assignment)) {
@@ -35,10 +35,10 @@ class RoleManagementController extends Controller
             });
         }
         
-        // Order and paginate results
+        // Order and paginate results with 15 items per page
         $users = $query->orderBy('employees.first_name')
                       ->orderBy('employees.last_name')
-                      ->paginate($perPage)
+                      ->paginate(15) // Explicitly set 15 items per page
                       ->withQueryString();
             
         // Get all available roles

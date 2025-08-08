@@ -3,6 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
+use App\Models\Employee;
+use App\Models\TravelOrderStatus;
 
 return new class extends Migration
 {
@@ -13,6 +16,7 @@ return new class extends Migration
         Schema::create('travel_orders', function (Blueprint $table) {
             $table->id();
             $table->string('employee_email'); // FK to employees.email
+            $table->decimal('employee_salary', 10, 2);
             $table->string('destination');
             $table->text('purpose');
             $table->date('departure_date');
@@ -28,12 +32,10 @@ return new class extends Migration
         });
 
         Schema::table('travel_orders', function (Blueprint $table) {
-            $table->foreign('employee_email')->references('email')->on('employees')->onDelete('cascade');
+            $table->foreign('employee_email')->references('email')->on('users')->onDelete('cascade');
             $table->foreign('status_id')->references('id')->on('travel_order_status')->onDelete('cascade');
+            $table->foreign('recommender_email')->references('email')->on('users')->onDelete('cascade');
+            $table->foreign('approver_email')->references('email')->on('users')->onDelete('cascade');
         });
-    }
-
-    public function down() {
-        Schema::dropIfExists('travel_orders');
     }
 };

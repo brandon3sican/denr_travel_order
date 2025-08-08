@@ -19,6 +19,7 @@ class TravelOrder extends Model
         'arrival_date',
         'appropriation',
         'per_diem',
+        'employee_salary',
         'laborer_assistant',
         'remarks',
         'recommender',

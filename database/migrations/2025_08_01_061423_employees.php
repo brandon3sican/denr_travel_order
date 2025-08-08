@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('suffix')->nullable();
             $table->string('sex');
-            $table->foreignId('email')->unique()->constrained('users')->cascadeOnDelete();
+            $table->string('email')->unique();
             $table->string('emp_status');
             $table->string('position_name');
             $table->string('assignment_name');
@@ -33,9 +33,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('employees');
-        Schema::table('employees', function (Blueprint $table) {
-            $table->dropForeign(['email']);
-            $table->dropIndex(['email']);
-        });
     }
 };
