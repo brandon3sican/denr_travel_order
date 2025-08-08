@@ -51,13 +51,13 @@
                                             placeholder="Salary">
                                     </div>
                                     <div class="md:col-span-1">
-                                        <label for="departureDate" class="block text-sm font-medium text-gray-700 mb-1">Departure Date</label>
-                                        <input type="date" id="departureDate" name="departureDate" required
+                                        <label for="departure_date" class="block text-sm font-medium text-gray-700 mb-1">Departure Date</label>
+                                        <input type="date" id="departure_date" name="departure_date" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                     </div>
                                     <div class="md:col-span-1">
-                                        <label for="arrivalDate" class="block text-sm font-medium text-gray-700 mb-1">Arrival Date</label>
-                                        <input type="date" id="arrivalDate" name="arrivalDate" required
+                                        <label for="arrival_date" class="block text-sm font-medium text-gray-700 mb-1">Arrival Date</label>
+                                        <input type="date" id="arrival_date" name="arrival_date" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                     </div>
                                 </div>
@@ -69,17 +69,17 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <!-- Fund Source -->
                                     <div class="md:col-span-1">
-                                        <label for="fundSource" class="block text-sm font-medium text-gray-700 mb-1">Source of Fund</label>
-                                        <select id="fundSource" name="fundSource" required
+                                        <label for="appropriation" class="block text-sm font-medium text-gray-700 mb-1">Source of Fund</label>
+                                        <select id="appropriation" name="appropriation" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            onchange="toggleOtherFundSource(this.value)">
+                                            onchange="toggleOtherAppropriation(this.value)">
                                             <option value="">Select source of fund</option>
                                             <option value="Regular Fund">Regular Fund</option>
                                             <option value="Others">Others</option>
                                         </select>
-                                        <div id="otherFundSourceContainer" class="mt-2 hidden">
-                                            <label for="otherFundSource" class="block text-sm font-medium text-gray-700 mb-1">Please specify</label>
-                                            <input type="text" id="otherFundSource" name="otherFundSource"
+                                        <div id="otherAppropriationContainer" class="mt-2 hidden">
+                                            <label for="otherAppropriation" class="block text-sm font-medium text-gray-700 mb-1">Please specify: </label>
+                                            <input type="text" id="otherAppropriation" name="otherAppropriation"
                                                 class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                                 placeholder="Enter source of fund">
                                         </div>
@@ -103,9 +103,9 @@
                                 </div>
 
                                 <script>
-                                    function toggleOtherFundSource(value) {
-                                        const otherContainer = document.getElementById('otherFundSourceContainer');
-                                        const otherInput = document.getElementById('otherFundSource');
+                                    function toggleOtherAppropriation(value) {
+                                        const otherContainer = document.getElementById('otherAppropriationContainer');
+                                        const otherInput = document.getElementById('otherAppropriation');
                                         if (value === 'Others') {
                                             otherContainer.classList.remove('hidden');
                                             otherInput.setAttribute('required', 'required');
@@ -119,7 +119,7 @@
                                     // Handle form submission to combine values if 'Others' is selected
                                     document.querySelector('form').addEventListener('submit', function(e) {
                                         const fundSource = document.getElementById('fundSource');
-                                        const otherInput = document.getElementById('otherFundSource');
+                                        const otherInput = document.getElementById('otherAppropriation');
                                         
                                         if (fundSource.value === 'Others' && otherInput.value.trim() !== '') {
                                             // Create a hidden input with the combined value
@@ -360,6 +360,10 @@
                     <div class="bg-white p-4 rounded-md border border-gray-200">
                         <h4 class="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">EMPLOYEE INFORMATION</h4>
                         <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <p class="text-xs text-gray-500 mb-0.5">Name</p>
+                                <p class="font-medium text-gray-800">{{ auth()->user()->first_name }} {{ auth()->user()->middle_name }} {{ auth()->user()->last_name }}</p>
+                            </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Position</p>
                                 <p class="font-medium text-gray-800">{{ auth()->user()->employee->position_name ?? 'N/A' }}</p>

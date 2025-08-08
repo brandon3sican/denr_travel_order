@@ -172,6 +172,10 @@ A comprehensive Travel Order Management System for the Department of Environment
   - Filter by date range, status, department
   - Export to Excel/PDF
 
+## 📚 Documentation
+
+For detailed documentation about the system's architecture, database design, and workflows, please see the [Documentation](./docs/index.md) directory.
+
 ## Prerequisites
 
 - PHP 8.1 or higher
