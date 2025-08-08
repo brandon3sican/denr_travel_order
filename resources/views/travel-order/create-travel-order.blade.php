@@ -359,10 +359,10 @@
                 <div class="space-y-4 text-sm">
                     <div class="bg-white p-4 rounded-md border border-gray-200">
                         <h4 class="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">EMPLOYEE INFORMATION</h4>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-5 gap-1">
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Name</p>
-                                <p class="font-medium text-gray-800">{{ auth()->user()->first_name }} {{ auth()->user()->middle_name }} {{ auth()->user()->last_name }}</p>
+                                <p class="font-medium text-gray-800">{{ auth()->user()->employee->first_name ?? '' }} {{ auth()->user()->employee->middle_name ?? '' }} {{ auth()->user()->employee->last_name ?? '' }}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Position</p>
@@ -386,7 +386,7 @@
 
                     <div class="bg-white p-4 rounded-md border border-gray-200">
                         <h4 class="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">TRAVEL DETAILS</h4>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-5 gap-2">
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Purpose</p>
                                 <p class="font-medium text-gray-800">${data.purpose || 'N/A'}</p>
@@ -398,16 +398,16 @@
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Duration</p>
                                 <p class="font-medium text-gray-800">
-                                    ${formatDate(data.departureDate)} to ${formatDate(data.arrivalDate)}
+                                    ${formatDate(data.departure_date)} to ${formatDate(data.arrival_date)}
                                 </p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Source of Fund</p>
-                                <p class="font-medium text-gray-800">${data.fundSource || 'N/A'}</p>
+                                <p class="font-medium text-gray-800">${data.appropriation === 'Others' ? (data.otherAppropriation || 'N/A') : (data.appropriation || 'N/A')}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Per Diem</p>
-                                <p class="font-medium text-gray-800">${formatCurrency(data.perDiem)}</p>
+                                <p class="font-medium text-gray-800">${formatCurrency(data.per_diem)}</p>
                             </div>
                             <div class="col-span-2">
                                 <p class="text-xs text-gray-500 mb-0.5">Remarks</p>
