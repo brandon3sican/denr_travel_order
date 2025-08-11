@@ -11,13 +11,19 @@ class TravelOrderController extends Controller
 {
     public function index()
     {
-        $travelOrders = TravelOrderModel::with([
-                'employee',
-                'recommenderEmployee',
-                'approverEmployee',
-                'status'
+        $travelOrders = TravelOrderModel::select('travel_orders.*')
+            ->with(['employee', 'status'])
+            ->leftJoin('employees as recommender', 'travel_orders.recommender', '=', 'recommender.email')
+            ->leftJoin('employees as approver', 'travel_orders.approver', '=', 'approver.email')
+            ->addSelect([
+                'recommender.first_name as recommender_first_name',
+                'recommender.last_name as recommender_last_name',
+                'recommender.position_name as recommender_position',
+                'approver.first_name as approver_first_name',
+                'approver.last_name as approver_last_name',
+                'approver.position_name as approver_position',
             ])
-            ->latest('created_at')
+            ->latest('travel_orders.created_at')
             ->get();
 
         return view('travel-order.my-travel-orders', [
@@ -86,8 +92,19 @@ class TravelOrderController extends Controller
 
     public function show($id)
     {
+        $travelOrder = TravelOrderModel::with([
+            'employee',
+            'recommenderEmployee',
+            'approverEmployee',
+            'status'
+        ])->findOrFail($id);
+
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json($travelOrder);
+        }
+
         return view('travel-order.show', [
-            'travelOrder' => TravelOrderModel::findOrFail($id),
+            'travelOrder' => $travelOrder,
         ]);
     }
 

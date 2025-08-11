@@ -44,14 +44,16 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Travel Order No.</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Travel Order No.</th>
                                     @if (auth()->user()->is_admin)
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Employee</th>
                                     @endif
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Destination</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Purpose</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Arrival Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Departure Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -69,28 +71,42 @@
                                         {{ $order->destination }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }} - 
+                                        {{ $order->purpose }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                             @if($order->status_id == 1) bg-yellow-100 text-yellow-800 @endif
-                                            @if($order->status_id == 2) bg-green-100 text-green-800 @endif
-                                            @if($order->status_id == 3) bg-red-100 text-red-800 @endif
-                                            @if($order->status_id == 4) bg-blue-100 text-blue-800 @endif"
+                                            @if($order->status_id == 2) bg-blue-100 text-blue-800 @endif
+                                            @if($order->status_id == 3) bg-green-100 text-green-800 @endif
+                                            @if($order->status_id == 4) bg-red-100 text-red-800 @endif
+                                            @if($order->status_id == 5) bg-gray-100 text-gray-800 @endif
+                                            @if($order->status_id == 6) bg-purple-100 text-purple-800 @endif
+                                            "
                                             data-status="{{ strtolower($order->status->name ?? '') }}">
                                             {{ $order->status->name ?? 'N/A' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button onclick='showOrderDetails(@json($order))' 
-                                           class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                           class="text-indigo-600 hover:text-indigo-900 mr-3 border border-indigo-600 px-2 py-1 rounded">
                                             View
                                         </button>
                                         @if($order->status_id == 1) {{-- Only show edit for pending orders --}}
                                         <a href="{{ route('travel-orders.edit', $order->id) }}" 
-                                           class="text-yellow-600 hover:text-yellow-900">
+                                           class="text-yellow-600 hover:text-yellow-900 border border-yellow-600 px-2 py-1 rounded mr-3">
                                             Edit
+                                        </a>
+                                        @endif
+                                        @if($order->status_id == 1) {{-- Only show delete for pending orders --}}
+                                        <a href="{{ route('travel-orders.destroy', $order->id) }}" 
+                                           class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3">
+                                            Delete
                                         </a>
                                         @endif
                                     </td>

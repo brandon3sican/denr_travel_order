@@ -34,14 +34,8 @@ class DashboardController extends Controller
         $status = request()->input('status');
         
         if ($status) {
-            $statusId = match($status) {
-                'pending' => 1,
-                'approved' => 2,
-                'rejected' => 3,
-                'completed' => 4,
-                'cancelled' => 5,
-                default => null
-            };
+            // Get the status ID from the database based on the status name
+            $statusId = \App\Models\TravelOrderStatus::where('name', $status)->value('id');
             
             if ($statusId) {
                 $baseQuery->where('status_id', $statusId);
@@ -72,6 +66,13 @@ class DashboardController extends Controller
             'pendingRequests' => $pendingRequests,
             'completedRequests' => $completedRequests,
             'cancelledRequests' => $cancelledRequests
+        ]);
+    }
+    public function show($id)
+    {
+        $travelOrder = TravelOrder::findOrFail($id);
+        return view('travel-order.show', [
+            'travelOrder' => $travelOrder,
         ]);
     }
 }
