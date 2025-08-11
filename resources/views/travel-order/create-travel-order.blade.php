@@ -46,10 +46,10 @@
                                             placeholder="Destination">
                                     </div>
                                     <div class="md:col-span-1">
-                                        <label for="employee_salary" class="block text-sm font-medium text-gray-700 mb-1">employee_salary</label>
+                                        <label for="employee_salary" class="block text-sm font-medium text-gray-700 mb-1">Employee Salary</label>
                                         <input type="number" id="employee_salary" name="employee_salary" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="employee_salary">
+                                            placeholder="Employee Salary">
                                     </div>
                                     <div class="md:col-span-1">
                                         <label for="departure_date" class="block text-sm font-medium text-gray-700 mb-1">Departure Date</label>
