@@ -11,8 +11,17 @@ class TravelOrderController extends Controller
 {
     public function index()
     {
-        return view('travel-order.index', [
-            'travelOrders' => TravelOrderModel::all(),
+        $travelOrders = TravelOrderModel::with([
+                'employee',
+                'recommenderEmployee',
+                'approverEmployee',
+                'status'
+            ])
+            ->latest('created_at')
+            ->get();
+
+        return view('travel-order.my-travel-orders', [
+            'travelOrders' => $travelOrders,
         ]);
     }
 
@@ -50,6 +59,7 @@ class TravelOrderController extends Controller
     {
         $validated = $request->validate([
             'employee_email' => 'required|email|exists:employees,email',
+            'employee_salary' => 'required|numeric|min:0',
             'destination' => 'required|string|max:255',
             'purpose' => 'required|string',
             'departure_date' => 'required|date',
@@ -63,11 +73,6 @@ class TravelOrderController extends Controller
             'status_id' => 'required|exists:travel_order_status,id'
         ]);
 
-        // Set the current user as the creator
-        $user = Auth::user();
-        $validated['created_by'] = $user->id;
-        $validated['updated_by'] = $user->id;
-
         // Create the travel order
         $travelOrder = TravelOrderModel::create($validated);
 
@@ -75,7 +80,7 @@ class TravelOrderController extends Controller
         // You can implement this later using Laravel Notifications
         // Notification::send($recommender, new TravelOrderForRecommendation($travelOrder));
 
-        return redirect()->route('travel-orders.index')
+        return redirect()->route('my-travel-orders')
             ->with('success', 'Travel Order has been submitted for recommendation.');
     }
 
@@ -97,6 +102,7 @@ class TravelOrderController extends Controller
     {
         $request->validate([
             'employee_email' => 'required|email',
+            'employee_salary' => 'required|numeric|min:0',
             'destination' => 'required',
             'purpose' => 'required',
             'departure_date' => 'required|date',

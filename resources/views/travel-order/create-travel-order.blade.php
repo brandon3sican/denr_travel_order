@@ -27,6 +27,7 @@
                         <form id="travelOrderForm" action="{{ route('travel-orders.store') }}" method="POST" class="space-y-6">
                             @csrf
                             <input type="hidden" name="status_id" value="1"> <!-- 1 = For Recommendation -->
+                            <input type="hidden" name="employee_email" value="{{ auth()->user()->email }}">
                             <input type="hidden" id="preview_data" name="preview_data" value="">
                             <!-- Basic Information -->
                             <div>
@@ -45,10 +46,10 @@
                                             placeholder="Destination">
                                     </div>
                                     <div class="md:col-span-1">
-                                        <label for="salary" class="block text-sm font-medium text-gray-700 mb-1">Salary</label>
-                                        <input type="number" id="salary" name="salary" required
+                                        <label for="employee_salary" class="block text-sm font-medium text-gray-700 mb-1">employee_salary</label>
+                                        <input type="number" id="employee_salary" name="employee_salary" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Salary">
+                                            placeholder="employee_salary">
                                     </div>
                                     <div class="md:col-span-1">
                                         <label for="departure_date" class="block text-sm font-medium text-gray-700 mb-1">Departure Date</label>
@@ -87,16 +88,16 @@
 
                                     <!-- Per Diem -->
                                     <div class="md:col-span-1">
-                                        <label for="perDiem" class="block text-sm font-medium text-gray-700 mb-1">Per Diem</label>
-                                        <input type="number" id="perDiem" name="perDiem" required
+                                        <label for="per_diem" class="block text-sm font-medium text-gray-700 mb-1">Per Diem</label>
+                                        <input type="number" id="per_diem" name="per_diem" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                             placeholder="Per Diem">
                                     </div>
 
                                     <!-- Number of Labor -->
                                     <div class="md:col-span-1">
-                                        <label for="noOfLabor" class="block text-sm font-medium text-gray-700 mb-1">Number of Labor/Assistant</label>
-                                        <input type="number" id="noOfLabor" name="noOfLabor" required
+                                        <label for="laborer_assistant" class="block text-sm font-medium text-gray-700 mb-1">Number of Labor/Assistant</label>
+                                        <input type="number" id="laborer_assistant" name="laborer_assistant" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                             placeholder="Number of Labor/Assistant">
                                     </div>
@@ -133,9 +134,9 @@
                                 </script>
                                     <div class="md:col-span-2">
                                         <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
-                                        <input type="text" id="remarks" name="remarks" required
+                                        <textarea id="remarks" name="remarks" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Remarks">
+                                            placeholder="Remarks" rows="2"></textarea>
                                     </div>
                                 </div>
 
@@ -202,7 +203,7 @@
                                         Preview
                                     </button>
                                     <button type="submit" id="submitBtn" class="hidden inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                        Confirm Submission
+                                        Submit Request
                                     </button>
                                 </div>
                             </div>
@@ -232,7 +233,7 @@
                         Back to Edit
                     </button>
                     <button type="button" id="confirmSubmitBtn" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Confirm Submission
+                        Confirm
                     </button>
                 </div>
             </div>
@@ -350,6 +351,11 @@
             // Get form data
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
+            
+            // Handle fund source field
+            if (data.fund_source === 'Others') {
+                data.fund_source = data.other_fund_source || 'Others';
+            }
 
             // Store form data in hidden field for submission
             document.getElementById('preview_data').value = JSON.stringify(data);
@@ -379,7 +385,7 @@
                             
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Salary</p>
-                                <p class="font-medium text-gray-800">${formatCurrency(data.salary)}</p>
+                                <p class="font-medium text-gray-800">${data.employee_salary ? `₱${parseFloat(data.employee_salary).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A'}</p>
                             </div>
                         </div>
                     </div>
@@ -403,11 +409,11 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Source of Fund</p>
-                                <p class="font-medium text-gray-800">${data.appropriation === 'Others' ? (data.otherAppropriation || 'N/A') : (data.appropriation || 'N/A')}</p>
+                                <p class="font-medium text-gray-800">${data.fund_source === 'Others' ? (data.other_fund_source || 'N/A') : (data.fund_source || 'N/A')}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Per Diem</p>
-                                <p class="font-medium text-gray-800">${formatCurrency(data.per_diem)}</p>
+                                <p class="font-medium text-gray-800">${data.per_diem ? `₱${parseFloat(data.per_diem).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A'}</p>
                             </div>
                             <div class="col-span-2">
                                 <p class="text-xs text-gray-500 mb-0.5">Remarks</p>
@@ -445,6 +451,12 @@
             previewModal.classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
+
+        // Handle form submission when confirm button is clicked
+        document.getElementById('confirmSubmitBtn').addEventListener('click', function() {
+            // Submit the form
+            document.getElementById('travelOrderForm').submit();
+        });
 
         // Event listeners for closing modal
         closePreviewModal.addEventListener('click', closeModal);

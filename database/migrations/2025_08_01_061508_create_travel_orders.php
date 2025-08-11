@@ -21,8 +21,8 @@ return new class extends Migration
             $table->text('purpose');
             $table->date('departure_date');
             $table->date('arrival_date');
-            $table->string('recommender_email');
-            $table->string('approver_email');
+            $table->string('recommender');
+            $table->string('approver');
             $table->string('appropriation');
             $table->decimal('per_diem', 10, 2);
             $table->decimal('laborer_assistant', 10, 0);
@@ -34,8 +34,8 @@ return new class extends Migration
         Schema::table('travel_orders', function (Blueprint $table) {
             $table->foreign('employee_email')->references('email')->on('users')->onDelete('cascade');
             $table->foreign('status_id')->references('id')->on('travel_order_status')->onDelete('cascade');
-            $table->foreign('recommender_email')->references('email')->on('users')->onDelete('cascade');
-            $table->foreign('approver_email')->references('email')->on('users')->onDelete('cascade');
+            $table->foreign('recommender')->references('email')->on('users')->onDelete('cascade');
+            $table->foreign('approver')->references('email')->on('users')->onDelete('cascade');
         });
     }
 };
