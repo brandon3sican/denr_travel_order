@@ -25,12 +25,12 @@
     <main class="flex-1 overflow-y-auto p-6">
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <!-- Search and Filter Section -->
-            <div class="bg-white rounded-lg border border-gray-200 p-3 mb-3">
+            <div class="bg-white rounded-lg border border-gray-200 p-3">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
                     <!-- Search -->
                     <div>
                         <label for="search" class="sr-only">Search</label>
-                        <div class="relative">
+                        <div>
                             <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                                 <i class="fas fa-search text-gray-400 text-xs"></i>
                             </div>
@@ -44,7 +44,7 @@
                     <!-- Status Filter -->
                     <div>
                         <label for="status-filter" class="sr-only">Status</label>
-                        <div class="relative">
+                        <div>
                             <select id="status-filter" 
                                 class="block w-full pl-2 pr-6 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="">All Statuses</option>
@@ -63,46 +63,43 @@
                     <!-- Date Range Picker -->
                     <div>
                         <label for="date-range-button" class="sr-only">Date Range</label>
-                        <div class="relative">
-                            <button type="button" id="date-range-button" 
-                                class="w-full flex items-center justify-between px-2 py-1.5 border border-gray-300 rounded bg-white text-left text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                <span class="flex items-center">
-                                    <i class="far fa-calendar-alt text-gray-400 mr-1.5 text-xs"></i>
-                                    <span id="date-range-text" class="truncate text-xs">
-                                        @if(request('date_range'))
-                                            {{ request('date_range') }}
-                                        @else
-                                            Date Range
-                                        @endif
-                                    </span>
+                        <button type="button" id="date-range-button" 
+                            class="w-full flex items-center justify-between px-2 py-1.5 border border-gray-300 rounded bg-white text-left text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                            <span class="flex items-center">
+                                <i class="far fa-calendar-alt text-gray-400 mr-1.5 text-xs"></i>
+                                <span id="date-range-text" class="truncate text-xs">
+                                    @if(request('date_range'))
+                                        {{ request('date_range') }}
+                                    @else
+                                        Date Range
+                                    @endif
                                 </span>
-                                <i class="fas fa-chevron-down text-gray-400 text-2xs ml-1"></i>
-                            </button>
-                            <input type="hidden" id="date-range" name="date_range" value="{{ request('date_range') }}">
-                            
-                            <!-- Dropdown menu -->
-                            <div id="date-range-dropdown" class="hidden absolute z-10 w-56 mt-1 bg-white shadow-lg rounded-md py-1 border border-gray-200 text-sm">
-                                <div class="space-y-0.5 p-1">
-                                    <a href="#" data-range="today" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-sun text-yellow-400 mr-2 w-4 text-center"></i> Today
-                                    </a>
-                                    <a href="#" data-range="this-week" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-calendar-week text-blue-400 mr-2 w-4 text-center"></i> This Week
-                                    </a>
-                                    <a href="#" data-range="next-week" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-calendar-plus text-purple-400 mr-2 w-4 text-center"></i> Next Week
-                                    </a>
-                                    <a href="#" data-range="this-month" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-calendar text-green-400 mr-2 w-4 text-center"></i> This Month
-                                    </a>
-                                    <a href="#" data-range="next-month" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="fas fa-calendar-plus text-indigo-400 mr-2 w-4 text-center"></i> Next Month
-                                    </a>
-                                </div>
-                                <div class="border-t border-gray-200 my-1"></div>
-                                <div class="p-1">
-                                    <div id="date-range-picker" class="w-full text-xs"></div>
-                                </div>
+                            </span>
+                            <i class="fas fa-chevron-down text-gray-400 text-2xs ml-1"></i>
+                        </button>
+                        <input type="hidden" id="date-range" name="date_range" value="{{ request('date_range') }}">
+                        <!-- Dropdown menu -->
+                        <div id="date-range-dropdown" class="hidden absolute z-10 w-56 mt-1 bg-white shadow-lg rounded-md py-1 border border-gray-200 text-sm">
+                            <div class="space-y-0.5 p-1">
+                                <a href="#" data-range="today" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                    <i class="far fa-sun text-yellow-400 mr-2 w-4 text-center"></i> Today
+                                </a>
+                                <a href="#" data-range="this-week" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                    <i class="far fa-calendar-week text-blue-400 mr-2 w-4 text-center"></i> This Week
+                                </a>
+                                <a href="#" data-range="next-week" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                    <i class="far fa-calendar-plus text-purple-400 mr-2 w-4 text-center"></i> Next Week
+                                </a>
+                                <a href="#" data-range="this-month" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                    <i class="far fa-calendar text-green-400 mr-2 w-4 text-center"></i> This Month
+                                </a>
+                                <a href="#" data-range="next-month" class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                    <i class="fas fa-calendar-plus text-indigo-400 mr-2 w-4 text-center"></i> Next Month
+                                </a>
+                            </div>
+                            <div class="border-t border-gray-200 my-1"></div>
+                            <div class="p-1">
+                                <div id="date-range-picker" class="w-full text-xs"></div>
                             </div>
                         </div>
                     </div>
@@ -118,47 +115,51 @@
                             <i class="fas fa-filter text-blue-100 mr-1"></i> Apply
                         </button>
                     </div>
-                </div>                    
+                </div>
+            </div>
+        </div>
 
-                <!-- Travel Orders Table -->
-                <div class="bg-white rounded shadow overflow-hidden mt-3">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 text-sm">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">TO No.</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Purpose</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Destination</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Travel Date</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($travelOrders as $order)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div class="font-medium text-gray-900">{{ $order->travel_order_no }}</div>
-                                            <div class="text-xs text-gray-500">{{ $order->created_at->format('M d, Y') }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div class="font-medium">{{ $order->employee->first_name }} {{ $order->employee->last_name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $order->employee->position_name }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div class="font-medium">{{ $order->purpose }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div class="font-medium">{{ $order->destination }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div>{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>
-                                            <div class="text-xs text-gray-500">to {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            @php
-                                                $statusColors = [
+        
+        <div class="bg-white rounded-lg shadow overflow-hidden mt-2">
+            <!-- Travel Orders Table -->
+            <div class="bg-white rounded shadow overflow-hidden mt-2">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-800">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">TO No.</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Employee</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Purpose</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Destination</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Travel Date</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Status</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($travelOrders as $order)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <div class="font-medium text-gray-900">{{ $order->travel_order_no }}</div>
+                                    <div class="text-xs text-gray-500">{{ $order->created_at->format('M d, Y') }}</div>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <div class="font-medium">{{ $order->employee->first_name }} {{ $order->employee->last_name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $order->employee->position_name }}</div>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <div class="font-medium">{{ $order->purpose }}</div>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <div class="font-medium">{{ $order->destination }}</div>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <div>{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>
+                                    <div class="text-xs text-gray-500">to {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</div>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    @php
+                                        $statusColors = [
                                                     'for recommendation' => 'bg-yellow-100 text-yellow-800',
                                                     'for approval' => 'bg-blue-100 text-blue-800',
                                                     'approved' => 'bg-green-100 text-green-800',
@@ -166,22 +167,22 @@
                                                     'cancelled' => 'bg-gray-100 text-gray-800',
                                                     'completed' => 'bg-purple-100 text-purple-800',
                                                 ];
-                                                $statusColor = $statusColors[strtolower($order->status->name)] ?? 'bg-gray-100 text-gray-800';
-                                            @endphp
-                                            <span class="px-2 py-0.5 text-xs font-medium rounded-full {{ $statusColor }}">
-                                                {{ $order->status->name }}
-                                            </span>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <button onclick="showTravelOrder({{ $order->id }})" 
-                                                class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3">
-                                                 View
-                                             </button>
+                                        $statusColor = $statusColors[strtolower($order->status->name)] ?? 'bg-gray-100 text-gray-800';
+                                    @endphp
+                                    <span class="px-2 py-0.5 text-xs font-medium rounded-full {{ $statusColor }}">
+                                        {{ $order->status->name }}
+                                    </span>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <button onclick="showTravelOrder({{ $order->id }})" 
+                                        class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3">
+                                         View
+                                     </button>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-3 py-4 text-center text-gray-500 text-sm">
+                                        <td colspan="7" class="px-3 py-4 text-center text-gray-500 text-sm">
                                             No travel orders found.
                                         </td>
                                     </tr>
@@ -214,9 +215,11 @@
                         </div>
                     @endif
                 </div>
-            </main>
+            </div>
         </div>
-    </div>
+    </main>
+</div>
+</div>
 
 <!-- View Order Modal -->
 <div id="orderModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
@@ -336,20 +339,20 @@
                     endDate = today.format('YYYY-MM-DD');
                     break;
                 case 'this-week':
-                    startDate = today.startOf('week').format('YYYY-MM-DD');
-                    endDate = today.endOf('week').format('YYYY-MM-DD');
+                    startDate = moment().startOf('week').format('YYYY-MM-DD');
+                    endDate = moment().endOf('week').format('YYYY-MM-DD');
                     break;
                 case 'next-week':
-                    startDate = today.add(1, 'weeks').startOf('week').format('YYYY-MM-DD');
-                    endDate = today.endOf('week').format('YYYY-MM-DD');
+                    startDate = moment().add(1, 'weeks').startOf('week').format('YYYY-MM-DD');
+                    endDate = moment().add(1, 'weeks').endOf('week').format('YYYY-MM-DD');
                     break;
                 case 'this-month':
-                    startDate = today.startOf('month').format('YYYY-MM-DD');
-                    endDate = today.endOf('month').format('YYYY-MM-DD');
+                    startDate = moment().startOf('month').format('YYYY-MM-DD');
+                    endDate = moment().endOf('month').format('YYYY-MM-DD');
                     break;
                 case 'next-month':
-                    startDate = today.add(1, 'month').startOf('month').format('YYYY-MM-DD');
-                    endDate = today.endOf('month').format('YYYY-MM-DD');
+                    startDate = moment().add(1, 'month').startOf('month').format('YYYY-MM-DD');
+                    endDate = moment().add(1, 'month').endOf('month').format('YYYY-MM-DD');
                     break;
             }
 
