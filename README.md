@@ -1,6 +1,16 @@
 # DENR Travel Order Information System (DENR-TOIS)
 
-A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 10 and Tailwind CSS 3. This system streamlines the process of creating, managing, and tracking travel orders within the organization.
+A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 10, Tailwind CSS 3, and Livewire. This system streamlines the process of creating, managing, and tracking travel orders within the organization with a modern, responsive interface.
+
+## 🚀 Key Features
+
+- **Modern, Responsive UI** - Built with Tailwind CSS for a clean, professional look that works on all devices
+- **Advanced Filtering** - Powerful filtering system with date range picker for easy data retrieval
+- **Role-Based Access Control** - Fine-grained permissions for different user roles
+- **Real-time Updates** - Livewire-powered components for seamless user experience
+- **Comprehensive Reporting** - Generate detailed travel order reports with filtering options
+- **Email Notifications** - Automatic notifications for travel order status updates
+- **Document Generation** - Generate and print travel orders in PDF format
 
 ## 📋 System Workflow
 
@@ -388,3 +398,98 @@ This project is open-source and available under the [MIT License](LICENSE).
 ## Contact
 
 For any inquiries, please contact the development team at it-support@denr.gov.ph
+
+## 🛠 Installation
+
+1. Clone the repository
+2. Run `composer install`
+3. Copy `.env.example` to `.env` and configure your database settings
+4. Run `php artisan key:generate`
+5. Run migrations and seed the database: `php artisan migrate --seed`
+6. Install Node.js dependencies: `npm install`
+7. Build assets: `npm run build`
+8. Link storage: `php artisan storage:link`
+9. Start the development server: `php artisan serve`
+
+### Environment Variables
+
+Make sure to set these environment variables in your `.env` file:
+
+```
+APP_NAME="DENR Travel Order System"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=denr_travel_order
+DB_USERNAME=root
+DB_PASSWORD=
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+### Seeding Test Data
+
+To populate the database with test data, run:
+
+```bash
+php artisan db:seed --class=DatabaseSeeder
+```
+
+This will create:
+- Admin user (email: admin@example.com, password: password)
+- Sample employees and roles
+- Test travel orders
+
+## 📊 API Documentation
+
+### Available Endpoints
+
+- `GET /api/travel-orders` - List all travel orders (with filters)
+- `POST /api/travel-orders` - Create a new travel order
+- `GET /api/travel-orders/{id}` - Get a specific travel order
+- `PUT /api/travel-orders/{id}` - Update a travel order
+- `DELETE /api/travel-orders/{id}` - Delete a travel order
+
+### Authentication
+
+All API endpoints require authentication. Include the API token in the `Authorization` header:
+
+```
+Authorization: Bearer your-api-token
+```
+
+## 🛡 Security
+
+- All passwords are hashed using bcrypt
+- CSRF protection is enabled
+- Input validation on all forms
+- Rate limiting on authentication endpoints
+- SQL injection prevention using Eloquent ORM
+- XSS protection with Blade templating engine
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## 📞 Contact
+
+For any questions or support, please contact the development team at [your-email@example.com](mailto:your-email@example.com).

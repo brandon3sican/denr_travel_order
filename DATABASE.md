@@ -14,32 +14,165 @@
   - `email_verified_at` - Timestamp for email verification
   - `remember_token` - For "remember me" functionality
   - `created_at`, `updated_at` - Timestamps
+  - `is_active` - Boolean flag for account status
 
 - **Relationships**:
   - Has one `employee` profile
   - Has many `travel_orders` (created)
   - Has many `notifications`
   - Belongs to many `roles`
+  - Has many `recommendedTravelOrders` (as recommender)
+  - Has many `approvedTravelOrders` (as approver)
+  - Has many `signatures`
+
+### Core Relationships
+
+1. **Users and Employees**
+   - One-to-One: Each User has exactly one Employee profile
+   ```
+   User 1:1 Employee
+   ```
+
+2. **Users and Roles**
+   - Many-to-Many: Users can have multiple roles
+   ```
+   User *:* Role
+   ```
+   - Managed through `role_user` pivot table
+
+3. **Travel Orders**
+   - Created by User (One-to-Many)
+   ```
+   User 1:* TravelOrder
+   ```
+   - Recommended by User (One-to-Many, nullable)
+   ```
+   User 1:* TravelOrder (as recommender)
+   ```
+   - Approved by User (One-to-Many, nullable)
+   ```
+   User 1:* TravelOrder (as approver)
+   ```
+
+4. **Travel Order Signatures**
+   - Each TravelOrder has multiple signatures (One-to-Many)
+   ```
+   TravelOrder 1:* TravelOrderSignature
+   ```
+   - Each signature is created by a User (Many-to-One)
+   ```
+   User 1:* TravelOrderSignature
+   ```
+
+5. **Notifications**
+   - Each User has many Notifications (One-to-Many)
+   ```
+   User 1:* Notification
+   ```
+
+### Relationship Methods in Models
+
+#### User Model
+```php
+public function employee()
+{
+    return $this->hasOne(Employee::class);
+}
+
+public function roles()
+{
+    return $this->belongsToMany(Role::class);
+}
+
+public function travelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'created_by');
+}
+
+public function recommendedTravelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'recommended_by');
+}
+
+public function approvedTravelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'approved_by');
+}
+
+public function signatures()
+{
+    return $this->hasMany(TravelOrderSignature::class, 'signed_by');
+}
+
+public function notifications()
+{
+    return $this->hasMany(Notification::class);
+}
+```
+
+#### TravelOrder Model
+```php
+public function creator()
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
+
+public function recommender()
+{
+    return $this->belongsTo(User::class, 'recommended_by');
+}
+
+public function approver()
+{
+    return $this->belongsTo(User::class, 'approved_by');
+}
+
+public function signatures()
+{
+    return $this->hasMany(TravelOrderSignature::class);
+}
+```
+
+#### Employee Model
+```php
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+public function travelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'created_by', 'user_id');
+}
+```
 
 #### 2. `employees` - Employee Information
 - **Purpose**: Detailed employee profiles
 - **Key Fields**:
   - `id` - Primary key (auto-increment)
-  - `email` - Foreign key to users table (unique)
+  - `employee_id` - Official employee ID
   - `first_name` - Employee's first name
   - `middle_name` - Middle name or initial
   - `last_name` - Employee's last name
-  - `position_name` - Job title/position (renamed from 'position')
-  - `assignment_name` - Current assignment/designation
-  - `div_sec_unit` - Division/Section/Unit
-  - `emp_status` - Employment status (Active/Inactive)
-  - `sex` - Gender (M/F)
+  - `suffix` - Name suffix (Jr., Sr., III, etc.)
+  - `position_name` - Job title/position
+  - `salary_grade` - Salary grade level
+  - `step` - Salary step
+  - `employment_status` - (Permanent, Contractual, Casual, etc.)
+  - `division` - Division/Office
+  - `section` - Section/Unit
+  - `contact_number` - Mobile/Phone number
+  - `date_of_birth` - Date of birth
+  - `date_hired` - Date hired
+  - `address` - Complete address
   - `created_at`, `updated_at` - Timestamps
 
 - **Indexes**:
-  - `email` (unique, foreign key to users.email)
-  - `emp_status` (for filtering active/inactive employees)
+  - `user_id` (unique, foreign key to users.id)
+  - `employee_id` (unique)
+  - `last_name` (for searching)
   - `position_name` (for role-based queries)
+  - `division`, `section` (for filtering)
 
 #### 3. `roles` - User Permissions
 - **Purpose**: Role-based access control
@@ -228,11 +361,194 @@ The database includes seeders for initial data:
 - **Date/Datetime**: Used for tracking dates and times
 - **Decimal**: Used for monetary values like per diem
 - **Boolean**: Used for flags like `is_read` in notifications
-- **Enum**: Used for status fields with fixed options
+
+## Database Relationships
+
+### Core Relationships
+
+1. **Users and Employees**
+   - One-to-One: Each User has exactly one Employee profile
+   ```
+   User 1:1 Employee
+   ```
+
+2. **Users and Roles**
+   - Many-to-Many: Users can have multiple roles
+   ```
+   User *:* Role
+   ```
+   - Managed through `role_user` pivot table
+
+3. **Travel Orders**
+   - Created by User (One-to-Many)
+   ```
+   User 1:* TravelOrder
+   ```
+   - Recommended by User (One-to-Many, nullable)
+   ```
+   User 1:* TravelOrder (as recommender)
+   ```
+   - Approved by User (One-to-Many, nullable)
+   ```
+   User 1:* TravelOrder (as approver)
+   ```
+
+4. **Travel Order Signatures**
+   - Each TravelOrder has multiple signatures (One-to-Many)
+   ```
+   TravelOrder 1:* TravelOrderSignature
+   ```
+   - Each signature is created by a User (Many-to-One)
+   ```
+   User 1:* TravelOrderSignature
+   ```
+
+5. **Notifications**
+   - Each User has many Notifications (One-to-Many)
+   ```
+   User 1:* Notification
+   ```
+
+### Relationship Methods in Models
+
+#### User Model
+```php
+public function employee()
+{
+    return $this->hasOne(Employee::class);
+}
+
+public function roles()
+{
+    return $this->belongsToMany(Role::class);
+}
+
+public function travelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'created_by');
+}
+
+public function recommendedTravelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'recommended_by');
+}
+
+public function approvedTravelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'approved_by');
+}
+
+public function signatures()
+{
+    return $this->hasMany(TravelOrderSignature::class, 'signed_by');
+}
+
+public function notifications()
+{
+    return $this->hasMany(Notification::class);
+}
+```
+
+#### TravelOrder Model
+```php
+public function creator()
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
+
+public function recommender()
+{
+    return $this->belongsTo(User::class, 'recommended_by');
+}
+
+public function approver()
+{
+    return $this->belongsTo(User::class, 'approved_by');
+}
+
+public function signatures()
+{
+    return $this->hasMany(TravelOrderSignature::class);
+}
+```
+
+#### Employee Model
+```php
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+public function travelOrders()
+{
+    return $this->hasMany(TravelOrder::class, 'created_by', 'user_id');
+}
+```
 
 ## Security Considerations
 
-1. Email is used as a foreign key in multiple tables for user identification
-2. Sensitive data like passwords are hashed (handled by Laravel's authentication)
-3. All database queries should use prepared statements to prevent SQL injection
-4. Input validation is implemented at the application level
+1. **Authentication & Authorization**
+   - Implemented using Laravel's built-in authentication
+   - Role-based access control (RBAC)
+   - Policy-based authorization for resources
+
+2. **Data Protection**
+   - Passwords hashed using bcrypt
+   - Sensitive fields encrypted using Laravel's encrypter
+   - CSRF protection enabled
+   - XSS prevention with output escaping
+
+3. **Audit Trail**
+   - All significant actions are logged
+   - Tracks who did what and when
+   - Includes IP addresses and timestamps
+
+4. **API Security**
+   - Token-based authentication
+   - Rate limiting on authentication endpoints
+   - CORS configuration for API routes
+
+## Performance Optimization
+
+1. **Query Optimization**:
+   - Eager loading for relationships
+   - Query caching for frequently accessed data
+   - Database query logging in development
+
+2. **Database Maintenance**:
+   - Regular optimization of tables
+   - Index maintenance
+   - Regular backups
+
+## Migration Guide
+
+To update the database schema:
+
+```bash
+# Run migrations
+php artisan migrate
+
+# Rollback last migration
+php artisan migrate:rollback
+
+# Rollback all migrations
+php artisan migrate:reset
+
+# Refresh database and re-run all migrations
+php artisan migrate:refresh
+```
+
+## Seeding Test Data
+
+To populate the database with test data:
+
+```bash
+php artisan db:seed
+```
+
+Or seed specific seeders:
+
+```bash
+php artisan db:seed --class=UsersTableSeeder
+php artisan db:seed --class=EmployeesTableSeeder
+php artisan db:seed --class=TravelOrdersTableSeeder
