@@ -5,35 +5,39 @@
 ```mermaid
 flowchart TD
     %% Main Flow
-    A[Start: Create New Travel Order] --> B[Save as Draft]
+    A[Start: Create Travel Order Request] --> B[Save as Draft]
     B --> C{User Action}
     
     C -->|Continue Editing| B
-    C -->|Submit for Recommendation| D[Status: For Recommendation]
+    C -->|Submit| D[Status: For Recommendation]
     
-    D --> E{Recommender}
-    E -->|Request Changes| F[Add Review Comments]
-    F --> B
-    E -->|Recommend for Approval| G[Status: For Approval]
+    %% Recommendation Phase
+    D --> E{Recommender Reviews}
+    E -->|Disapprove| F[Status: Disapproved]
+    F -->|Notify User| B
     
-    G --> H{Approver}
-    H -->|Request Changes| I[Add Approval Comments]
-    I --> B
-    H -->|Approve| J[Generate Travel Order No.]
+    E -->|Recommend| G[Status: For Approval]
     
+    %% Approval Phase
+    G --> H{Approver Reviews}
+    H -->|Disapprove| I[Status: Disapproved]
+    I -->|Notify User| B
+    
+    H -->|Approve| J[Generate Official Travel Order No.]
     J --> K[Status: Approved]
-    K --> L[System Actions]
     
-    %% System Actions
+    %% Post-Approval Actions
+    K --> L[System Actions]
     L --> M[Notify Requester]
     L --> N[Update Records]
-    L --> O[Generate Documents]
+    L --> O[Generate Official Documents]
     
     %% Status Tracking
     B -->|Status| P((Draft))
     D -->|Status| Q((For Recommendation))
-    G -->|Status| R((For Approval))
-    K -->|Status| S((Approved))
+    F -->|Status| R((Disapproved))
+    G -->|Status| S((For Approval))
+    K -->|Status| T((Approved))
     
     %% Styling
     classDef startend fill:#4caf50,stroke:#2e7d32,color:white,stroke-width:2px
@@ -62,68 +66,70 @@ flowchart TD
 
 ## 2. Detailed Process Flow
 
-### 2.1 Draft Creation & Submission
-1. **Travel Order Creation**
-   - User fills out the travel order form with:
-     - Travel details (dates, destination, purpose)
-     - Estimated budget
-     - Supporting documents
-   - System validates all required fields
-   - Auto-saves as draft periodically
+### 2.1 Request Creation & Submission
+1. **Travel Order Request**
+   - User creates a new travel order request with:
+     - Complete travel details (dates, destination, purpose)
+     - Required documentation
+     - Supporting information
+   - System validates all mandatory fields
+   - Auto-saves progress as draft
 
 2. **Submission for Recommendation**
-   - User reviews and submits the travel order
+   - User finalizes and submits the request
    - System:
      - Validates all required information
      - Updates status to "For Recommendation"
-     - Locks the travel order from further edits
-     - Notifies the assigned recommender
+     - Notifies the designated recommender
+     - Locks the request from further edits
 
 ### 2.2 Recommendation Phase
 1. **Review Process**
-   - Recommender receives notification
-   - Reviews travel order details
-   - Can:
-     - **Recommend for Approval**: Moves to next phase
-     - **Request Changes**: Returns to user with comments
-     - **View History**: See all previous actions
+   - Recommender is notified of pending request
+   - Reviews travel order details and documentation
+   - Makes decision:
+     - **Recommend for Approval**: Moves to approval phase
+     - **Disapprove**: Request is rejected with reason
 
-2. **Action on Recommendation**
+2. **Recommendation Actions**
    - If recommended:
      - Status changes to "For Approval"
-     - Approver is notified
-   - If changes requested:
-     - Status reverts to "Draft"
-     - User receives notification with comments
-     - User can make changes and resubmit
+     - Approver is automatically notified
+   - If disapproved:
+     - Status changes to "Disapproved"
+     - User receives notification with reason
+     - User must address issues and resubmit
 
 ### 2.3 Approval Phase
-1. **Approval Process**
-   - Approver reviews the travel order
-   - Can:
-     - **Approve**: Final approval
-     - **Request Changes**: Returns for modification
-     - **View Recommendation Notes**: See recommender's comments
+1. **Final Review Process**
+   - Approver receives notification
+   - Conducts final review of:
+     - Travel details
+     - Recommendation notes
+     - Supporting documents
+   - Makes final decision:
+     - **Approve**: Proceeds to finalize
+     - **Disapprove**: Rejects with reason
 
 2. **Approval Actions**
    - If approved:
-     - System generates unique travel order number
+     - System generates official travel order number
      - Status changes to "Approved"
-     - All related documents are stamped
-   - If changes requested:
-     - Returns to draft status
-     - Detailed feedback provided
+     - Official documents are generated and stamped
+   - If disapproved:
+     - Status changes to "Disapproved"
+     - User receives detailed feedback
 
 ### 2.4 Post-Approval
-1. **Notification & Documentation**
-   - System sends approval notification to:
-     - Requester
-     - Finance department
-     - HR department (if applicable)
-   - Generates official documents:
-     - Travel Order Form
-     - Itinerary
-     - Budget breakdown
+1. **Document Generation & Notification**
+   - System generates and assigns official travel order number
+   - Creates official documents:
+     - Travel Order with official number
+     - Approved itinerary
+     - Supporting documentation
+   - Notifications sent to:
+     - Requester (with travel order details)
+     - Relevant departments (Finance, HR, etc.)
 
 2. **Record Keeping**
    - All actions are logged with:
@@ -138,7 +144,7 @@ flowchart TD
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Draft: New Travel Order
+    [*] --> Draft: New Request
     
     state Draft {
         [*] --> Editing
@@ -151,30 +157,31 @@ stateDiagram-v2
     state ForRecommendation {
         [*] --> PendingReview
         PendingReview --> UnderReview: Opened by Recommender
-        UnderReview --> ChangesRequested: Request Changes
-        UnderReview --> ForApproval: Recommend
-        ChangesRequested --> [*]
+        UnderReview --> Disapproved: Disapproved
+        UnderReview --> ForApproval: Recommended
     }
     
     state ForApproval {
         [*] --> PendingApproval
-        PendingApproval --> InReview: Opened by Approver
-        InReview --> ChangesRequested: Request Changes
-        InReview --> Approved: Approve
-        ChangesRequested --> [*]
+        PendingApproval --> FinalReview: Opened by Approver
+        FinalReview --> Disapproved: Disapproved
+        FinalReview --> Approved: Approved
+    }
+    
+    state Disapproved {
+        [*] --> NeedsRevision
+        NeedsRevision --> [*]: User Updates
     }
     
     state Approved {
         [*] --> Processing
         Processing --> Active: Documents Generated
         Active --> Completed: Travel Completed
-        Active --> Cancelled: If needed
     }
     
     %% Transitions
     Draft --> [*]: Delete
-    ForRecommendation --> Draft: Withdrawn by User
-    ForApproval --> Draft: Withdrawn by User
+    Disapproved --> Draft: User Resubmits
     
     %% Styling
     classDef startend fill:#4caf50,stroke:#2e7d32,color:white
@@ -205,10 +212,13 @@ stateDiagram-v2
 | Event | Recipients | Channel |
 |-------|------------|----------|
 | Submitted for Recommendation | Recommender | Email, In-App |
-| Recommendation Decision | Requester, Next Approver | Email, In-App |
-| Approval Decision | Requester, Finance, HR | Email, In-App |
-| Changes Requested | Requester | Email, In-App |
-| Travel Order Approved | Requester, All Stakeholders | Email, In-App |
+| Recommendation Decision | | |
+| • Recommended | Approver | Email, In-App |
+| • Disapproved | Requester | Email, In-App |
+| Approval Decision | | |
+| • Approved | Requester, Finance, HR | Email, In-App |
+| • Disapproved | Requester | Email, In-App |
+| Travel Order Number Assigned | Requester, All Stakeholders | Email, In-App |
 
 ### 4.3 Error Handling
 
