@@ -84,7 +84,7 @@
                                 <div class="flex items-center space-x-3">
                                     <div class="relative">
                                         <form id="filterForm" method="GET" class="flex space-x-2">
-                                            <select name="status" id="statusFilter" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                            <select name="status" id="statusFilter" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                                                 <option value="" {{ request('status') == '' ? 'selected' : '' }}>All Status</option>
                                                 <option value="For Recommendation" {{ request('status') == 'For Recommendation' ? 'selected' : '' }}>For Recommendation</option>
                                                 <option value="For Approval" {{ request('status') == 'For Approval' ? 'selected' : '' }}>For Approval</option>

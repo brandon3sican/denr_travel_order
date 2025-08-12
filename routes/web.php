@@ -35,16 +35,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Travel Order Routes
-    Route::resource('travel-orders', TravelOrderController::class)->except(['index']);
+    Route::resource('travel-orders', TravelOrderController::class);
     
     // Additional custom routes for travel orders
     Route::prefix('travel-order')->group(function () {
-        Route::get('/create', [TravelOrderController::class, 'create'])->name('travel-orders.create');
         Route::get('/my-orders', [MyTravelOrderController::class, 'index'])->name('my-travel-orders');
+        Route::get('/all-orders', [TravelOrderController::class, 'index'])->name('all-travel-orders');
 
         Route::get('/role-management', [RoleManagementController::class, 'index'])->name('role-management');
         Route::post('/role-management/{user}/update-role', [RoleManagementController::class, 'updateRole'])->name('role-management.update-role');
     });
+    
+    // Alias for the show route to match both singular and plural forms
+    Route::get('travel-order/{travel_order}', [TravelOrderController::class, 'show'])->name('travel-order.show');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

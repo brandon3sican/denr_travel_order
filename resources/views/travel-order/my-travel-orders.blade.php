@@ -44,16 +44,16 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Travel Order No.</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(0)">Travel Order No.</th>
                                     @if (auth()->user()->is_admin)
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Employee</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(1)">Employee</th>
                                     @endif
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Destination</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Purpose</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Arrival Date</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Departure Date</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider">Actions</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(2)">Destination</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(3)">Purpose</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(4)">Arrival Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(5)">Departure Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(6)">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(7)">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">

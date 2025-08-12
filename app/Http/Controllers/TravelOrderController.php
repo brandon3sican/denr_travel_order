@@ -11,7 +11,12 @@ class TravelOrderController extends Controller
 {
     public function index()
     {
-        $travelOrders = TravelOrderModel::select('travel_orders.*')
+        $perPage = request()->input('per_page', 10);
+        $search = request()->input('search');
+        $status = request()->input('status');
+        $dateRange = request()->input('date_range');
+
+        $query = TravelOrderModel::select('travel_orders.*')
             ->with(['employee', 'status'])
             ->leftJoin('employees as recommender', 'travel_orders.recommender', '=', 'recommender.email')
             ->leftJoin('employees as approver', 'travel_orders.approver', '=', 'approver.email')
@@ -22,12 +27,54 @@ class TravelOrderController extends Controller
                 'approver.first_name as approver_first_name',
                 'approver.last_name as approver_last_name',
                 'approver.position_name as approver_position',
-            ])
-            ->latest('travel_orders.created_at')
-            ->get();
+            ]);
 
-        return view('travel-order.my-travel-orders', [
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('travel_orders.destination', 'like', "%{$search}%")
+                  ->orWhere('travel_orders.purpose', 'like', "%{$search}%")
+                  ->orWhereHas('employee', function($q) use ($search) {
+                      $q->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Apply status filter
+        if ($status) {
+            $query->whereHas('status', function($q) use ($status) {
+                $q->where('name', 'like', "%{$status}%");
+            });
+        }
+
+        // Apply date range filter
+        if ($dateRange) {
+            $dates = explode(' - ', $dateRange);
+            if (count($dates) === 2) {
+                $startDate = \Carbon\Carbon::parse(trim($dates[0]))->startOfDay();
+                $endDate = \Carbon\Carbon::parse(trim($dates[1]))->endOfDay();
+                
+                $query->where(function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('departure_date', [$startDate, $endDate])
+                      ->orWhereBetween('arrival_date', [$startDate, $endDate])
+                      ->orWhere(function($q) use ($startDate, $endDate) {
+                          $q->where('departure_date', '<=', $startDate)
+                            ->where('arrival_date', '>=', $endDate);
+                      });
+                });
+            }
+        }
+
+        $travelOrders = $query->latest('travel_orders.created_at')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $statuses = \App\Models\TravelOrderStatus::all();
+
+        return view('travel-order.all-travel-orders-simple', [
             'travelOrders' => $travelOrders,
+            'statuses' => $statuses,
         ]);
     }
 
