@@ -53,7 +53,7 @@
                 </a>
 
                 <!-- Role & Permission Management -->
-                <a href="" class="nav-item">
+                <a href="{{ route('role-management') }}" class="nav-item">
                     <i class="fas fa-user-shield"></i>
                     <span>Role Management</span>
                 </a>
