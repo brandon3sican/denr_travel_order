@@ -1,20 +1,26 @@
 # Travel Order Management System - Workflow
 
-## 1. Simplified Workflow
+## 1. Complete Workflow
 
 ```mermaid
 flowchart TD
-    A[User Creates Travel Order] --> B[Status: For Recommendation]
+    %% Step 1: Create Travel Order
+    A[1. Requester Creates Travel Order] --> B[Status: For Recommendation]
     
-    %% Recommendation Phase
-    B --> C{Recommender Reviews}
-    C -->|Approve| D[Status: For Approval]
+    %% Step 2 & 3: Recommender Review
+    B --> C{2. Recommender Reviews}
+    C -->|Approve| D[3. Forwarded for Approval]
     C -->|Disapprove| E[Status: Disapproved]
     
-    %% Approval Phase
-    D --> F{Approver Reviews}
-    F -->|Approve| G[Generate Travel Order No.\nStatus: Approved]
+    %% Step 4 & 5: Approver Review
+    D --> F{4. Approver Reviews}
+    F -->|Approve| G[5. Status: Approved\nAssign Travel Order No.]
     F -->|Disapprove| H[Status: Disapproved]
+    
+    %% Step 6: End States
+    E --> I[6. Create New Request]
+    H --> I
+    G --> J[6. Process Complete]
     
     %% Styling
     classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px
@@ -66,110 +72,116 @@ flowchart TD
     class M,N,O,P status;
 ```
 
-## 2. Process Steps
+## 2. Step-by-Step Process
 
-### 2.1 Create Travel Order
-1. **User Submits Request**
-   - Fill out travel details
-   - Attach required documents
+### 2.1 Create Travel Order (Requester)
+1. **Submit New Request**
+   - Fill out travel order form
+   - Attach necessary documents
    - Submit for processing
    - System sets status to "For Recommendation"
 
 ### 2.2 Recommendation Phase
-1. **Recommender Reviews**
-   - Reviews the travel order
-   - Options:
-     - Approve → Moves to approver
-     - Disapprove → Request is rejected
+1. **Recommender Review**
+   - Receives notification of new request
+   - Reviews travel order details
+   - Makes decision:
+     - **Approve**: Forwards to approver
+     - **Disapprove**: Rejects request
    - If disapproved:
-     - Status: Disapproved
-     - User must create new request
+     - Status set to "Disapproved"
+     - Requester must create new request
 
 ### 2.3 Approval Phase
-1. **Approver Reviews**
-   - Reviews the recommended travel order
-   - Options:
-     - Approve → Generates travel order number
-     - Disapprove → Request is rejected
+1. **Approver Review**
+   - Receives notification of forwarded request
+   - Conducts final review
+   - Makes decision:
+     - **Approve**: Final approval
+     - **Disapprove**: Reject request
    - If approved:
-     - System assigns travel order number
-     - Status: Approved
+     - System generates unique travel order number
+     - Status set to "Approved"
    - If disapproved:
-     - Status: Disapproved
-     - User must create new request
+     - Status set to "Disapproved"
+     - Requester must create new request
 
 ## 3. Status Flow
 
 ```mermaid
 stateDiagram-v2
-    [*] --> ForRecommendation: New Request
+    [*] --> ForRecommendation: 1. New Request
     
     state ForRecommendation {
         [*] --> Pending
-        Pending --> Reviewed: Recommender reviews
+        Pending --> Reviewed: 2. Recommender reviews
         Reviewed --> ForApproval: Approved
-        Reviewed --> Disapproved: Rejected
+        Reviewed --> Disapproved: Disapproved
     }
     
     state ForApproval {
         [*] --> PendingApproval
-        PendingApproval --> Reviewed: Approver reviews
-        Reviewed --> Approved: Approved
-        Reviewed --> Disapproved: Rejected
+        PendingApproval --> FinalReview: 4. Approver reviews
+        FinalReview --> Approved: Approved
+        FinalReview --> Disapproved: Disapproved
     }
     
-    Approved --> [*]: Process Complete
-    Disapproved --> [*]: Request Closed
+    Approved --> [*]: 6. Process Complete
+    Disapproved --> NewRequest: 6. Create New Request
+    NewRequest --> [*]
     
     classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px
     classDef pending fill:#fffde7,stroke:#fbc02d,stroke-width:2px
     classDef approved fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
     classDef rejected fill:#ffebee,stroke:#c62828,stroke-width:2px
-    
+```
     class ForRecommendation,ForApproval pending
     class Approved approved
     class Disapproved rejected
 
 ## 4. Key Points
 
-1. **Simple Status Flow**
-   - For Recommendation → For Approval → Approved/Disapproved
-   - No draft or edit after submission
-   - New request needed if disapproved
+1. **Workflow Steps**
+   1. Requester creates travel order
+   2. Recommender reviews (Approve/Disapprove)
+   3. If approved, moves to approver
+   4. Approver reviews (Approve/Disapprove)
+   5. If approved, assigns travel order number
+   6. Process completes or new request needed
 
-2. **User Actions**
-   - Create new travel order
-   - Submit for processing
-   - Create new request if disapproved
-
-3. **System Actions**
-   - Assign status
-   - Notify relevant parties
-   - Generate travel order number when approved
-   - Maintain audit trail
+2. **Important Rules**
+   - No editing after submission
+   - Disapproved requests cannot be modified
+   - New request required for any changes
+   - Travel order number assigned only after final approval
 
 ## 5. Notifications
 
-| Event | Sent To | Method |
-|-------|---------|--------|
-| New Submission | Recommender | Email, In-App |
-| Recommendation Approved | Approver | Email, In-App |
-| Recommendation Disapproved | Requester | Email, In-App |
-| Travel Order Approved | Requester, Finance | Email, In-App |
-| Travel Order Disapproved | Requester | Email, In-App |
+| Step | Event | Sent To | Method |
+|------|-------|---------|--------|
+| 1    | New Request Submitted | Recommender | Email, In-App |
+| 2-3  | Recommendation Decision | | |
+|      | • Approved | Approver | Email, In-App |
+|      | • Disapproved | Requester | Email, In-App |
+| 4-5  | Approval Decision | | |
+|      | • Approved | Requester, Finance | Email, In-App |
+|      | • Disapproved | Requester | Email, In-App |
 
 ## 6. Important Notes
 
-1. **No Edits After Submission**
-   - Once submitted, requests cannot be modified
-   - Create new request if changes are needed
+1. **Request Creation**
+   - Complete all required fields
+   - Attach necessary documents
+   - Review before submission
+   - No changes allowed after submission
 
 2. **Disapproved Requests**
-   - Cannot be resubmitted
+   - Cannot be modified or resubmitted
    - New request must be created
-   - Previous request kept for reference
+   - Previous requests remain in system for reference
 
 3. **Approval Process**
-   - Sequential flow (recommendation → approval)
-   - No skipping of steps
-   - Clear audit trail maintained
+   - Strictly sequential (recommendation → approval)
+   - No step can be skipped
+   - All decisions are final
+   - Full audit trail maintained
