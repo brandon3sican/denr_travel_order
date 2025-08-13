@@ -23,18 +23,18 @@
             </div>
             <nav class="mt-4 space-y-1">
                 <!-- Dashboard -->
-                <a href="{{ route('dashboard') }}" class="nav-item {{ Request::routeIs('dashboard') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-black' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
 
                 @if (!auth()->user()->is_admin)
                 <!-- Regular User Menu -->
-                <a href="{{ route('my-travel-orders') }}" class="nav-item {{ Request::routeIs('my-travel-orders') ? 'active' : '' }}">
+                <a href="{{ route('my-travel-orders') }}" class="nav-item {{ request()->routeIs('my-travel-orders') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-passport"></i>
                     <span>My Travel Orders</span>
                 </a>
-                <a href="{{ route('travel-orders.create') }}" class="nav-item {{ Request::routeIs('travel-orders.create') ? 'active' : '' }}">
+                <a href="{{ route('travel-orders.create') }}" class="nav-item {{ request()->routeIs('travel-orders.create') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>New Travel Order</span>
                 </a>
@@ -47,37 +47,32 @@
                 </div>
 
                 <!-- Travel Order Management -->
-                <a href="{{ route('all-travel-orders') }}" class="nav-item">
+                <a href="{{ route('all-travel-orders') }}" class="nav-item {{ request()->routeIs('all-travel-orders') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-clipboard-list"></i>
                     <span>All Travel Orders</span>
                 </a>
 
                 <!-- Role & Permission Management -->
-                <a href="{{ route('role-management') }}" class="nav-item">
+                <a href="{{ route('role-management') }}" class="nav-item {{ request()->routeIs('role-management') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-user-shield"></i>
                     <span>Role Management</span>
                 </a>
 
                 <!-- Status Management -->
-                <a href="" class="nav-item">
+                <a href="{{ route('status-management.index') }}" class="nav-item {{ request()->routeIs('status-management.*') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-tasks"></i>
                     <span>Status Management</span>
                 </a>
 
                 <!-- Reports -->
-                <a href="" class="nav-item">
+                <a href="" class="nav-item {{ request()->routeIs('reports') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports & Analytics</span>
                 </a>
                 @endif
-
-                <!-- Common Menu Items -->
-                <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                    Resources
-                </div>
                 
                 <!-- User Profile -->
-                <a href="#" id="profileLink" class="nav-item">
+                <a href="" id="profileLink" class="nav-item">
                     <i class="fas fa-user-cog"></i>
                     <span>My Profile</span>
                 </a>

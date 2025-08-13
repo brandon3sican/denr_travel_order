@@ -31,4 +31,9 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class, 'email', 'email');
     }
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name . ' ' . $this->suffix;
+    }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TravelOrderController;
 use App\Http\Controllers\MyTravelOrderController;
 use App\Http\Controllers\RoleManagementController;
+use App\Http\Controllers\TravelOrderStatusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\NotificationsController;
@@ -48,6 +49,14 @@ Route::middleware('auth')->group(function () {
     
     // Alias for the show route to match both singular and plural forms
     Route::get('travel-order/{travel_order}', [TravelOrderController::class, 'show'])->name('travel-order.show');
+    
+    // Status Management Routes
+    Route::prefix('status-management')->group(function () {
+        Route::get('/', [TravelOrderStatusController::class, 'index'])->name('status-management.index');
+        Route::post('/', [TravelOrderStatusController::class, 'store'])->name('status-management.store');
+        Route::put('/{status}', [TravelOrderStatusController::class, 'update'])->name('status-management.update');
+        Route::delete('/{status}', [TravelOrderStatusController::class, 'destroy'])->name('status-management.destroy');
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
