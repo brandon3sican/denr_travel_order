@@ -65,7 +65,7 @@
                 </a>
 
                 <!-- Reports -->
-                <a href="" class="nav-item {{ request()->routeIs('reports') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
+                <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports & Analytics</span>
                 </a>
@@ -83,10 +83,9 @@
                         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" 
                              id="modalContent">
                             <!-- Header -->
-                            <div class="px-6 pt-6 pb-2 flex justify-between items-center border-b">
+                            <div class="px-6 pt-6 pb-2 flex justify-between items-center border-b bg-gray-800">
                                 <div>
-                                    <h3 class="text-xl font-semibold text-gray-900">Employee Profile</h3>
-                                    <p class="text-sm text-gray-500 mt-1">View your account details</p>
+                                    <h3 class="text-xl font-semibold text-white">Employee Profile</h3>
                                 </div>
                                 <button onclick="closeModal()" class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
                                     <i class="fas fa-times text-lg"></i>

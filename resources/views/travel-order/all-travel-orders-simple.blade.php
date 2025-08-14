@@ -31,9 +31,6 @@
                     <div>
                         <label for="search" class="sr-only">Search</label>
                         <div>
-                            <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400 text-xs"></i>
-                            </div>
                             <input type="text" id="search" 
                                 placeholder="Search..." 
                                 value="{{ request('search') }}"
@@ -148,10 +145,10 @@
                                     <div class="text-xs text-gray-500">{{ $order->employee->position_name }}</div>
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap">
-                                    <div class="font-medium">{{ $order->purpose }}</div>
+                                    <div class="font-medium text-gray-500">{{ $order->purpose }}</div>
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap">
-                                    <div class="font-medium">{{ $order->destination }}</div>
+                                    <div class="font-medium text-gray-500">{{ $order->destination }}</div>
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap">
                                     <div>{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>

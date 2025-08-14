@@ -72,6 +72,25 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class, 'email', 'email');
     }
+    
+    /**
+     * Get the travel orders that this user needs to approve
+     */
+    /**
+     * Get the travel orders created by this user
+     */
+    public function travelOrders()
+    {
+        return $this->hasMany(TravelOrder::class, 'employee_email', 'email');
+    }
+    
+    /**
+     * Get the travel orders that this user needs to approve
+     */
+    public function travelOrdersToApprove()
+    {
+        return $this->hasMany(TravelOrder::class, 'approver', 'email');
+    }
 
     /**
      * Get the attributes that should be cast.

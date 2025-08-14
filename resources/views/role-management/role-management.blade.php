@@ -53,14 +53,14 @@
                     <!-- Users Table -->
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 text-sm">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-gray-800">
                                 <tr>
-                                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
-                                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignment</th>
-                                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division/Section/Unit</th>
-                                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Role</th>
-                                    <th scope="col" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Change Role</th>
+                                    <th scope="col" class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">Employee Name</th>
+                                    <th scope="col" class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">Position</th>
+                                    <th scope="col" class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">Assignment</th>
+                                    <th scope="col" class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">Division/Section/Unit</th>
+                                    <th scope="col" class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">Current Role</th>
+                                    <th scope="col" class="px-4 py-2 text-right text-white text-xs font-medium uppercase tracking-wider">Change Role</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
