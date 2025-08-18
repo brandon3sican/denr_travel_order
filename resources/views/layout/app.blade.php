@@ -83,9 +83,10 @@
                         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" 
                              id="modalContent">
                             <!-- Header -->
-                            <div class="px-6 pt-6 pb-2 flex justify-between items-center border-b bg-gray-800">
+                            <div class="px-6 pt-6 pb-2 flex justify-between items-center border-b bg-gray-800 rounded-t-lg">
                                 <div>
                                     <h3 class="text-xl font-semibold text-white">Employee Profile</h3>
+                                    <p class="text-sm text-gray-400">View and manage your profile information.</p>
                                 </div>
                                 <button onclick="closeModal()" class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
                                     <i class="fas fa-times text-lg"></i>
@@ -93,7 +94,7 @@
                             </div>
                             
                             <!-- Profile Content -->
-                            <div class="p-6">
+                            <div class="p-6 bg-gray-800">
                                 @php
                                     $user = Auth::user();
                                     $employee = $user->employee; // Get the employee relationship
@@ -113,9 +114,9 @@
                                     <div class="h-24 w-24 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-3xl text-blue-600 font-bold mb-3 border-4 border-white shadow-lg">
                                         {{ $firstName ? strtoupper(substr($firstName, 0, 1)) : 'U' }}
                                     </div>
-                                    <h4 class="text-xl font-semibold text-gray-900">{{ $fullName }}</h4>
+                                    <h4 class="text-xl font-semibold text-white">{{ $fullName }}</h4>
                                     <p class="text-sm text-blue-600 font-medium mt-1">{{ $position }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">{{ $email }}</p>
+                                    <p class="text-xs text-gray-100 mt-1">{{ $email }}</p>
                                 </div>
 
                                 <!-- Profile Details -->

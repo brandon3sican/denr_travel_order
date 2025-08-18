@@ -22,8 +22,8 @@
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6">
-                <div class="max-w-4xl mx-auto">
-                    <div class="bg-gray-200 shadow-xl rounded-lg p-6 mb-6">
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="p-6">
                         <form id="travelOrderForm" action="{{ route('travel-orders.store') }}" method="POST" class="space-y-6">
                             @csrf
                             <input type="hidden" name="status_id" value="1"> <!-- 1 = For Recommendation -->
