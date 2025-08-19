@@ -63,13 +63,18 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+
+    Route::get('/travel-volume', [\App\Http\Controllers\ReportController::class, 'travelVolume'])->name('reports.travel-volume');
+    Route::get('/approval-metrics', [\App\Http\Controllers\ReportController::class, 'approvalMetrics'])->name('reports.approval-metrics');
+    Route::get('/employee-travel', [\App\Http\Controllers\ReportController::class, 'employeeTravelPatterns'])->name('reports.employee-travel');
+    Route::get('/department', [\App\Http\Controllers\ReportController::class, 'departmentReports'])->name('reports.department');
+    
     // Reports Routes
     Route::prefix('reports')->group(function () {
         Route::get('/', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
         Route::get('/travel-volume', [\App\Http\Controllers\ReportController::class, 'travelVolume'])->name('reports.travel-volume');
         Route::get('/approval-metrics', [\App\Http\Controllers\ReportController::class, 'approvalMetrics'])->name('reports.approval-metrics');
         Route::get('/employee-travel', [\App\Http\Controllers\ReportController::class, 'employeeTravelPatterns'])->name('reports.employee-travel');
-        Route::get('/operational-efficiency', [\App\Http\Controllers\ReportController::class, 'operationalEfficiency'])->name('reports.operational-efficiency');
         Route::get('/department', [\App\Http\Controllers\ReportController::class, 'departmentReports'])->name('reports.department');
     });
 });

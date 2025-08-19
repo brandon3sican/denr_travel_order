@@ -218,39 +218,8 @@
 </div>
 </div>
 
-<!-- View Order Modal -->
-<div id="orderModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="flex min-h-screen items-center justify-center p-4 pt-10 pb-20 text-center sm:block sm:p-0">
-        <!-- Background overlay -->
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-
-        <!-- Modal panel -->
-        <div class="inline-block w-full max-w-4xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all sm:my-8">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div class="w-full">
-                    <div class="flex items-center justify-between border-b pb-4">
-                        <h3 class="text-xl font-semibold leading-6 text-gray-900">Travel Order Details</h3>
-                        <button onclick="closeModal()" class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none">
-                            <span class="sr-only">Close</span>
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    <div class="mt-4 max-h-[70vh] overflow-y-auto" id="orderDetails">
-                        <!-- Order details will be populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button type="button" id="printButton" class="hidden inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm">
-                    <i class="fas fa-print mr-2"></i> Print
-                </button>
-                <button type="button" onclick="closeModal()" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Include Travel Order Modal Component -->
+@include('components.travel-order-modal')
 
     @push('styles')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />

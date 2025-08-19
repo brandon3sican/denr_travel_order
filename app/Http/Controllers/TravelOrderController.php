@@ -9,6 +9,34 @@ use App\Models\TravelOrderRole;
 
 class TravelOrderController extends Controller
 {
+    /**
+     * Get travel order details for AJAX requests
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDetails($id)
+    {
+        try {
+            $travelOrder = TravelOrderModel::with([
+                'employee',
+                'status',
+                'recommenderEmployee',
+                'approverEmployee'
+            ])->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $travelOrder
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch travel order details.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function index()
     {
         $perPage = request()->input('per_page', 10);

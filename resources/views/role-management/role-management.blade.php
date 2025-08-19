@@ -10,7 +10,7 @@
                         <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
                             <i class="fas fa-bars text-xl"></i>
                         </button>
-                        <h2 class="text-xl font-semibold text-gray-800">User Management</h2>
+                        <h2 class="text-xl font-semibold text-gray-800">Role Management</h2>
                     </div>
                     <div class="flex items-center space-x-4">
                         <div class="relative">

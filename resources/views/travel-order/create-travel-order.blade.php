@@ -23,15 +23,21 @@
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6">
                 <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <div class="p-6">
+                    <div class="px-6">
                         <form id="travelOrderForm" action="{{ route('travel-orders.store') }}" method="POST" class="space-y-6">
                             @csrf
                             <input type="hidden" name="status_id" value="1"> <!-- 1 = For Recommendation -->
                             <input type="hidden" name="employee_email" value="{{ auth()->user()->email }}">
                             <input type="hidden" id="preview_data" name="preview_data" value="">
+                            
                             <!-- Basic Information -->
-                            <div>
-                                <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">Basic Information</h3>
+                            <div class="">
+                                <div class="mb-4">
+                                    <h3 class="text-2xl font-semibold">Travel Order Request Form</h3>
+                                    <p class="text-sm text-gray-600">Fill up the form below to create a new travel order.</p>
+                                </div>
+                                <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">
+                                    <i class="fas fa-info-circle mr-2"></i>Basic Information</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="md:col-span-2">
                                         <label for="purpose" class="block text-sm font-medium text-gray-700 mb-1">Purpose of Travel</label>
@@ -66,7 +72,9 @@
 
                             <!-- Travel Details -->
                             <div class="pt-6 border-t-2 border-gray-600">
-                                <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">Travel Details</h3>
+                                <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">
+                                    <i class="fas fa-plane mr-2"></i>Travel Details
+                                </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <!-- Fund Source -->
                                     <div class="md:col-span-1">
@@ -132,80 +140,77 @@
                                         }
                                     });
                                 </script>
-                                    <div class="md:col-span-2">
-                                        <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
-                                        <textarea id="remarks" name="remarks" required
-                                            class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Remarks" rows="2"></textarea>
-                                    </div>
+                                <div class="md:col-span-2">
+                                    <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
+                                    <textarea id="remarks" name="remarks" required
+                                        class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        placeholder="Remarks" rows="2"></textarea>
                                 </div>
+                            </div>
 
-                                <!-- Approvals -->
-                                <div class="pt-6 border-t-2 border-gray-600">
-                                    <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">Approval Details</h3>
-                                    <div class="p-4 bg-gray-50 rounded-md border border-gray-200">
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <!-- Recommender Selection -->
+                            <!-- Approvals -->
+                            <div class="pt-6 border-t-2 border-gray-600">
+                                <h3 class="text-lg font-medium text-white bg-gray-800 px-4 rounded-md mb-4">
+                                    <i class="fas fa-check mr-2"></i>Approval Details</h3>
+                                <div class="p-4 bg-gray-50 rounded-md border border-gray-200">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Recommender Selection -->
+                                        <div class="relative">
+                                            <label for="recommender" class="block text-sm font-medium text-gray-700 mb-1">Recommender</label>
                                             <div class="relative">
-                                                <label for="recommender" class="block text-sm font-medium text-gray-700 mb-1">Recommender</label>
-                                                <div class="relative">
-                                                    <select id="recommender" name="recommender" required
-                                                        class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                                        <option value="" disabled selected>Select recommender</option>
-                                                        @foreach($recommenders as $recommender)
-                                                            <option value="{{ $recommender->email }}">
-                                                                {{ $recommender->first_name }} {{ $recommender->last_name }}
-                                                                @if($recommender->position)
-                                                                    ({{ $recommender->position }})
-                                                                @endif
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                                        <i class="fas fa-chevron-down text-xs"></i>
-                                                    </div>
+                                                <select id="recommender" name="recommender" required
+                                                    class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                    <option value="" disabled selected>Select recommender</option>
+                                                    @foreach($recommenders as $recommender)
+                                                        <option value="{{ $recommender->email }}">
+                                                            {{ $recommender->first_name }} {{ $recommender->last_name }}
+                                                            @if($recommender->position)
+                                                                ({{ $recommender->position }})
+                                                            @endif
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                                    <i class="fas fa-chevron-down text-xs"></i>
                                                 </div>
-                                                <p class="mt-1 text-xs text-gray-500">The person who will recommend your travel order for approval</p>
                                             </div>
+                                            <p class="mt-1 text-xs text-gray-500">The person who will recommend your travel order for approval</p>
+                                        </div>
 
-                                            <!-- Approver Selection -->
+                                        <!-- Approver Selection -->
+                                        <div class="relative">
+                                            <label for="approver" class="block text-sm font-medium text-gray-700 mb-1">Approver</label>
                                             <div class="relative">
-                                                <label for="approver" class="block text-sm font-medium text-gray-700 mb-1">Approver</label>
-                                                <div class="relative">
-                                                    <select id="approver" name="approver" required
-                                                        class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                                        <option value="" disabled selected>Select approver</option>
-                                                        @foreach($approvers as $approver)
-                                                            <option value="{{ $approver->email }}">
-                                                                {{ $approver->first_name }} {{ $approver->last_name }}
-                                                                @if($approver->position)
-                                                                    ({{ $approver->position }})
-                                                                @endif
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                                        <i class="fas fa-chevron-down text-xs"></i>
-                                                    </div>
+                                                <select id="approver" name="approver" required
+                                                    class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                    <option value="" disabled selected>Select approver</option>
+                                                    @foreach($approvers as $approver)
+                                                        <option value="{{ $approver->email }}">
+                                                            {{ $approver->first_name }} {{ $approver->last_name }}
+                                                            @if($approver->position)
+                                                                ({{ $approver->position }})
+                                                            @endif
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                                    <i class="fas fa-chevron-down text-xs"></i>
                                                 </div>
-                                                <p class="mt-1 text-xs text-gray-500">The person who will approve your travel order</p>
                                             </div>
+                                            <p class="mt-1 text-xs text-gray-500">The person who will approve your travel order</p>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Form Actions -->
-                                <div class="pt-6 border-t border-gray-200 flex justify-end space-x-3">
-                                    <button type="button" class="bg-white py-2 px-4 border-2 border-gray-300 rounded-md shadow text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        Cancel
-                                    </button>
-                                    <button type="button" id="previewBtn" class="inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        Preview
-                                    </button>
-                                    <button type="submit" id="submitBtn" class="hidden inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                        Submit Request
-                                    </button>
-                                </div>
+                            </div>
+                            
+                            <!-- Form Actions -->
+                            <div class="p-2 border-t-2 border-gray-600 flex justify-end space-x-3">
+                                <button type="button" id="previewBtn" class="inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Preview
+                                </button>
+                                <button type="submit" id="submitBtn" class="hidden inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                    Submit Request
+                                </button>
                             </div>
                         </form>
                     </div>
