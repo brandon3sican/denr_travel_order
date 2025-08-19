@@ -22,20 +22,32 @@
                 </div>
             </div>
             <nav class="mt-4 space-y-1">
+                <!-- Admin Menu -->
+                <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Main
+                </div>
+
                 <!-- Dashboard -->
-                <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-black' : 'text-gray-700 hover:bg-gray-50' }}">
-                    <i class="fas fa-tachometer-alt"></i>
+                <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-tachometer-alt text-blue-400 mr-3 w-5 text-center"></i>
                     <span>Dashboard</span>
                 </a>
 
                 @if (!auth()->user()->is_admin)
                 <!-- Regular User Menu -->
-                <a href="{{ route('my-travel-orders') }}" class="nav-item {{ request()->routeIs('my-travel-orders') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
-                    <i class="fas fa-passport"></i>
+                <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Travel Orders
+                </div>
+
+                <!-- My Travel Orders -->
+                <a href="{{ route('my-travel-orders') }}" class="nav-item {{ request()->routeIs('my-travel-orders') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-suitcase text-green-400 mr-3 w-5 text-center"></i>
                     <span>My Travel Orders</span>
                 </a>
-                <a href="{{ route('travel-orders.create') }}" class="nav-item {{ request()->routeIs('travel-orders.create') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
-                    <i class="fas fa-plus-circle"></i>
+
+                <!-- New Travel Order -->
+                <a href="{{ route('travel-orders.create') }}" class="nav-item {{ request()->routeIs('travel-orders.create') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-plus-circle text-yellow-400 mr-3 w-5 text-center"></i>
                     <span>New Travel Order</span>
                 </a>
                 @endif
@@ -47,38 +59,61 @@
                 </div>
 
                 <!-- Travel Order Management -->
-                <a href="{{ route('all-travel-orders') }}" class="nav-item {{ request()->routeIs('all-travel-orders') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
-                    <i class="fas fa-clipboard-list"></i>
+                <a href="{{ route('all-travel-orders') }}" class="nav-item {{ request()->routeIs('all-travel-orders') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-clipboard-list text-indigo-400 mr-3 w-5 text-center"></i>
                     <span>All Travel Orders</span>
                 </a>
 
                 <!-- Role & Permission Management -->
-                <a href="{{ route('role-management') }}" class="nav-item {{ request()->routeIs('role-management') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
-                    <i class="fas fa-user-shield"></i>
+                <a href="{{ route('role-management') }}" class="nav-item {{ request()->routeIs('role-management') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-user-shield text-purple-400 mr-3 w-5 text-center"></i>
                     <span>Role Management</span>
                 </a>
 
                 <!-- Status Management -->
-                <a href="{{ route('status-management.index') }}" class="nav-item {{ request()->routeIs('status-management.*') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
-                    <i class="fas fa-tasks"></i>
+                <a href="{{ route('status-management.index') }}" class="nav-item {{ request()->routeIs('status-management.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-tasks text-cyan-400 mr-3 w-5 text-center"></i>
                     <span>Status Management</span>
                 </a>
 
-                <!-- Reports -->
-                <a href="{{ route('reports.index') }}" class="nav-item {{ request()->routeIs('reports.*') ? 'bg-gray-700 text-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Reports & Analytics</span>
+                <!-- Reports Menu -->
+                <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Reports
+                </div>
+
+                <a href="{{ route('reports.approval-metrics') }}" class="nav-item {{ request()->routeIs('reports.approval-metrics') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-clipboard-check text-green-400 mr-3 w-5 text-center"></i>
+                    <span>Approval Metrics</span>
+                </a>
+
+                <a href="{{ route('reports.travel-volume') }}" class="nav-item {{ request()->routeIs('reports.travel-volume') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-chart-line text-blue-400 mr-3 w-5 text-center"></i>
+                    <span>Travel Volume</span>
+                </a>
+
+                <a href="{{ route('reports.employee-travel') }}" class="nav-item {{ request()->routeIs('reports.employee-travel') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-users text-purple-400 mr-3 w-5 text-center"></i>
+                    <span>Employee Travel</span>
+                </a>
+
+                <a href="{{ route('reports.department') }}" class="nav-item {{ request()->routeIs('reports.department') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-building text-amber-400 mr-3 w-5 text-center"></i>
+                    <span>Department Reports</span>
                 </a>
                 @endif
-                
+
+                <!-- User Menu -->
+                <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    User Profile
+                </div>
                 <!-- User Profile -->
-                <a href="" id="profileLink" class="nav-item">
-                    <i class="fas fa-user-cog"></i>
+                <a href="" id="profileLink" class="nav-item text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <i class="fas fa-user-cog text-pink-400 mr-3 w-5 text-center"></i>
                     <span>My Profile</span>
                 </a>
 
                 <!-- Profile Modal -->
-                <div id="profileModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                <div id="profileModal" class="fixed inset-0 z-50 hidden overflow-y-auto rounded-xl">
                     <div class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 transition-opacity">
                         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" 
                              id="modalContent">
@@ -94,7 +129,7 @@
                             </div>
                             
                             <!-- Profile Content -->
-                            <div class="p-6 bg-gray-800">
+                            <div class="p-6 bg-gray-800 rounded-b-lg">
                                 @php
                                     $user = Auth::user();
                                     $employee = $user->employee; // Get the employee relationship
