@@ -41,63 +41,120 @@ stateDiagram-v2
     Completed --> [*]
 ```
 
-### Status Details
+## Detailed Workflow
 
-#### 1. Draft
-- **Description**: Initial state when creating a new travel order
-- **Allowed Actions**:
-  - Edit all fields
-  - Save as draft
-  - Submit for recommendation
-  - Delete (if no dependencies)
-- **Who Can Modify**: Creator, Admin
-- **Notification**: None
+### 1. Draft Stage
+- **Initiated by**: Employee/Creator
+- **Actions**:
+  - Fill in travel details (destination, purpose, dates, etc.)
+  - Add passengers (if any)
+  - Upload supporting documents
+  - Save as draft or submit for recommendation
+- **Required Fields**:
+  - Destination
+  - Purpose
+  - Start/End dates
+  - Fund source
+  - Recommender
+  - Approver
+- **Notifications**: None
+- **Possible Next States**: For Recommendation, Cancelled
 
-#### 2. For Recommendation
-- **Description**: Submitted and waiting for recommender's action
-- **Allowed Actions**:
-  - View details
-  - Add recommendation
-  - Reject with reason
-  - Cancel (creator/admin only)
-- **Who Can Modify**: Recommender, Admin
-- **Notification**: Email to recommender
+### 2. For Recommendation
+- **Actioned by**: Recommender
+- **Actions**:
+  - Review travel order details
+  - Add recommendation notes
+  - Attach electronic signature
+  - Recommend for approval or reject with reason
+- **Required Actions**:
+  - Review all details
+  - Add recommendation notes (optional)
+  - Provide electronic signature
+- **Notifications**:
+  - Email to recommender when assigned
+  - Email to creator when recommended/rejected
+- **Possible Next States**: For Approval, Rejected, Cancelled
 
-#### 3. For Approval
-- **Description**: Recommended and waiting for approver's action
-- **Allowed Actions**:
-  - View details
-  - Approve with travel order number
-  - Reject with reason
-  - Request revision
+### 3. For Approval
+- **Actioned by**: Approver
+- **Actions**:
+  - Review travel order and recommendation
+  - Add approval notes
+  - Attach electronic signature
+  - Approve with travel order number or reject with reason
+- **Required Actions**:
+  - Review all details and recommendation
+  - Add approval notes (optional)
+  - Provide electronic signature
+  - Assign travel order number
+- **Notifications**:
+  - Email to approver when assigned
+  - Email to creator and recommender when approved/rejected
+- **Possible Next States**: Approved, Rejected, Cancelled
+
+### 4. Approved
+- **Status**: Final approval granted
+- **Actions**:
+  - View and print travel order
+  - Mark as completed after travel
   - Cancel (admin only)
-- **Who Can Modify**: Approver, Admin
-- **Notification**: Email to approver
+- **Notifications**:
+  - Email to creator with approved travel order
+  - Email to passengers (if any)
+- **Possible Next States**: Completed, Cancelled
 
-#### 4. Approved
-- **Description**: Fully approved with official travel order number
-- **Allowed Actions**:
-  - View details
-  - Download/print travel order
-  - Mark as completed
-  - Cancel (admin only)
-- **Who Can Modify**: Admin
-- **Notification**: Email to creator
+### 5. Rejected
+- **Status**: Rejected by recommender or approver
+- **Actions**:
+  - View rejection reason
+  - Create new version (if allowed)
+  - Contact recommender/approver for clarification
+- **Notifications**:
+  - Email to creator with rejection reason
+  - Email to previous approvers (if applicable)
+- **Possible Next States**: Draft (new version), [*]
 
-#### 5. Rejected
-- **Description**: Rejected by recommender or approver
-- **Allowed Actions**:
-  - View details and rejection reason
-  - Resubmit (creates new version)
-  - Delete (admin only)
-- **Who Can Modify**: Creator, Admin
-- **Notification**: Email to creator with rejection reason
-
-#### 6. Cancelled
-- **Description**: Cancelled by creator or admin
-- **Allowed Actions**:
-  - View details
+### 6. Cancelled
+- **Status**: Travel order cancelled
+- **Actions**:
+  - View cancellation details
   - Restore (admin only)
+  - Create new version (if needed)
+- **Notifications**:
+  - Email to all involved parties
+- **Possible Next States**: [*]
+
+### 7. Completed
+- **Status**: Travel has been completed
+- **Actions**:
+  - View travel order details
+  - Download documents
+  - Submit completion report (if required)
+- **Notifications**:
+  - Email confirmation to creator
+  - Notification to HR/Admin
+- **Final State**: No further actions
+
+## Workflow Rules
+
+### General Rules
+1. Only the creator can modify a draft
+2. Once submitted, only recommenders/approvers can change the status
+3. All status changes are logged in the history
+4. Email notifications are sent for all status changes
+5. Electronic signatures are required for recommendations and approvals
+
+### Access Control
+- **Creators**: Can view and manage their own travel orders
+- **Recommenders**: Can view and act on travel orders assigned to them
+- **Approvers**: Can view and approve travel orders in their purview
+- **Admins**: Full access to all travel orders and settings
+
+### Data Retention
+- Drafts older than 30 days may be automatically archived
+- Completed travel orders are retained for 5 years
+- All actions are logged for audit purposes
   - Delete (admin only)
 - **Who Can Modify**: Admin
 - **Notification**: Email to all involved parties

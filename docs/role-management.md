@@ -2,102 +2,200 @@
 
 ## Overview
 
-The Role Management system controls user access and permissions within the DENR Travel Order System. It's built on Laravel's built-in authorization system with Spatie's Laravel Permission package for enhanced role and permission management.
+The Role Management system controls user access and permissions within the DENR Travel Order System. It's built on Laravel's built-in authorization system with a custom role-based access control (RBAC) implementation.
 
 ## Roles and Permissions
 
 ### Default Roles
 
 1. **Super Admin**
-   - Full system access
-   - Can manage all users, roles, and permissions
-   - Can override any travel order status
-   - Access to all system settings
-   - Can generate comprehensive system reports
-   - Can manage system maintenance
+   - Full system access and configuration
+   - Manage all users, roles, and permissions
+   - Override any travel order status
+   - Access to system settings and maintenance
+   - Generate comprehensive reports
+   - Manage system backups
+   - Configure approval workflows
 
 2. **Admin**
    - Full access to travel order management
-   - Can manage users and their roles
-   - Can approve/recommend any travel order
-   - Can generate and export reports
-   - Cannot modify system settings
+   - Manage users and their roles
+   - Approve/recommend any travel order
+   - Generate and export reports
+   - Manage departments and divisions
+   - Cannot modify system configurations
+   - View system logs
 
 3. **Recommender**
-   - Can recommend travel orders assigned to them
-   - Can view travel orders requiring their recommendation
-   - Can attach e-signatures to recommendations
+   - Recommend travel orders assigned to them
+   - View travel orders requiring recommendation
+   - Attach e-signatures to recommendations
+   - View recommendation history
    - Cannot recommend their own travel orders
-   - Can view basic reports for their department
+   - View department-specific reports
+   - Export recommendation history
 
 4. **Approver**
-   - Can approve/reject travel orders
-   - Can view travel orders requiring their approval
-   - Can attach e-signatures to approvals
+   - Approve/reject travel orders
+   - View travel orders requiring approval
+   - Attach e-signatures to approvals
+   - Generate official travel order numbers
+   - View approval statistics
+   - Delegate approval authority (if configured)
    - Cannot approve their own travel orders
-   - Can generate official travel order numbers
-   - Can view approval statistics
 
 5. **User** (Default)
-   - Can create and manage their own travel orders
-   - Can view their travel order history
-   - Can upload and manage their e-signature
-   - Can track status of their requests
-   - Can view personal travel statistics
-   - Can export their own travel orders
+   - Create and manage their own travel orders
+   - View their travel order history
+   - Upload and manage e-signature
+   - Track request status
+   - View personal travel statistics
+   - Export their travel orders
+   - Update profile information
 
-### Permissions
+### Permission Groups
 
 #### Travel Order Permissions
-- `view travel orders` - View all travel orders
-- `create travel orders` - Create new travel orders
-- `edit travel orders` - Modify existing travel orders
-- `delete travel orders` - Remove travel orders
-- `recommend travel orders` - Recommend travel orders
-- `approve travel orders` - Approve travel orders
-- `view all travel orders` - View all travel orders in the system
-- `export travel orders` - Export travel orders to various formats
+- `view-travel-orders` - View travel order lists
+- `create-travel-orders` - Create new travel orders
+- `edit-travel-orders` - Modify existing travel orders
+- `delete-travel-orders` - Remove travel orders
+- `recommend-travel-orders` - Recommend travel orders
+- `approve-travel-orders` - Approve travel orders
+- `view-all-travel-orders` - View all travel orders
+- `export-travel-orders` - Export travel order data
+- `cancel-travel-orders` - Cancel travel orders
+- `manage-travel-order-templates` - Manage travel order templates
 
 #### User Management Permissions
-- `view users` - View user list
-- `create users` - Add new users
-- `edit users` - Modify user details
-- `delete users` - Remove users
-- `assign roles` - Assign roles to users
-- `manage roles` - Create and modify roles
+- `view-users` - View user list
+- `create-users` - Add new users
+- `edit-users` - Modify user details
+- `delete-users` - Remove users
+- `assign-roles` - Assign roles to users
+- `manage-roles` - Create and modify roles
+- `view-user-profiles` - View detailed user profiles
+- `impersonate-users` - Login as another user
 
 #### System Permissions
-- `view reports` - Access to reporting features
-- `manage settings` - Modify system settings
-- `manage departments` - Manage department structure
-- `audit logs` - View system audit logs
+- `view-reports` - Access reporting features
+- `generate-reports` - Create custom reports
+- `manage-settings` - Modify system settings
+- `manage-departments` - Manage department structure
+- `view-audit-logs` - View system audit logs
+- `manage-backups` - Create and manage backups
+- `view-system-health` - Monitor system health
 
 ## Implementation
 
 ### Role Assignment
 
-Roles are managed through the Role Management interface (`/admin/roles`). The interface allows:
-- Creating and modifying roles
-- Assigning permissions to roles
-- Assigning roles to users
-- Viewing role assignments
+Roles are managed through the Admin Panel (`/admin`). The interface provides:
+- Role creation and modification
+- Permission assignment to roles
+- User role management
+- Role-based dashboard access
+- Audit trail for role changes
 
 ### Authorization
 
 #### Middleware Protection
 ```php
 // Role-based access
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    // Admin-only routes
+Route::middleware(['auth', 'role:admin,approver'])->group(function () {
+    // Routes accessible by admin or approver
 });
 
 // Permission-based access
-Route::middleware(['auth', 'permission:approve travel orders'])->group(function () {
+Route::middleware(['auth', 'permission:approve-travel-orders'])->group(function () {
     // Routes for users who can approve travel orders
+});
+
+// Multiple permissions
+Route::middleware(['auth', 'permission:create-travel-orders|edit-travel-orders'])->group(function () {
+    // Routes for users who can create or edit travel orders
 });
 ```
 
 #### Blade Directives
+
+```blade
+@role('admin')
+    <!-- Content visible only to admin -->
+    <div class="admin-actions">
+        <!-- Admin actions here -->
+    </div>
+@endrole
+
+@can('approve-travel-orders')
+    <!-- Content visible to users with approval permission -->
+    <button>Approve Travel Order</button>
+@endcan
+```
+
+### Programmatic Checks
+
+```php
+// Controller method
+public function approve(TravelOrder $travelOrder)
+{
+    $this->authorize('approve-travel-orders');
+    
+    // Approval logic here
+}
+
+// Service class
+if (auth()->user()->can('edit-travel-orders')) {
+    // Update travel order
+}
+```
+
+## Best Practices
+
+1. **Least Privilege**
+   - Assign minimum required permissions
+   - Use role inheritance where applicable
+   - Regularly review and audit permissions
+
+2. **Role Design**
+   - Create roles based on job functions
+   - Avoid role explosion (too many specific roles)
+   - Document role purposes and permissions
+
+3. **Security**
+   - Never assign super admin role lightly
+   - Implement IP restrictions for sensitive roles
+   - Enable two-factor authentication for admin roles
+   - Log all permission changes
+
+4. **Maintenance**
+   - Document all custom permissions
+   - Review role assignments periodically
+   - Clean up unused roles and permissions
+   - Test role changes in staging first
+
+## Common Tasks
+
+### Creating a New Role
+1. Go to Admin Panel > Roles
+2. Click "Add New Role"
+3. Enter role name and description
+4. Assign appropriate permissions
+5. Save the role
+6. Assign to users as needed
+
+### Modifying Permissions
+1. Go to Admin Panel > Roles
+2. Select the role to modify
+3. Update permission assignments
+4. Save changes
+5. Notify affected users if needed
+
+### Auditing Access
+1. View audit logs in Admin Panel
+2. Filter by user, role, or action
+3. Review permission changes
+4. Generate audit reports as needed
 ```blade
 @role('admin')
     <!-- Content for admins only -->

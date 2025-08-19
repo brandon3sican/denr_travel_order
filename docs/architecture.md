@@ -2,53 +2,79 @@
 
 ## Overview
 
-The DENR Travel Order System follows a modern web application architecture using Laravel 10 as the backend framework. The system is designed with a focus on maintainability, scalability, and security, following the MVC (Model-View-Controller) pattern with additional layers for business logic and service abstraction.
+The DENR Travel Order System is a modern web application built with Laravel 10, featuring a clean architecture that separates concerns and promotes maintainability. The system follows the MVC (Model-View-Controller) pattern with additional layers for business logic and service abstraction.
 
 ## Technology Stack
 
 ### Backend
 - **Framework**: Laravel 10.x (PHP 8.2+)
 - **Database**: MySQL 8.0+ with InnoDB
-- **Search**: Laravel Scout with MySQL Full-Text Search
-- **Caching**: Redis/Memcached
-- **Queue**: Laravel Horizon with Redis
 - **Authentication**: Laravel Breeze with Session
-- **Authorization**: Spatie Laravel Permission
-- **API**: RESTful JSON API with Laravel Sanctum
-- **File Storage**: Local/S3 Compatible
+- **Authorization**: Role-based access control (RBAC)
+- **File Storage**: Local filesystem with S3 compatibility
 - **PDF Generation**: DomPDF
-- **Email**: SMTP/Mailgun/SES
-- **Logging**: Stackdriver/Papertrail
-- **Monitoring**: Laravel Telescope
+- **Email**: SMTP with queue support
+- **Logging**: Daily log files with rotation
+- **Caching**: Redis for session and cache
 
 ### Frontend
 - **Templating**: Blade Components
-- **Styling**: Tailwind CSS 3.x with Flowbite
+- **Styling**: Tailwind CSS 3.x
 - **JavaScript**: Alpine.js 3.x
 - **Icons**: Heroicons 2.x
-- **Date Handling**: Moment.js
-- **UI Components**: Custom Livewire components
-- **Data Tables**: Livewire PowerGrid
-- **Form Handling**: Livewire with validation
-- **Notifications**: Laravel Notifications with Toastr
+- **Date Handling**: Flatpickr
+- **UI Components**: Custom components with Livewire
+- **Form Handling**: Livewire forms with validation
+- **Notifications**: Laravel Notifications with toast messages
 
 ### Development & DevOps
-- **Version Control**: Git (GitHub/GitLab)
+- **Version Control**: Git with GitHub
 - **Package Managers**: Composer 2.x, NPM 9.x
-- **Local Development**: Laravel Sail (Docker)
-- **Testing**: PHPUnit, Pest, Laravel Dusk
-- **CI/CD**: GitHub Actions/GitLab CI
-- **Containerization**: Docker
-- **Monitoring**: Sentry, Bugsnag
-- **Documentation**: Markdown, Swagger/OpenAPI
+- **Local Development**: Laravel Valet
+- **Testing**: PHPUnit, Pest
+- **Deployment**: Git-based deployment
+- **Monitoring**: Laravel Horizon for queue monitoring
+
+## System Components
+
+### 1. Authentication & Authorization
+- Email/password authentication
+- Role-based access control (RBAC)
+- Middleware for route protection
+- Password reset functionality
+- Email verification
+
+### 2. User Management
+- Employee profiles
+- Role assignments
+- Department/division management
+- User activity logging
+
+### 3. Travel Order Management
+- Create and manage travel orders
+- Multi-level approval workflow
+- Document generation (PDF)
+- Status tracking
+- History and audit logs
+
+### 4. Document Processing
+- PDF generation for travel orders
+- File uploads and management
+- Digital signatures
+- Document templates
+
+### 5. Notifications
+- Email notifications for status changes
+- In-app notifications
+- Task reminders
+- Approval requests
 
 ## Directory Structure
 
 ```
 app/
 ├── Console/
-│   ├── Commands/       # Custom Artisan commands
-│   └── Kernel.php      # Command scheduling
+│   └── Commands/       # Custom Artisan commands
 ├── Events/             # Event classes
 ├── Exceptions/         # Custom exception handlers
 ├── Http/
@@ -57,47 +83,75 @@ app/
 │   │   ├── Auth/       # Authentication controllers
 │   │   └── Web/        # Web controllers
 │   ├── Middleware/     # HTTP middleware
-│   ├── Requests/       # Form request validation
-│   └── Resources/      # API resources
+│   └── Requests/       # Form request validation
 ├── Jobs/               # Queueable jobs
 ├── Listeners/          # Event listeners
 ├── Mail/               # Email templates
-├── Models/
-│   ├── Concerns/       # Model traits
-│   ├── Enums/          # PHP 8.1+ enums
-│   └── Relations/      # Relationship definitions
+├── Models/             # Eloquent models
 ├── Notifications/      # Notification classes
 ├── Policies/           # Authorization policies
-├── Providers/          # Service providers
-├── Rules/              # Custom validation rules
-├── Services/           # Business logic services
-│   ├── Reports/        # Report generation
-│   ├── Documents/      # Document processing
-│   └── Workflow/       # Workflow logic
-└── View/
-    └── Components/     # Blade components
+└── Services/           # Business logic services
+    ├── Documents/      # Document processing
+    ├── Notifications/  # Notification services
+    └── Workflow/       # Workflow logic
 
-bootstrap/              # Framework bootstrapping
 config/                 # Configuration files
 
 database/
 ├── factories/          # Model factories
 ├── migrations/         # Database migrations
-├── seeders/            # Database seeders
-└── states/             # Model states for testing
+└── seeders/            # Database seeders
 
 public/                 # Web root
 
 resources/
 ├── css/                # CSS assets
 ├── js/                 # JavaScript assets
-│   ├── Components/     # Alpine.js components
-│   └── Lib/            # Third-party libraries
-├── lang/               # Language files
-└── views/
+└── views/              # Blade templates
     ├── auth/           # Authentication views
     ├── components/     # Reusable components
     ├── layouts/        # Layout templates
+    └── travel-orders/  # Travel order views
+
+routes/
+├── api.php            # API routes
+├── auth.php           # Authentication routes
+└── web.php            # Web routes
+
+storage/
+├── app/               # User uploads
+│   ├── public/        # Publicly accessible files
+│   └── private/       # Private files
+└── logs/              # Application logs
+
+tests/                 # Test files
+```
+
+## Key Features
+
+### 1. Multi-level Approval Workflow
+- Configurable approval chains
+- Parallel/serial approval options
+- Delegation support
+- Escalation rules
+
+### 2. Document Management
+- Version control
+- Digital signatures
+- Template system
+- Bulk operations
+
+### 3. Reporting
+- Custom report builder
+- Export to multiple formats (PDF, Excel, CSV)
+- Scheduled reports
+- Dashboard widgets
+
+### 4. Integration
+- Email notifications
+- Calendar integration
+- API for external systems
+- Webhook support
     ├── livewire/       # Livewire components
     └── travel-orders/  # Travel order views
 

@@ -10,94 +10,159 @@ This document outlines the database schema, relationships, and key tables used i
 
 #### 1. users
 - `id` (bigint, primary key)
+- `name` (string)
 - `email` (string, unique)
 - `email_verified_at` (timestamp, nullable)
 - `password` (string)
-- `is_admin` (boolean, default: false)
+- `role` (string) - 'admin', 'recommender', 'approver', 'user'
+- `is_active` (boolean, default: true)
+- `last_login_at` (timestamp, nullable)
+- `last_login_ip` (string, nullable)
 - `remember_token` (string, nullable)
 - `created_at` (timestamp)
 - `updated_at` (timestamp)
 
-#### 2. emp_status
+#### 2. employees
 - `id` (bigint, primary key)
-- `name` (string)
-- `desc` (string, nullable)
-- `created_at` (timestamp)
-- `updated_at` (timestamp)
-
-#### 3. employees
-- `id` (bigint, primary key)
+- `user_id` (bigint, foreign key to users.id)
+- `employee_id` (string, unique)
 - `first_name` (string)
 - `middle_name` (string, nullable)
 - `last_name` (string)
 - `suffix` (string, nullable)
-- `sex` (string)
-- `email` (string, unique)
-- `emp_status` (string)
 - `position_name` (string)
-- `assignment_name` (string)
+- `department` (string)
 - `div_sec_unit` (string)
+- `email` (string, unique)
+- `phone` (string, nullable)
+- `signature_path` (string, nullable)
 - `created_at` (timestamp)
 - `updated_at` (timestamp)
+- `deleted_at` (timestamp, nullable)
 
-#### 4. travel_order_roles
+#### 3. travel_orders
 - `id` (bigint, primary key)
-- `name` (string, unique)
-- `description` (text, nullable)
-- `created_at` (timestamp)
-- `updated_at` (timestamp)
-
-#### 5. travel_order_status
-- `id` (bigint, primary key)
-- `name` (string, unique)
-- `created_at` (timestamp)
-- `updated_at` (timestamp)
-
-#### 6. travel_orders
-- `id` (bigint, primary key)
-- `employee_email` (string, foreign key to users.email)
-- `employee_salary` (decimal 10,2)
-- `destination` (string)
+- `tracking_number` (string, unique)
+- `employee_id` (bigint, foreign key to employees.id)
 - `purpose` (text)
-- `departure_date` (date)
-- `arrival_date` (date)
-- `recommender` (string, foreign key to users.email)
-- `approver` (string, foreign key to users.email)
-- `appropriation` (string)
-- `per_diem` (decimal 10,2)
-- `laborer_assistant` (decimal 10,0)
-- `remarks` (string)
-- `status_id` (unsigned bigint, foreign key to travel_order_status.id)
+- `destination` (string)
+- `start_date` (date)
+- `end_date` (date)
+- `fund_source` (string)
+- `recommender_id` (bigint, foreign key to users.id, nullable)
+- `recommended_at` (timestamp, nullable)
+- `recommendation_notes` (text, nullable)
+- `recommendation_signature` (text, nullable)
+- `approver_id` (bigint, foreign key to users.id, nullable)
+- `approved_at` (timestamp, nullable)
+- `approval_notes` (text, nullable)
+- `approval_signature` (text, nullable)
+- `status` (string) - 'draft', 'for_recommendation', 'for_approval', 'approved', 'rejected', 'cancelled', 'completed'
+- `rejection_reason` (text, nullable)
+- `created_by` (bigint, foreign key to users.id)
+- `updated_by` (bigint, foreign key to users.id, nullable)
+- `created_at` (timestamp)
+- `updated_at` (timestamp)
+- `deleted_at` (timestamp, nullable)
+
+#### 4. travel_order_passengers
+- `id` (bigint, primary key)
+- `travel_order_id` (bigint, foreign key to travel_orders.id)
+- `employee_id` (bigint, foreign key to employees.id)
 - `created_at` (timestamp)
 - `updated_at` (timestamp)
 
-#### 7. user_travel_order_roles
+#### 5. travel_order_attachments
 - `id` (bigint, primary key)
-- `user_email` (string, foreign key to users.email)
-- `travel_order_role_id` (unsigned bigint, foreign key to travel_order_roles.id)
+- `travel_order_id` (bigint, foreign key to travel_orders.id)
+- `file_name` (string)
+- `file_path` (string)
+- `file_type` (string)
+- `file_size` (integer)
+- `uploaded_by` (bigint, foreign key to users.id)
+- `created_at` (timestamp)
+- `updated_at` (timestamp)
+
+#### 6. travel_order_histories
+- `id` (bigint, primary key)
+- `travel_order_id` (bigint, foreign key to travel_orders.id)
+- `status_from` (string)
+- `status_to` (string)
+- `remarks` (text, nullable)
+- `action_by` (bigint, foreign key to users.id)
+- `created_at` (timestamp)
+- `updated_at` (timestamp)
+
+#### 7. notifications
+- `id` (bigint, primary key)
+- `type` (string)
+- `notifiable_type` (string)
+- `notifiable_id` (bigint)
+- `data` (json)
+- `read_at` (timestamp, nullable)
 - `created_at` (timestamp)
 - `updated_at` (timestamp)
 
 ## Relationships
 
-### Users
-- `hasMany` TravelOrder (as employee_email)
-- `hasMany` TravelOrder (as recommender)
-- `hasMany` TravelOrder (as approver)
-- `belongsToMany` TravelOrderRole (through user_travel_order_roles)
+### User Model
+- `hasOne` Employee
+- `hasMany` TravelOrder (as creator)
+- `hasMany` RecommendedTravelOrders (foreignKey: 'recommender_id')
+- `hasMany` ApprovedTravelOrders (foreignKey: 'approver_id')
+- `hasMany` TravelOrderHistories
+- `morphMany` Notifications
 
-### Employees
-- `belongsTo` User (via email)
+### Employee Model
+- `belongsTo` User
+- `hasMany` TravelOrders (as passenger)
+- `hasMany` TravelOrderPassengers
+- `hasMany` Attachments (through TravelOrder)
 
-### Travel Orders
-- `belongsTo` User (as employee_email)
-- `belongsTo` User (as recommender)
-- `belongsTo` User (as approver)
-- `belongsTo` TravelOrderStatus (as status_id)
+### TravelOrder Model
+- `belongsTo` Employee
+- `belongsTo` Recommender (User)
+- `belongsTo` Approver (User)
+- `belongsTo` Creator (User, foreignKey: 'created_by')
+- `hasMany` Passengers (through TravelOrderPassenger)
+- `hasMany` Attachments
+- `hasMany` Histories
+- `hasMany` Notifications
 
-### User Travel Order Roles
-- `belongsTo` User (as user_email)
-- `belongsTo` TravelOrderRole
+## Indexes
+
+### users
+- Primary: `id`
+- Unique: `email`
+- Index: `role`, `is_active`
+
+### employees
+- Primary: `id`
+- Unique: `employee_id`, `email`
+- Index: `user_id`, `department`, `div_sec_unit`
+- Fulltext: `first_name`, `middle_name`, `last_name`
+
+### travel_orders
+- Primary: `id`
+- Unique: `tracking_number`
+- Index: `employee_id`, `recommender_id`, `approver_id`, `status`, `start_date`, `end_date`
+- Fulltext: `purpose`, `destination`
+
+## Soft Deletes
+- `employees`
+- `travel_orders`
+- `travel_order_attachments`
+
+## Enums
+
+### Travel Order Status
+- `draft` - Initial draft state
+- `for_recommendation` - Submitted and awaiting recommendation
+- `for_approval` - Recommended and awaiting approval
+- `approved` - Fully approved
+- `rejected` - Rejected by recommender or approver
+- `cancelled` - Cancelled by creator or admin
+- `completed` - Travel has been completed
 
 ## Indexes
 
