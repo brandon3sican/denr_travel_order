@@ -5,7 +5,7 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Navigation -->
             <header class="bg-white shadow-sm z-10">
-                <div class="flex items-center justify-between p-4">
+                <div class="flex items-center justify-between p-2">
                     <div class="flex items-center">
                         <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
                             <i class="fas fa-bars text-xl"></i>
@@ -82,8 +82,13 @@
                                     <p class="text-sm text-gray-600 mt-1">Track and manage all travel order requests</p>
                                 </div>
                                 <div class="flex items-center space-x-3">
+                                    <div>
+                                        <a href="{{ route('travel-orders.create') }}" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            <i class="fas fa-plus mr-2"></i> New Travel Order
+                                        </a>
+                                    </div>
                                     <div class="relative">
-                                        <form id="filterForm" method="GET" class="flex space-x-2">
+                                        <form id="filterForm" method="GET" class="flex space-x-2 border border-gray-500 rounded-md">
                                             <select name="status" id="statusFilter" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                                                 <option value="" {{ request('status') == '' ? 'selected' : '' }}>All Status</option>
                                                 <option value="For Recommendation" {{ request('status') == 'For Recommendation' ? 'selected' : '' }}>For Recommendation</option>
@@ -94,8 +99,8 @@
                                                 <option value="Completed" {{ request('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
                                             </select>
                                             @if(request('status') || request('search'))
-                                                <a href="{{ route('dashboard') }}" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                                    Clear Filters
+                                                <a href="{{ route('dashboard') }}" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">
+                                                    Clear
                                                 </a>
                                             @endif
                                             <input type="hidden" name="search" value="{{ request('search') }}">
@@ -253,7 +258,7 @@
     </div>
 
     <!-- Include Travel Order Modal Component -->
-    @include('components.travel-order-modal')
+    @include('components.travel-order.travel-order-modal')
 
 @endsection
     

@@ -5,16 +5,16 @@
 <div class="flex-1 flex flex-col overflow-hidden">
     <!-- Top Navigation -->
     <header class="bg-white shadow-sm z-10">
-        <div class="flex items-center justify-between p-4">
+        <div class="flex items-center justify-between p-2">
             <div class="flex items-center">
                 <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
                 <h2 class="text-xl font-semibold text-gray-800">Travel Order Volume Report</h2>
             </div>
-            <div class="mt-4 md:mt-0 flex space-x-2">
+            <div class="flex space-x-2">
                 <div class="relative">
-                    <select id="timeframe" class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="timeframe" class="appearance-none bg-white border border-gray-300 py-2 rounded-md pl-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="daily">Daily</option>
                         <option value="weekly">Weekly</option>
                         <option value="monthly" selected>Monthly</option>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <select id="statusFilter" class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="statusFilter" class="appearance-none bg-white border border-gray-300 py-2 rounded-md pl-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">All Statuses</option>
                         @foreach(\App\Models\TravelOrderStatus::all() as $status)
                             <option value="{{ $status->name }}" {{ request('status') == $status->name ? 'selected' : '' }}>
@@ -38,6 +38,10 @@
                         <i class="fas fa-chevron-down text-xs"></i>
                     </div>
                 </div>
+                <button class="relative p-2 text-gray-600 hover:text-gray-900">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                </button>
             </div>
         </div>
     </header>
