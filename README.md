@@ -10,7 +10,8 @@ A comprehensive Travel Order Management System for the Department of Environment
 - **Real-time Updates** - Livewire-powered components for seamless user experience
 - **Comprehensive Reporting** - Generate detailed travel order reports with filtering options
 - **Email Notifications** - Automatic notifications for travel order status updates
-- **Document Generation** - Generate and print travel orders in PDF format
+- **Digital Signatures** - Secure digital signatures for document approval
+- **Document Generation** - Generate and print travel orders in PDF format with embedded signatures
 
 ## 📋 System Workflow
 
@@ -40,8 +41,9 @@ A comprehensive Travel Order Management System for the Department of Environment
    - The assigned Approver receives the travel order
    - Actions available:
      - Review travel order and recommendation
-     - Attach e-signature to approve
+     - Attach digital signature to approve
      - System automatically assigns an official travel order number upon approval
+     - System generates PDF with all required signatures
    - Status: Changes to "Approved" with O.R. number
 
 ### User Roles and Permissions

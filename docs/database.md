@@ -35,12 +35,22 @@ This document outlines the database schema, relationships, and key tables used i
 - `div_sec_unit` (string)
 - `email` (string, unique)
 - `phone` (string, nullable)
-- `signature_path` (string, nullable)
 - `created_at` (timestamp)
 - `updated_at` (timestamp)
 - `deleted_at` (timestamp, nullable)
 
-#### 3. travel_orders
+#### 3. employee_signatures
+- `id` (bigint, primary key)
+- `employee_id` (bigint, foreign key to employees.id)
+- `signature_data` (longtext, nullable) - Base64 encoded signature image
+- `signature_path` (string, nullable) - Path to stored signature file
+- `mime_type` (string) - MIME type of the signature image
+- `is_active` (boolean, default: true) - Indicates if this is the active signature
+- `created_at` (timestamp)
+- `updated_at` (timestamp)
+- `deleted_at` (timestamp, nullable)
+
+#### 4. travel_orders
 - `id` (bigint, primary key)
 - `tracking_number` (string, unique)
 - `employee_id` (bigint, foreign key to employees.id)

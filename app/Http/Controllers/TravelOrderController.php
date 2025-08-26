@@ -138,19 +138,27 @@ class TravelOrderController extends Controller
                 ->with('error', 'Employee record not found. Please contact the administrator.');
         }
         
-        // Get the list of employees who can recommend (excluding the current user)
+        // Get the list of employees who can recommend (travel_order_role_id 3 or 5)
         $recommenders = Employee::where('id', '!=', $employee->id)
+            ->whereHas('user.travelOrderRoles', function($query) {
+                $query->whereIn('travel_order_role_id', [3, 5]);
+            })
+            ->with('user')
             ->orderBy('first_name')
             ->orderBy('last_name')
             ->get();
             
-        // Get the list of employees who can approve (excluding the current user)
+        // Get the list of employees who can approve (travel_order_role_id 4 or 5)
         $approvers = Employee::where('id', '!=', $employee->id)
+            ->whereHas('user.travelOrderRoles', function($query) {
+                $query->whereIn('travel_order_role_id', [4, 5]);
+            })
+            ->with('user')
             ->orderBy('first_name')
             ->orderBy('last_name')
             ->get();
             
-        return view('travel-order.create', compact('employee', 'recommenders', 'approvers'));
+        return view('travel-order.create-travel-order', compact('employee', 'recommenders', 'approvers'));
     }
 
     public function store(Request $request)
@@ -205,7 +213,7 @@ class TravelOrderController extends Controller
                 $employee->signature->signature_url = asset('storage/' . ltrim($signaturePath, '/'));
                 
                 // Log the signature URL for debugging
-                \Log::info('Signature URL:', [
+                Log::info('Signature URL:', [
                     'employee_id' => $employee->id,
                     'name' => $employee->first_name . ' ' . $employee->last_name,
                     'signature_path' => $signaturePath,

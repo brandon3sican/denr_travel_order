@@ -48,6 +48,7 @@ stateDiagram-v2
 - **Actions**:
   - Fill in travel details (destination, purpose, dates, etc.)
   - Add passengers (if any)
+  - Upload or create digital signature (if not already done)
   - Upload supporting documents
   - Save as draft or submit for recommendation
 - **Required Fields**:

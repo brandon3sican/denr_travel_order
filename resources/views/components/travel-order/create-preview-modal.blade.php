@@ -147,8 +147,8 @@
             // Build preview HTML
             let previewHTML = `
                 <div class="space-y-4 text-sm">
-                    <div class="bg-white p-4 rounded-md border border-gray-200">
-                        <h4 class="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">EMPLOYEE INFORMATION</h4>
+                    <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
+                        <h4 class="text-sm font-semibold bg-gray-700 text-white mb-3 pb-2 border-b text-center py-2 rounded-t-md rounded-b-md">EMPLOYEE INFORMATION</h4>
                         <div class="grid grid-cols-5 gap-1">
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Name</p>
@@ -174,8 +174,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-4 rounded-md border border-gray-200">
-                        <h4 class="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">TRAVEL DETAILS</h4>
+                    <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
+                        <h4 class="text-sm font-semibold bg-gray-700 text-white mb-3 pb-2 border-b text-center py-2 rounded-t-md rounded-b-md">TRAVEL DETAILS</h4>
                         <div class="grid grid-cols-5 gap-2">
                             <div>
                                 <p class="text-xs text-gray-500 mb-0.5">Purpose</p>
@@ -206,8 +206,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-4 rounded-md border border-gray-200">
-                        <h4 class="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">APPROVAL DETAILS</h4>
+                    <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
+                        <h4 class="text-sm font-semibold bg-gray-700 text-white mb-3 pb-2 border-b text-center py-2 rounded-t-md rounded-b-md">APPROVAL DETAILS</h4>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="border-r pr-4">
                                 <p class="text-xs text-gray-500 mb-1">Recommending Approval</p>

@@ -47,7 +47,10 @@ The Role Management system controls user access and permissions within the DENR 
 5. **User** (Default)
    - Create and manage their own travel orders
    - View their travel order history
-   - Upload and manage e-signature
+   - Upload and manage their digital signature
+   - View their signature history
+   - Set default signature
+   - Delete old signatures
    - Track request status
    - View personal travel statistics
    - Export their travel orders
@@ -76,6 +79,15 @@ The Role Management system controls user access and permissions within the DENR 
 - `manage-roles` - Create and modify roles
 - `view-user-profiles` - View detailed user profiles
 - `impersonate-users` - Login as another user
+
+#### Signature Permissions
+- `upload_signature` - Upload a new signature
+- `delete_signature` - Remove a signature
+- `view_signature` - View signatures
+- `manage_own_signature` - Manage own signatures
+- `manage_all_signatures` - Manage all users' signatures (admin only)
+- `use_digital_signature` - Ability to use digital signature on documents
+- `require_signature` - Documents require signature for submission
 
 #### System Permissions
 - `view-reports` - Access reporting features

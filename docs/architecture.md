@@ -45,9 +45,10 @@ The DENR Travel Order System is a modern web application built with Laravel 10, 
 - Email verification
 
 ### 2. User Management
-- Employee profiles
+- Employee profiles with digital signatures
 - Role assignments
 - Department/division management
+- Signature management
 - User activity logging
 
 ### 3. Travel Order Management
@@ -56,6 +57,7 @@ The DENR Travel Order System is a modern web application built with Laravel 10, 
 - Document generation (PDF)
 - Status tracking
 - History and audit logs
+- Signature feature
 
 ### 4. Document Processing
 - PDF generation for travel orders
