@@ -44,7 +44,7 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-800 text-white">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(0)">Travel Order No.</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(0)">Date Created</th>
                                     @if (auth()->user()->is_admin)
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(1)">Employee</th>
                                     @endif
@@ -60,7 +60,7 @@
                                 @forelse($travelOrders as $order)
                                 <tr data-status="{{ strtolower($order->status->name ?? '') }}">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        TO-2025-{{ $order->id }}
+                                        {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $order->destination }}

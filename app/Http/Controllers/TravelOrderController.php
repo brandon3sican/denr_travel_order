@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\TravelOrder as TravelOrderModel;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TravelOrderRole;
+use App\Models\Employee;
+use App\Models\EmployeeSignature;
+use App\Models\TravelOrderStatus;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class TravelOrderController extends Controller
 {
@@ -20,10 +26,16 @@ class TravelOrderController extends Controller
         try {
             $travelOrder = TravelOrderModel::with([
                 'employee',
+                'employee.signature',
                 'status',
                 'recommenderEmployee',
                 'approverEmployee'
             ])->findOrFail($id);
+
+            // Add signature URL if it exists
+            if ($travelOrder->employee && $travelOrder->employee->signature) {
+                $travelOrder->employee->signature_url = asset('storage/' . $travelOrder->employee->signature->signature_path);
+            }
 
             return response()->json([
                 'success' => true,
@@ -37,6 +49,7 @@ class TravelOrderController extends Controller
             ], 500);
         }
     }
+
     public function index()
     {
         $perPage = request()->input('per_page', 10);
@@ -108,50 +121,61 @@ class TravelOrderController extends Controller
 
     public function create()
     {
-        $currentUser = Auth::user();
+        // Get the currently authenticated user
+        $user = Auth::user();
         
-        // Fetch users with recommender or recommender and approver roles, excluding current user
-        $recommenders = \App\Models\User::select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position')
-            ->join('employees', 'users.email', '=', 'employees.email')
-            ->join('user_travel_order_roles', 'users.email', '=', 'user_travel_order_roles.user_email')
-            ->join('travel_order_roles', 'user_travel_order_roles.travel_order_role_id', '=', 'travel_order_roles.id')
-            ->whereIn('travel_order_roles.name', ['Recommender', 'Recommender and Approver'])
-            ->where('users.email', '!=', $currentUser->email)
-            ->distinct()
+        // Check if user has a signature
+        if (!$user->employee || !$user->employee->signature) {
+            return redirect()->route('signature.index')
+                ->with('error', 'Please upload your signature before creating a travel order.');
+        }
+        
+        // Get the employee record for the current user
+        $employee = $user->employee;
+        
+        if (!$employee) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Employee record not found. Please contact the administrator.');
+        }
+        
+        // Get the list of employees who can recommend (excluding the current user)
+        $recommenders = Employee::where('id', '!=', $employee->id)
+            ->orderBy('first_name')
+            ->orderBy('last_name')
             ->get();
-
-        // Fetch users with approver or recommender and approver roles, excluding current user
-        $approvers = \App\Models\User::select('users.*', 'employees.first_name', 'employees.last_name', 'employees.position_name as position')
-            ->join('employees', 'users.email', '=', 'employees.email')
-            ->join('user_travel_order_roles', 'users.email', '=', 'user_travel_order_roles.user_email')
-            ->join('travel_order_roles', 'user_travel_order_roles.travel_order_role_id', '=', 'travel_order_roles.id')
-            ->whereIn('travel_order_roles.name', ['Approver', 'Recommender and Approver'])
-            ->where('users.email', '!=', $currentUser->email)
-            ->distinct()
+            
+        // Get the list of employees who can approve (excluding the current user)
+        $approvers = Employee::where('id', '!=', $employee->id)
+            ->orderBy('first_name')
+            ->orderBy('last_name')
             ->get();
-
-        return view('travel-order.create-travel-order', [
-            'recommenders' => $recommenders,
-            'approvers' => $approvers
-        ]);
+            
+        return view('travel-order.create', compact('employee', 'recommenders', 'approvers'));
     }
 
     public function store(Request $request)
     {
+        // Check if user has a signature
+        $user = Auth::user();
+        if (!$user->employee || !$user->employee->signature) {
+            return redirect()->route('signature.index')
+                ->with('error', 'Please upload your signature before creating a travel order.');
+        }
+
         $validated = $request->validate([
-            'employee_email' => 'required|email|exists:employees,email',
+            'employee_email' => 'required|email',
             'employee_salary' => 'required|numeric|min:0',
-            'destination' => 'required|string|max:255',
-            'purpose' => 'required|string',
+            'destination' => 'required',
+            'purpose' => 'required',
             'departure_date' => 'required|date',
             'arrival_date' => 'required|date|after:departure_date',
-            'appropriation' => 'required|string|max:255',
-            'per_diem' => 'required|numeric|min:0',
-            'laborer_assistant' => 'required|numeric|min:0',
-            'remarks' => 'required|string',
-            'recommender' => 'required|email|exists:users,email',
-            'approver' => 'required|email|exists:users,email',
-            'status_id' => 'required|exists:travel_order_status,id'
+            'appropriation' => 'required',
+            'per_diem' => 'required|numeric',
+            'laborer_assistant' => 'required|numeric',
+            'remarks' => 'required',
+            'recommender' => 'required|email',
+            'approver' => 'required|email',
+            'status_id' => 'required',
         ]);
 
         // Create the travel order
@@ -168,11 +192,39 @@ class TravelOrderController extends Controller
     public function show($id)
     {
         $travelOrder = TravelOrderModel::with([
-            'employee',
-            'recommenderEmployee',
-            'approverEmployee',
+            'employee.signature',
+            'recommenderEmployee.signature',
+            'approverEmployee.signature',
             'status'
         ])->findOrFail($id);
+
+        // Helper function to add signature URL
+        $addSignatureUrl = function ($employee) {
+            if ($employee && $employee->signature) {
+                $signaturePath = $employee->signature->signature_path;
+                $employee->signature->signature_url = asset('storage/' . ltrim($signaturePath, '/'));
+                
+                // Log the signature URL for debugging
+                \Log::info('Signature URL:', [
+                    'employee_id' => $employee->id,
+                    'name' => $employee->first_name . ' ' . $employee->last_name,
+                    'signature_path' => $signaturePath,
+                    'full_url' => $employee->signature->signature_url
+                ]);
+            }
+            return $employee;
+        };
+
+        // Add signature URLs for all relevant employees
+        if ($travelOrder->employee) {
+            $travelOrder->employee = $addSignatureUrl($travelOrder->employee);
+        }
+        if ($travelOrder->recommenderEmployee) {
+            $travelOrder->recommenderEmployee = $addSignatureUrl($travelOrder->recommenderEmployee);
+        }
+        if ($travelOrder->approverEmployee) {
+            $travelOrder->approverEmployee = $addSignatureUrl($travelOrder->approverEmployee);
+        }
 
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json($travelOrder);

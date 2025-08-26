@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('appropriation');
             $table->decimal('per_diem', 10, 2);
             $table->decimal('laborer_assistant', 10, 0);
-            $table->string('remarks');
+            $table->string('remarks')->nullable();
             $table->unsignedBigInteger('status_id'); // FK to travel_status
             $table->timestamps();
         });

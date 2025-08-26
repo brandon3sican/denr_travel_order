@@ -5,7 +5,7 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Navigation -->
             <header class="bg-white shadow-sm z-10">
-                <div class="flex items-center justify-between p-2">
+                <div class="flex items-center justify-between p-4">
                     <div class="flex items-center">
                         <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
                             <i class="fas fa-bars text-xl"></i>

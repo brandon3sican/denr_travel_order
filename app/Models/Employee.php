@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Employee extends Model
 {
@@ -30,6 +31,14 @@ class Employee extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'email', 'email');
+    }
+
+    /**
+     * Get the employee's signature.
+     */
+    public function signature(): HasOne
+    {
+        return $this->hasOne(EmployeeSignature::class);
     }
 
     public function getFullNameAttribute()

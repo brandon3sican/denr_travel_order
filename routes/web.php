@@ -34,6 +34,13 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Signature Routes
+    Route::prefix('signature')->name('signature.')->group(function() {
+        Route::get('/', [\App\Http\Controllers\SignatureController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\SignatureController::class, 'store'])->name('store');
+        Route::post('/clear', [\App\Http\Controllers\SignatureController::class, 'clear'])->name('clear');
+    });
 
     // Travel Order Routes
     Route::resource('travel-orders', TravelOrderController::class);
@@ -49,6 +56,7 @@ Route::middleware('auth')->group(function () {
     
     // Alias for the show route to match both singular and plural forms
     Route::get('travel-order/{travel_order}', [TravelOrderController::class, 'show'])->name('travel-order.show');
+    Route::get('travel-orders/{travel_order}', [TravelOrderController::class, 'show']);
     
     // Status Management Routes
     Route::prefix('status-management')->group(function () {

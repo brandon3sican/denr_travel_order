@@ -52,10 +52,33 @@
                 </a>
                 @endif
 
+                @php
+                    $user = auth()->user();
+                    $hasApprovalRole = $user->travelOrderRoles->whereIn('id', [3, 4, 5])->isNotEmpty();
+                @endphp
+                
+                @if ($hasApprovalRole)
+                <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Approvals
+                </div>
+                @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
+                <a href="" class="nav-item {{ request()->routeIs('approvals.recommendation') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-clipboard-check text-yellow-400 mr-3 w-5 text-center"></i>
+                    <span>For Recommendation</span>
+                </a>
+                @endif
+                @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
+                <a href="" class="nav-item {{ request()->routeIs('approvals.approval') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <i class="fas fa-clipboard-list text-green-400 mr-3 w-5 text-center"></i>
+                    <span>For Approval</span>
+                </a>
+                @endif
+                @endif
+
                 @if (auth()->user()->is_admin)
                 <!-- Admin Menu -->
                 <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                    Administration
+                    Travel Orders
                 </div>
 
                 <!-- Travel Order Management -->
@@ -110,6 +133,12 @@
                 <a href="" id="profileLink" class="nav-item text-gray-300 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-user-cog text-pink-400 mr-3 w-5 text-center"></i>
                     <span>My Profile</span>
+                </a>
+                
+                <!-- Signature -->
+                <a href="{{ route('signature.index') }}" class="nav-item text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <i class="fas fa-signature text-indigo-400 mr-3 w-5 text-center"></i>
+                    <span>Signature</span>
                 </a>
 
                 <!-- Profile Modal -->
@@ -260,30 +289,7 @@
                 </script>
 
             </nav>
-            <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        @php
-                            $user = Auth::user();
-                            $employee = $user->employee;
-                            $userInitial = $employee && $employee->first_name 
-                                ? strtoupper(substr($employee->first_name, 0, 1))
-                                : ($user->first_name ? strtoupper(substr($user->first_name, 0, 1)) : 'U');
-                        @endphp
-                        <div class="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-white font-semibold">{{ $userInitial }}</div>
-                        <div>
-                            <p class="text-sm font-medium">{{ Auth::user()->name }}</p>
-                            <p class="text-xs text-gray-400">{{ Auth::user()->email }}</p>
-                        </div>
-                    </div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="text-red-500 hover:text-white focus:outline-none">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
+            @include('components.header')
         </div>
         @yield('content')
     </div>
@@ -291,21 +297,8 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/table-filters.js') }}"></script>
-    <script>
-        // Close modal when clicking outside
-        document.getElementById('profileModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
-            }
-        });
 
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('profileModal').classList.add('hidden');
-            }
-        });
-    </script>
+    @include('components.profile-modal')
     @stack('scripts')
 </body>
 </html>

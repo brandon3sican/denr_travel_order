@@ -5,7 +5,7 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Navigation -->
             <header class="bg-white shadow-sm z-10">
-                <div class="flex items-center justify-between p-2">
+                <div class="flex items-center justify-between p-4">
                     <div class="flex items-center">
                         <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
                             <i class="fas fa-bars text-xl"></i>
@@ -130,7 +130,7 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-800">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Travel Order ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Date Created</th>
                                         @if (auth()->user()->is_admin)
                                         <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Employee</th>
                                         @endif
@@ -145,7 +145,7 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($travelOrders as $index => $order)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">TO-2025-{{ $order->id }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</td>
                                         @if($isAdmin)
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $order->employee ? $order->employee->first_name . ' ' . $order->employee->last_name : 'N/A' }}

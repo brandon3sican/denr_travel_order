@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 use App\Models\Employee;
+use App\Models\EmployeeSignature;
 
 class TravelOrder extends Model
 {
@@ -45,5 +47,50 @@ class TravelOrder extends Model
     public function status(): BelongsTo
     {
         return $this->belongsTo(TravelOrderStatus::class, 'status_id');
+    }
+
+    /**
+     * Get the employee's signature for this travel order.
+     */
+    public function employeeSignature()
+    {
+        return $this->hasOneThrough(
+            EmployeeSignature::class,
+            Employee::class,
+            'email', // Foreign key on employees table...
+            'employee_id', // Foreign key on employee_signatures table...
+            'employee_email', // Local key on travel_orders table...
+            'id' // Local key on employees table...
+        );
+    }
+
+    /**
+     * Get the recommender's signature for this travel order.
+     */
+    public function recommenderSignature()
+    {
+        return $this->hasOneThrough(
+            EmployeeSignature::class,
+            Employee::class,
+            'email', // Foreign key on employees table...
+            'employee_id', // Foreign key on employee_signatures table...
+            'recommender', // Local key on travel_orders table...
+            'id' // Local key on employees table...
+        );
+    }
+
+    /**
+     * Get the approver's signature for this travel order.
+     */
+    public function approverSignature()
+    {
+        return $this->hasOneThrough(
+            EmployeeSignature::class,
+            Employee::class,
+            'email', // Foreign key on employees table...
+            'employee_id', // Foreign key on employee_signatures table...
+            'approver', // Local key on travel_orders table...
+            'id' // Local key on employees table...
+        );
     }
 }
