@@ -341,6 +341,7 @@
 
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/table-filters.js') }}"></script>
+    <script src="{{ asset('js/travel-order-actions.js') }}"></script>
 
     @include('components.profile-modal')
     @stack('scripts')

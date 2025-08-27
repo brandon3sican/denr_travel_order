@@ -45,6 +45,18 @@ Route::middleware('auth')->group(function () {
     // Travel Order Routes
     Route::resource('travel-orders', TravelOrderController::class);
     
+    // Travel Order Approval/Rejection Routes
+    Route::prefix('travel-order')->group(function () {
+        // Approve travel order
+        Route::post('/{id}/approve', [TravelOrderController::class, 'approve'])->name('travel-orders.approve');
+        
+        // Reject travel order
+        Route::post('/{id}/reject', [TravelOrderController::class, 'reject'])->name('travel-orders.reject');
+        
+        // Update status (for existing functionality)
+        Route::post('/{id}/status', [TravelOrderController::class, 'updateStatus'])->name('travel-orders.status');
+    });
+    
     // Additional custom routes for travel orders
     Route::prefix('travel-order')->group(function () {
         Route::get('/my-orders', [MyTravelOrderController::class, 'index'])->name('my-travel-orders');

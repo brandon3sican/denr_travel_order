@@ -145,13 +145,13 @@
                                          View
                                     </button>
                                     <button onclick="approve({{ $order->id }})" 
-                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-20"
-                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
+                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                        {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
                                         Approve
                                     </button>
                                     <button onclick="reject({{ $order->id }})" 
-                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20"
-                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
+                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                        {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
                                         Reject
                                     </button>
                                 </td>

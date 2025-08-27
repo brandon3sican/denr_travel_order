@@ -49,6 +49,11 @@ class TravelOrder extends Model
         return $this->belongsTo(TravelOrderStatus::class, 'status_id');
     }
 
+    public function travelOrderNumber()
+    {
+        return $this->hasOne(TravelOrderNumber::class);
+    }
+
     /**
      * Get the employee's signature for this travel order.
      */

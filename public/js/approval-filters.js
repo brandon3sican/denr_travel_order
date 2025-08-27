@@ -1,4 +1,5 @@
-let sortStates = {}; // Track sort states for each column
+// Use window object to prevent duplicate declarations
+window.sortStates = window.sortStates || {}; // Track sort states for each column
 
 function sortTable(columnIndex) {
     const table = document.querySelector('table');

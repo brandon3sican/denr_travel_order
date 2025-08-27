@@ -5,10 +5,77 @@ function recommend(orderId) {
     }
 }
 
+// Function to handle approval of a travel order
+function approve(orderId) {
+    if (confirm('Are you sure you want to approve this travel order? This action cannot be undone.')) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        fetch(`/travel-order/${orderId}/approve`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                _token: csrfToken
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Travel order has been approved successfully.\nTravel Order Number: ${data.travel_order_number}`);
+                window.location.reload();
+            } else {
+                throw new Error(data.message || 'Failed to approve travel order');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred while approving the travel order. Please try again.');
+        });
+    }
+}
+
 // Function to handle rejection of a travel order
 function reject(orderId) {
-    if (confirm('Are you sure you want to reject this travel order?')) {
-        updateTravelOrderStatus(orderId, 'disapproved');
+    const reason = prompt('Please provide a reason for rejection (required):');
+    if (reason === null) return; // User cancelled
+    if (!reason.trim()) {
+        alert('Rejection reason is required.');
+        return;
+    }
+
+    if (confirm('Are you sure you want to reject this travel order? This action cannot be undone.')) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        fetch(`/travel-order/${orderId}/reject`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                reason: reason,
+                _token: csrfToken
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Travel order has been rejected successfully.');
+                window.location.reload();
+            } else {
+                throw new Error(data.message || 'Failed to reject travel order');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred while rejecting the travel order. Please try again.');
+        });
     }
 }
 

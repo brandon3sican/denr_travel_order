@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\EmployeeSignature;
 use App\Models\TravelOrder as TravelOrderModel;
+use App\Models\TravelOrderNumber;
 use App\Models\TravelOrderRole;
 use App\Models\TravelOrderStatus;
 use Illuminate\Http\Request;
@@ -45,6 +46,98 @@ class TravelOrderController extends Controller
             'travelOrders' => $travelOrders,
             'statuses' => $statuses
         ]);
+    }
+
+    /**
+     * Approve a travel order
+     */
+    public function approve(Request $request, $id)
+    {
+        $travelOrder = TravelOrderModel::findOrFail($id);
+        
+        // Check if already approved
+        if ($travelOrder->status->name === 'Approved') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This travel order has already been approved.'
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Update status to Approved
+            $approvedStatus = TravelOrderStatus::where('name', 'Approved')->first();
+            $travelOrder->status_id = $approvedStatus->id;
+            $travelOrder->save();
+
+            // Generate travel order number (format: TO-YYYYMMDD-XXXX)
+            $datePrefix = now()->format('Ymd');
+            $lastOrder = TravelOrderNumber::orderBy('id', 'desc')->first();
+            $sequence = $lastOrder ? (int)substr($lastOrder->travel_order_number, -4) + 1 : 1;
+            $travelOrderNumber = 'TO-' . $datePrefix . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+
+            // Save travel order number
+            TravelOrderNumber::create([
+                'travel_order_number' => $travelOrderNumber,
+                'travel_order_id' => $travelOrder->id
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Travel order approved successfully.',
+                'travel_order_number' => $travelOrderNumber
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error approving travel order: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to approve travel order. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Reject a travel order
+     */
+    public function reject(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:500'
+        ]);
+
+        $travelOrder = TravelOrderModel::findOrFail($id);
+        
+        // Check if already rejected
+        if ($travelOrder->status->name === 'Disapproved') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This travel order has already been rejected.'
+            ]);
+        }
+
+        try {
+            // Update status to Disapproved
+            $rejectedStatus = TravelOrderStatus::where('name', 'Disapproved')->first();
+            $travelOrder->status_id = $rejectedStatus->id;
+            $travelOrder->remarks = $request->reason;
+            $travelOrder->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Travel order has been rejected.'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error rejecting travel order: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject travel order. Please try again.'
+            ], 500);
+        }
     }
     
     /**
