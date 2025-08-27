@@ -62,13 +62,13 @@
                     Approvals
                 </div>
                 @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
-                <a href="" class="nav-item {{ request()->routeIs('approvals.recommendation') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                <a href="{{ route('for-recommendation') }}" class="nav-item {{ request()->routeIs('for-recommendation') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
                     <i class="fas fa-clipboard-check text-yellow-400 mr-3 w-5 text-center"></i>
                     <span>For Recommendation</span>
                 </a>
                 @endif
                 @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
-                <a href="" class="nav-item {{ request()->routeIs('approvals.approval') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                <a href="{{ route('for-approval') }}" class="nav-item {{ request()->routeIs('for-approval') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
                     <i class="fas fa-clipboard-list text-green-400 mr-3 w-5 text-center"></i>
                     <span>For Approval</span>
                 </a>
@@ -135,11 +135,13 @@
                     <span>My Profile</span>
                 </a>
                 
+                @if (!auth()->user()->is_admin)
                 <!-- Signature -->
                 <a href="{{ route('signature.index') }}" class="nav-item text-gray-300 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-signature text-indigo-400 mr-3 w-5 text-center"></i>
                     <span>Signature</span>
                 </a>
+                @endif
 
                 <!-- Profile Modal -->
                 <div id="profileModal" class="fixed inset-0 z-50 hidden overflow-y-auto rounded-xl">
@@ -295,6 +297,48 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Success Message Container -->
+    <div id="successMessage" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg flex items-center" role="alert">
+            <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+            </div>
+            <div>
+                <p class="font-bold">Success</p>
+                <p id="successMessageText" class="text-sm"></p>
+            </div>
+            <button type="button" onclick="document.getElementById('successMessage').classList.add('hidden')" class="ml-4 text-green-700 hover:text-green-900">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            showSuccessMessage('{{ session('success') }}');
+        });
+    </script>
+    @endif
+
+    <script>
+        // Show success message function
+        function showSuccessMessage(message) {
+            const successMessage = document.getElementById('successMessage');
+            const messageText = document.getElementById('successMessageText');
+            
+            messageText.textContent = message;
+            successMessage.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 5000);
+        }
+    </script>
+
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/table-filters.js') }}"></script>
 

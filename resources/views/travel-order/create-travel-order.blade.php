@@ -13,9 +13,10 @@
                         <h2 class="text-xl font-semibold text-gray-800">Create Travel Order</h2>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <a href="{{ route('my-travel-orders') }}" class="text-white hover:text-red-300 flex items-center space-x-3 font-semibold bg-red-600 px-4 py-2 rounded-md">
-                            Cancel
-                        </a>
+                        <button class="relative p-2 text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
                     </div>
                 </div>
             </header>
@@ -32,9 +33,16 @@
                             
                             <!-- Basic Information -->
                             <div class="">
-                                <div class="mb-4">
-                                    <h3 class="text-2xl font-semibold">Travel Order Request Form</h3>
-                                    <p class="text-sm text-gray-600">Fill up the form below to create a new travel order.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="items-center space-x-4 mb-4">
+                                        <h3 class="flex items-center text-2xl font-semibold">Travel Order Request Form</h3>
+                                        <p class="text-sm text-gray-600">Fill up the form below to create a new travel order.</p>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <a href="{{ route('travel-orders.index') }}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                            Cancel
+                                        </a>
+                                    </div>
                                 </div>
                                 <h3 class="text-lg font-medium text-white bg-gray-800 px-4 py-2 rounded-md mb-4">
                                     <i class="fas fa-info-circle mr-2"></i>Basic Information</h3>

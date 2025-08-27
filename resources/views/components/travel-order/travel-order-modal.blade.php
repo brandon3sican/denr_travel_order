@@ -645,7 +645,7 @@
             
             // Show print button for approved or completed orders
             const printButton = document.getElementById('printButton');
-            if ([2, 3].includes(order.status_id)) {
+            if ([3, 6].includes(order.status_id)) {
                 printButton.classList.remove('hidden');
                 printButton.onclick = () => window.print();
             } else {
