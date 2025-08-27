@@ -136,10 +136,10 @@
                                         @endif
                                         <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Destination</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Purpose</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Arrival Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Departure Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-white font-bold uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase tracking-wider">Arrival Date</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase tracking-wider">Departure Date</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -157,13 +157,13 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $order->purpose ?? 'N/A' }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                             {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                             {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
                                             @php
                                                 // Get the status name from the relationship
                                                 $statusName = $order->status->name ?? '';
@@ -180,9 +180,9 @@
                                                 {{ $order->status->name ?? 'Unknown' }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <button onclick="showTravelOrder({{ $order->id }})" 
-                                               class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3">
+                                               class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
                                                 View
                                             </button>
                                         </td>

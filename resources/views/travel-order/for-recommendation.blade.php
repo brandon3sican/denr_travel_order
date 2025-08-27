@@ -2,6 +2,7 @@
 
 @push('scripts')
     <script src="{{ asset('js/approval-filters.js') }}"></script>
+    <script src="{{ asset('js/travel-order-actions.js') }}"></script>
 @endpush
 
 @section('content')
@@ -78,12 +79,24 @@
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-800">
                             <tr>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Date Created</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase cursor-pointer hover:bg-gray-700" onclick="sortTable(0)">
+                                    <div class="flex items-center">
+                                        Date Created
+                                        <span id="dateCreatedSort" class="ml-1">
+                                            <i class="fas fa-sort"></i>
+                                        </span>
+                                    </div>
+                                </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Employee</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Purpose</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Destination</th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Travel Date</th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Status</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase cursor-pointer hover:bg-gray-700" onclick="sortTable(4)">
+                                    Travel Date
+                                    <span id="dateCreatedSort" class="ml-1">
+                                        <i class="fas fa-sort"></i>
+                                    </span>
+                                </th>
+                                <th class="px-3 py-2 text-center text-xs font-medium text-white font-bold uppercase">Status</th>
                                 <th class="px-3 py-2 text-center text-xs font-medium text-white font-bold uppercase">Action</th>
                             </tr>
                         </thead>
@@ -107,7 +120,7 @@
                                     <div>{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>
                                     <div class="text-xs text-gray-500">to {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</div>
                                 </td>
-                                <td class="px-3 py-2 whitespace-nowrap">
+                                <td class="px-3 py-2 whitespace-nowrap text-center">
                                     @php
                                         $statusColors = [
                                                     'for recommendation' => 'bg-yellow-100 text-yellow-800',
@@ -125,16 +138,18 @@
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap text-center">
                                     <button onclick="showTravelOrder({{ $order->id }})" 
-                                        class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3">
-                                         View
-                                     </button>
-                                     <button onclick="recommend({{ $order->id }})" 
-                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3">
-                                         Recommend
-                                     </button>
-                                     <button onclick="reject({{ $order->id }})" 
-                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3">
-                                         Reject
+                                        class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
+                                        View
+                                    </button>
+                                    <button onclick="recommend({{ $order->id }})" 
+                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-24"
+                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
+                                        Recommend
+                                    </button>
+                                    <button onclick="reject({{ $order->id }})" 
+                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20"
+                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
+                                        Reject
                                      </button>
                                 </td>
                             </tr>

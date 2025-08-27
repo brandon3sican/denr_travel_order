@@ -129,7 +129,7 @@
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Purpose</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Destination</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Travel Date</th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Status</th>
+                                <th class="px-3 py-2 text-center text-xs font-medium text-white font-bold uppercase">Status</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Action</th>
                             </tr>
                         </thead>
@@ -153,7 +153,7 @@
                                     <div>{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>
                                     <div class="text-xs text-gray-500">to {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</div>
                                 </td>
-                                <td class="px-3 py-2 whitespace-nowrap">
+                                <td class="px-3 py-2 whitespace-nowrap text-center">
                                     @php
                                         $statusColors = [
                                                     'for recommendation' => 'bg-yellow-100 text-yellow-800',
@@ -171,7 +171,7 @@
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap">
                                     <button onclick="showTravelOrder({{ $order->id }})" 
-                                        class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3">
+                                        class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
                                          View
                                      </button>
                                         </td>

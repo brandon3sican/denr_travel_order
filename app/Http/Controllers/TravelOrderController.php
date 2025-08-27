@@ -380,4 +380,67 @@ class TravelOrderController extends Controller
             return back()->with('error', 'Failed to delete travel order. Please try again.');
         }
     }
+
+    /**
+     * Update the status of a travel order
+     *
+     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateStatus($id, Request $request)
+    {
+        try {
+            $request->validate([
+                'status' => 'required|string|in:for approval,disapproved'
+            ]);
+
+            $travelOrder = TravelOrderModel::findOrFail($id);
+            $user = Auth::user();
+            
+            // Check if the user is authorized to update the status
+            if ($travelOrder->recommender !== $user->email) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to update this travel order status.'
+                ], 403);
+            }
+
+            // Get the status ID based on the status name
+            $status = TravelOrderStatus::where('name', ucfirst($request->status))->first();
+            
+            if (!$status) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid status provided.'
+                ], 422);
+            }
+
+            // Update the status
+            $travelOrder->status_id = $status->id;
+            
+            // If recommending for approval, update the approver if not set
+            if ($request->status === 'for approval' && !$travelOrder->approver) {
+                // Get the default approver from the database or config
+                $defaultApprover = 'approver@example.com'; // Replace with your logic to get the default approver
+                $travelOrder->approver = $defaultApprover;
+            }
+            
+            $travelOrder->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Travel order status updated successfully.',
+                'status' => $status->name
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error updating travel order status: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating the travel order status.'
+            ], 500);
+        }
+    }
 }

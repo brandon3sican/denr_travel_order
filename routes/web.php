@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     // Additional custom routes for travel orders
     Route::prefix('travel-order')->group(function () {
         Route::get('/my-orders', [MyTravelOrderController::class, 'index'])->name('my-travel-orders');
+        Route::post('/{id}/status', [TravelOrderController::class, 'updateStatus'])->name('travel-orders.update-status');
         
         // Approval workflow routes
         Route::get('/for-approval', [TravelOrderController::class, 'forApproval'])->name('for-approval');

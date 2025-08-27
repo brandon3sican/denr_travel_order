@@ -61,9 +61,9 @@
                                     @endif
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(2)">Destination</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(3)">Purpose</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(4)">Arrival Date</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(5)">Departure Date</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(6)">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(4)">Arrival Date</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(5)">Departure Date</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(6)">Status</th>
                                     <th scope="col" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable(7)">Actions</th>
                                 </tr>
                             </thead>
@@ -79,13 +79,13 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ $order->purpose }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                         {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                         {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                             @if($order->status_id == 1) bg-yellow-100 text-yellow-800 @endif
                                             @if($order->status_id == 2) bg-blue-100 text-blue-800 @endif
@@ -100,17 +100,17 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                         <button onclick="showTravelOrder({{ $order->id }})" 
-                                            class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3">
+                                            class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
                                              View
                                          </button>
                                         @if($order->status_id == 1) {{-- Only show edit for pending orders --}}
                                         <button onclick="editTravelOrder({{ $order->id }})" 
-                                           class="text-yellow-600 hover:text-yellow-900 border border-yellow-600 px-2 py-1 rounded mr-3">
+                                           class="text-yellow-600 hover:text-yellow-900 border border-yellow-600 px-2 py-1 rounded mr-3 w-20">
                                             Edit
                                         </button>
                                        
                                         <button type="button" 
-                                                class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3"
+                                                class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20"
                                                 onclick="confirmDelete({{ $order->id }})">
                                             Delete
                                         </button>

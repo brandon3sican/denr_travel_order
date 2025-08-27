@@ -91,7 +91,7 @@
                 1: { class: 'bg-yellow-100 text-yellow-800', text: 'Pending' },
                 2: { class: 'bg-blue-100 text-blue-800', text: 'Approved' },
                 3: { class: 'bg-green-100 text-green-800', text: 'Completed' },
-                4: { class: 'bg-red-100 text-red-800', text: 'Rejected' },
+                4: { class: 'bg-red-100 text-red-800', text: 'Disapproved' },
                 5: { class: 'bg-gray-100 text-gray-800', text: 'For Recommendation' }
             }[order.status_id] || { class: 'bg-gray-100 text-gray-800', text: 'Unknown' };
 
@@ -219,7 +219,7 @@
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                             </td>
                             <td style="width:97.4pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">${order.employee?.first_name || ''} ${order.employee?.middle_name || ''} ${order.employee?.last_name || ''}</span></p>
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman'; text-transform: uppercase">${order.employee?.first_name || ''} ${order.employee?.middle_name || ''} ${order.employee?.last_name || ''}</span></p>
                             </td>
                             <td style="width:62.55pt; padding:0pt 5.4pt; vertical-align:top;">
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">SALARY:</span></p>
@@ -259,13 +259,13 @@
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                             </td>
                             <td style="width:97.4pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">${order.employee?.position_name || 'N/A'}</span></p>
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman'; text-transform: uppercase">${order.employee?.position_name || 'N/A'}</span></p>
                             </td>
                             <td colspan="2" style="width:97pt; padding:0pt 5.4pt; vertical-align:top;">
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">OFFICIAL STATION:</span></p>
                             </td>
                             <td style="width:101.45pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">${order.employee?.assignment_name || 'N/A'}</span></p>
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman'; text-transform: uppercase">${order.employee?.assignment_name || 'N/A'}</span></p>
                             </td>
                         </tr>
                         <tr>
@@ -318,7 +318,7 @@
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">DESTINATION OF TRAVEL:</span></p>
                             </td>
                             <td style="width:97.4pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">${order.destination || 'N/A'}</span></p>
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman'; text-transform: uppercase">${order.destination || 'N/A'}</span></p>
                             </td>
                             <td style="width:62.55pt; padding:0pt 5.4pt; vertical-align:top;">
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
@@ -342,7 +342,11 @@
                         </tr>
                         <tr>
                             <td style="width:452.5pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">- ${order.purpose || 'N/A'}</span></p>
+                                <div style="font-family:'Times New Roman'; font-size:10pt;">
+                                    ${order.purpose ? order.purpose.split(';').map((purpose, index) => 
+                                        `<div>${index + 1}. ${purpose.trim()}</div>`
+                                    ).join('') : 'N/A'}
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -488,14 +492,16 @@
                             </td>
                             <td style="width:173.7pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
-                                    ${order.recommender_employee?.signature?.signature_url ? 
-                                        `<img src="${order.recommender_employee.signature.signature_url}" alt="Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
-                                        `<!-- No signature found for ${order.recommender_employee?.first_name} ${order.recommender_employee?.last_name} -->
-                                        <p>signature</p>`
+                                    ${order.status_id === 2 ? 
+                                        (order.recommender_employee?.signature?.signature_url ? 
+                                            `<img src="${order.recommender_employee.signature.signature_url}" alt="Recommender Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
+                                            `<!-- No signature found for ${order.recommender_employee?.first_name} ${order.recommender_employee?.middle_name} ${order.recommender_employee?.last_name} -->
+                                            <p>signature</p>`
+                                        ) : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
-                                        <strong><span style="font-family:'Times New Roman';">
-                                            ${order.recommender_employee?.first_name || ''} ${order.recommender_employee?.last_name || ''}
+                                        <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
+                                            ${order.recommender_employee?.first_name || ''} ${order.recommender_employee?.middle_name || ''} ${order.recommender_employee?.last_name || ''}
                                         </span></strong>
                                     </p>
                                 </div>
@@ -505,14 +511,17 @@
                             </td>
                             <td style="width:163.15pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
-                                    ${order.approver_employee?.signature?.signature_url ? 
-                                        `<img src="${order.approver_employee.signature.signature_url}" alt="Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
-                                        `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.last_name} -->
-                                        <p>signature</p>`
+                                    ${order.status_id === 3 ? `
+                                        ${order.approver_employee?.signature?.signature_url ? 
+                                            `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
+                                            `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} -->
+                                            <p>signature</p>`
+                                        }
+                                    ` : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
-                                        <strong><span style="font-family:'Times New Roman';">
-                                            ${order.approver_employee?.first_name || ''} ${order.approver_employee?.last_name || ''}
+                                        <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
+                                            ${order.approver_employee?.first_name || ''} ${order.approver_employee?.middle_name || ''} ${order.approver_employee?.last_name || ''}
                                         </span></strong>
                                     </p>
                                 </div>
@@ -551,7 +560,7 @@
                             </td>
                             
                             <td style="width:66.9pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">mm/dd/yyyy</span></p>
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">${order.approved_at ? new Date(order.approved_at).toLocaleDateString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric'}) : 'mm/dd/yyyy'}</span></p>
                             </td>
                             
                         </tr>
@@ -607,15 +616,15 @@
                                 <p style="margin-bottom:0pt; text-align:justify; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                             </td>
                             <td style="width:145.05pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
-                                <div style="text-align: center;">
+                                <div class="text-center">
                                     ${order.employee?.signature?.signature_url ? 
-                                        `<img src="${order.employee.signature.signature_url}" alt="Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
-                                        `<!-- No signature found for ${order.employee?.first_name} ${order.employee?.last_name} -->
+                                        `<img src="${order.employee.signature.signature_url}" class="text-center" alt="Employee Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
+                                        `<!-- No signature found for ${order.employee?.first_name} ${order.employee?.middle_name} ${order.employee?.last_name} -->
                                         <p>signature</p>`
                                     }
                                     <p style="margin-top: 0px; line-height:normal; font-size:10pt;">
-                                        <strong><span style="font-family:'Times New Roman';">
-                                            ${order.employee?.first_name || ''} ${order.employee?.last_name || ''}
+                                        <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
+                                            ${order.employee?.first_name || ''} ${order.employee?.middle_name || ''} ${order.employee?.last_name || ''}
                                         </span></strong>
                                     </p>
                                 </div>
