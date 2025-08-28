@@ -57,22 +57,22 @@
                     $hasApprovalRole = $user->travelOrderRoles->whereIn('id', [3, 4, 5])->isNotEmpty();
                 @endphp
                 
-                @if ($hasApprovalRole)
+                @if ($hasApprovalRole && ($user->employee && $user->employee->signature))
                 <div class="px-4 pt-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                     Approvals
                 </div>
-                @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
-                <a href="{{ route('for-recommendation') }}" class="nav-item {{ request()->routeIs('for-recommendation') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <i class="fas fa-clipboard-check text-yellow-400 mr-3 w-5 text-center"></i>
-                    <span>For Recommendation</span>
-                </a>
-                @endif
-                @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
-                <a href="{{ route('for-approval') }}" class="nav-item {{ request()->routeIs('for-approval') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <i class="fas fa-clipboard-list text-green-400 mr-3 w-5 text-center"></i>
-                    <span>For Approval</span>
-                </a>
-                @endif
+                    @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
+                        <a href="{{ route('for-recommendation') }}" class="nav-item {{ request()->routeIs('for-recommendation') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                            <i class="fas fa-clipboard-check text-yellow-400 mr-3 w-5 text-center"></i>
+                            <span>For Recommendation</span>
+                        </a>
+                    @endif
+                    @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
+                        <a href="{{ route('for-approval') }}" class="nav-item {{ request()->routeIs('for-approval') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                            <i class="fas fa-clipboard-list text-green-400 mr-3 w-5 text-center"></i>
+                            <span>For Approval</span>
+                        </a>
+                    @endif
                 @endif
 
                 @if (auth()->user()->is_admin)
