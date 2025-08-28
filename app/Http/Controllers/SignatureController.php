@@ -36,62 +36,38 @@ class SignatureController extends BaseController
             
             $signatureData = $request->input('signature');
             $isUpload = $request->input('is_upload', false);
+            $filename = 'signature_' . $employee->id . '_' . time() . '.png';
+            $directory = 'signatures';
+            $path = $directory . '/' . $filename;
+            
+            // Ensure the public/signatures directory exists
+            if (!Storage::disk('public')->exists($directory)) {
+                Storage::disk('public')->makeDirectory($directory);
+            }
             
             // If it's a direct upload (not from canvas)
             if ($isUpload) {
                 // Check if the signature is already in base64 format
                 if (strpos($signatureData, 'base64') !== false) {
                     // Extract the base64 data
-                    list($type, $data) = explode(';', $signatureData);
-                    list(, $data) = explode(',', $data);
-                    $imageData = base64_decode($data);
-                    
-                    // Get the file extension from the mime type
-                    $mimeType = str_replace('data:', '', $type);
-                    $extension = $this->getExtensionFromMime($mimeType);
-                    
-                    // Generate a unique filename
-                    $filename = 'signatures/' . Str::random(40) . '.' . $extension;
-                    
-                    // Store the file
-                    Storage::disk('public')->put($filename, $imageData);
-                    
-                    // Save to database
-                    $signature = $employee->signature()->updateOrCreate(
-                        ['employee_id' => $employee->id],
-                        [
-                            'signature_data' => $signatureData,
-                            'signature_path' => $filename,
-                            'mime_type' => $mimeType,
-                            'is_active' => true
-                        ]
-                    );
-                    
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Signature uploaded successfully',
-                        'signature' => $signature
-                    ]);
+                    $signatureData = explode(',', $signatureData)[1];
                 }
+                
+                // Decode and save the base64 data
+                Storage::disk('public')->put($path, base64_decode($signatureData));
+            } else {
+                // For canvas-based signatures
+                $image = str_replace('data:image/png;base64,', '', $signatureData);
+                $image = str_replace(' ', '+', $image);
+                Storage::disk('public')->put($path, base64_decode($image));
             }
             
-            // Handle canvas signature (original code)
-            $image = str_replace('data:image/png;base64,', '', $signatureData);
-            $image = str_replace(' ', '+', $image);
-            $imageData = base64_decode($image);
-            
-            // Generate a unique filename
-            $filename = 'signatures/' . Str::random(40) . '.png';
-            
-            // Store the file
-            Storage::disk('public')->put($filename, $imageData);
-            
-            // Save to database
+            // Create or update the signature
             $signature = $employee->signature()->updateOrCreate(
                 ['employee_id' => $employee->id],
                 [
                     'signature_data' => $request->input('signature'),
-                    'signature_path' => $filename,
+                    'signature_path' => $path,
                     'mime_type' => 'image/png',
                     'is_active' => true
                 ]
@@ -118,9 +94,12 @@ class SignatureController extends BaseController
             $signature = $user->employee->signature;
             
             if ($signature) {
-                // Delete the file if it exists
-                if ($signature->signature_path && Storage::disk('public')->exists($signature->signature_path)) {
-                    Storage::disk('public')->delete($signature->signature_path);
+                // Get the full path to the signature file
+                $filePath = 'public/' . $signature->signature_path;
+                
+                // Delete the file if it exists in the public storage
+                if ($signature->signature_path && Storage::exists($filePath)) {
+                    Storage::delete($filePath);
                 }
                 
                 // Delete the record

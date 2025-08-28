@@ -10,10 +10,16 @@ A comprehensive Travel Order Management System for the Department of Environment
 - **Real-time Updates** - Livewire-powered components for seamless user experience
 - **Comprehensive Reporting** - Generate detailed travel order reports with filtering options
 - **Email Notifications** - Automatic notifications for travel order status updates
-- **Digital Signatures** - Secure digital signatures for document approval
+- **Digital Signatures** - Secure digital signatures for document approval with signature verification
 - **Document Generation** - Generate and print travel orders in PDF format with embedded signatures
 
 ## 📋 System Workflow
+
+### Signature Requirements
+- All users must upload their digital signature before participating in the workflow
+- Signatures are stored securely in the `public/signatures` directory
+- Each user can have only one active signature at a time
+- Signatures are required for both recommendation and approval actions
 
 ### Travel Order Request Process
 
@@ -24,27 +30,34 @@ A comprehensive Travel Order Management System for the Department of Environment
      - Selection of one Recommender
      - Selection of one Approver
    - System validations:
+     - User must have a valid signature uploaded
      - Recommender and Approver must be different users
      - User cannot be both Recommender and Approver for the same request
      - User cannot be Recommender/Approver for their own request
+     - Recommender and Approver must have valid signatures
    - Status: Set to "Pending/For Recommendation" upon creation
 
 2. **Recommendation Phase**
    - The assigned Recommender receives the travel order
+   - System verifies Recommender has a valid signature
    - Actions available:
      - Review travel order details
-     - Attach e-signature to recommend
+     - Attach digital signature to recommend
      - Forward to Approver
    - Status: Changes to "For Approval" after recommendation
+   - System logs the recommendation with timestamp and signature
 
 3. **Approval Phase**
    - The assigned Approver receives the travel order
+   - System verifies Approver has a valid signature
    - Actions available:
      - Review travel order and recommendation
+     - Verify Recommender's signature
      - Attach digital signature to approve
      - System automatically assigns an official travel order number upon approval
-     - System generates PDF with all required signatures
+     - System generates PDF with all required signatures and verification hashes
    - Status: Changes to "Approved" with O.R. number
+   - System logs the approval with timestamp and signature
 
 ### User Roles and Permissions
 

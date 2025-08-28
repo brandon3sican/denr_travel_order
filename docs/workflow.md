@@ -2,18 +2,58 @@
 
 ## Overview
 
-This document outlines the complete workflow of a travel order from creation to completion in the DENR Travel Order System. The workflow is designed to be flexible yet structured, ensuring proper authorization and documentation at each stage.
+This document outlines the complete workflow of a travel order from creation to completion in the DENR Travel Order System. The workflow is designed to be flexible yet structured, ensuring proper authorization and documentation at each stage. 
+
+## Signature Requirements
+
+1. **Mandatory Signatures**
+   - All users must upload their digital signature before they can participate in the travel order workflow
+   - Signatures are required for both recommendation and approval actions
+   - Signatures are stored securely in the `public/signatures` directory
+   - Each user can have only one active signature at a time
+
+2. **Signature Management**
+   - Users can upload or draw their signature in the profile section
+   - Signatures must be uploaded in PNG format
+   - The system automatically resizes and optimizes uploaded signatures
+   - Users can update their signature at any time
 
 ## Workflow States
 
 ### Main Statuses
 1. **Draft** - Initial state when creating a new travel order
+   - Can be saved and edited
+   - Not visible to recommenders/approvers
+
 2. **For Recommendation** - Submitted and awaiting recommender's action
+   - Locked for editing by creator
+   - Visible to assigned recommender
+   - Requires recommender's digital signature
+
 3. **For Approval** - Recommended and awaiting approver's action
+   - Locked for editing
+   - Visible to assigned approver
+   - Requires approver's digital signature
+
 4. **Approved** - Fully approved with travel order number assigned
+   - Generates official travel order number
+   - Triggers notifications to all parties
+   - Can be marked as completed after travel
+
 5. **Rejected** - Rejected by either recommender or approver
+   - Requires rejection reason
+   - Returns to creator for revision
+   - Maintains complete audit trail
+
 6. **Cancelled** - Cancelled by creator or admin
+   - Requires cancellation reason
+   - Cannot be reactivated
+   - Maintained for record-keeping
+
 7. **Completed** - Travel has been completed and documented
+   - Final state for reporting
+   - No further changes allowed
+   - Used for historical records
 
 ### Status Transitions
 

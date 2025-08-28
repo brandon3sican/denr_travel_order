@@ -6,6 +6,12 @@ The Role Management system controls user access and permissions within the DENR 
 
 ## Roles and Permissions
 
+### Signature Requirements
+- All roles except Super Admin and Admin must have a valid signature uploaded to participate in the approval workflow
+- Signatures are validated before any approval/recommendation action
+- The system enforces signature requirements at both the UI and API levels
+- Signature updates are logged for audit purposes
+
 ### Default Roles
 
 1. **Super Admin**
@@ -16,6 +22,7 @@ The Role Management system controls user access and permissions within the DENR 
    - Generate comprehensive reports
    - Manage system backups
    - Configure approval workflows
+   - Bypass signature requirements (for emergency overrides)
 
 2. **Admin**
    - Full access to travel order management
@@ -25,29 +32,39 @@ The Role Management system controls user access and permissions within the DENR 
    - Manage departments and divisions
    - Cannot modify system configurations
    - View system logs
+   - Manage user signature verification
+   - Bypass signature requirements (for emergency overrides)
+   - View signature update history
 
 3. **Recommender**
    - Recommend travel orders assigned to them
    - View travel orders requiring recommendation
-   - Attach e-signatures to recommendations
-   - View recommendation history
+   - Must have a valid signature to recommend orders
+   - View recommendation history with signature timestamps
    - Cannot recommend their own travel orders
    - View department-specific reports
-   - Export recommendation history
+   - Export recommendation history with signatures
+   - Receive notifications requiring signature verification
 
 4. **Approver**
    - Approve/reject travel orders
    - View travel orders requiring approval
-   - Attach e-signatures to approvals
-   - Generate official travel order numbers
-   - View approval statistics
+   - Must have a valid signature to approve orders
+   - Generate official travel order numbers with digital signature
+   - View approval statistics with signature verification status
    - Delegate approval authority (if configured)
    - Cannot approve their own travel orders
+   - Verify recommender's signature before approval
+   - Receive notifications requiring signature verification
 
 5. **User** (Default)
    - Create and manage their own travel orders
    - View their travel order history
    - Upload and manage their digital signature
+   - Must have a valid signature to submit travel orders
+   - Can update signature at any time
+   - View signature update history
+   - Receive notifications for signature requirements
    - View their signature history
    - Set default signature
    - Delete old signatures
