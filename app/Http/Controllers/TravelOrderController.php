@@ -401,7 +401,7 @@ class TravelOrderController extends Controller
     public function update(Request $request, TravelOrderModel $travelOrder)
     {
         try {
-            \Log::info('Update request data:', $request->all());
+            Log::info('Update request data:', $request->all());
             
             $validated = $request->validate([
                 'employee_email' => 'required|email',
@@ -417,19 +417,19 @@ class TravelOrderController extends Controller
                 'status_id' => 'required',
             ]);
 
-            \Log::info('Validated data:', $validated);
+            Log::info('Validated data:', $validated);
             
             $updated = $travelOrder->update($validated);
             
             if (!$updated) {
-                \Log::error('Failed to update travel order. Model update returned false.');
+                Log::error('Failed to update travel order. Model update returned false.');
                 return response()->json(['message' => 'Failed to update travel order in database'], 500);
             }
 
             return response()->json(['message' => 'Travel order updated successfully']);
             
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation error during travel order update:', [
+            Log::error('Validation error during travel order update:', [
                 'errors' => $e->errors(),
                 'input' => $request->all()
             ]);
@@ -439,7 +439,7 @@ class TravelOrderController extends Controller
             ], 422);
             
         } catch (\Exception $e) {
-            \Log::error('Error updating travel order: ' . $e->getMessage(), [
+            Log::error('Error updating travel order: ' . $e->getMessage(), [
                 'exception' => get_class($e),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -529,7 +529,7 @@ class TravelOrderController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error updating travel order status: ' . $e->getMessage());
+            Log::error('Error updating travel order status: ' . $e->getMessage());
             
             return response()->json([
                 'success' => false,
