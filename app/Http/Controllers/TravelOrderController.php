@@ -352,7 +352,8 @@ class TravelOrderController extends Controller
             'employee.signature',
             'recommenderEmployee.signature',
             'approverEmployee.signature',
-            'status'
+            'status',
+            'travelOrderNumber'
         ])->findOrFail($id);
 
         // Helper function to add signature URL

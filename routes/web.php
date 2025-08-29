@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function () {
 
     // Travel Order Routes
     Route::resource('travel-orders', TravelOrderController::class);
+
+    Route::get('travel-order-print/{id}', [TravelOrderController::class, 'print'])->name('travel-order.print');
     
     // Travel Order Approval/Rejection Routes
     Route::prefix('travel-order')->group(function () {

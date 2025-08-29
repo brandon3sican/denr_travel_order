@@ -6,17 +6,10 @@
 
         <!-- Modal panel -->
         <div class="inline-block w-full max-w-4xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all sm:my-8">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="bg-white px-4 sm:p-6">
                 <div class="sm:flex sm:items-start">
                     <div class="w-full">
-                        <div class="flex items-center justify-between border-b pb-4">
-                            <h3 class="text-xl font-semibold leading-6 text-gray-900">Travel Order Details</h3>
-                            <button onclick="closeOrderModal()" class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none">
-                                <span class="sr-only">Close</span>
-                                <i class="fas fa-times text-xl"></i>
-                            </button>
-                        </div>
-                        <div class="mt-4 max-h-[70vh] overflow-y-auto" id="orderDetails">
+                        <div class="overflow-y-auto" id="orderDetails">
                             <!-- Order details will be populated by JavaScript -->
                         </div>
                     </div>
@@ -45,7 +38,7 @@
             const modal = document.getElementById('orderModal');
             const orderDetails = document.getElementById('orderDetails');
             orderDetails.innerHTML = `
-                <div class="flex justify-center items-center py-12">
+                <div class="flex justify-center items-center">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     <span class="ml-3 text-gray-700">Loading travel order details...</span>
                 </div>
@@ -106,8 +99,8 @@
 
             // Create HTML for order details
             const detailsHtml = `
-            <div style="margin: 90px;">
-                <table style="margin-right: auto; margin-left: auto; margin-bottom: 0pt; padding: 0pt;">
+            <div style="margin-right: 90px; margin-left: 90px; margin-top: 50px; margin-bottom: 50px;">
+                <table style="margin-right: auto; margin-left: auto; padding: 0pt;">
                     <tbody>
                         <tr style="height:2.9pt;">
                             <td rowspan="4" style="width:82.7pt; padding:0pt 5.4pt;">
@@ -197,7 +190,7 @@
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                             </td>
                             <td style="width:82.7pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">No. ${order.travel_order_number}</span></p>
+                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">No. ${order.travel_order_number?.travel_order_number || 'N/A'}</span></p>
                             </td>
                             <td style="width:82.7pt; padding:0pt 5.4pt; vertical-align:top;">
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
@@ -413,14 +406,6 @@
                                 <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                             </td>
                         </tr>
-                        <tr style="height:0pt;">
-                            <td style="width:184.25pt;"><br></td>
-                            <td style="width:36.25pt;"><br></td>
-                            <td style="width:121.25pt;"><br></td>
-                            <td style="width:31.75pt;"><br></td>
-                            <td style="width:40.5pt;"><br></td>
-                            <td style="width:49.5pt;"><br></td>
-                        </tr>
                     </tbody>
                 </table>
                 <p style="margin-bottom:0pt; text-align:center; line-height:108%; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
@@ -441,51 +426,6 @@
                 <p style="margin-bottom:0pt; text-align:center; line-height:108%; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                 <table style="margin-right: auto; margin-left: auto; margin-bottom: 0pt; padding: 0pt; border-collapse: collapse; width: 100%;">
                     <tbody>
-                        <tr style="height:15.75pt;">
-                            <td style="width:11.7pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:173.7pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">RECOMMENDING APPROVAL:</span></p>
-                            </td>
-                            <td style="width:26.75pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:163.15pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">APPROVED:</span></p>
-                            </td>
-                            <td style="width:12.95pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                        </tr>
-                        <tr style="height:15.75pt;">
-                            <td style="width:11.7pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td rowspan="2" style="width:173.7pt; padding:0pt 5.4pt; vertical-align:middle;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:26.75pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td rowspan="2" style="width:163.15pt; padding:0pt 5.4pt; vertical-align:middle;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:12.95pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                        </tr>
-                        <tr style="height:15.75pt;">
-                            <td style="width:11.7pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:26.75pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:12.95pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                        </tr>
                         <tr style="height:15.75pt;">
                             <td style="width:11.7pt; padding:0pt 5.4pt; vertical-align:top;">
                                 <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
@@ -560,7 +500,7 @@
                             </td>
                             
                             <td style="width:66.9pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">${order.approved_at ? new Date(order.approved_at).toLocaleDateString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric'}) : 'mm/dd/yyyy'}</span></p>
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">${order.travel_order_number?.created_at ? new Date(order.travel_order_number.created_at).toLocaleDateString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric'}) : 'mm/dd/yyyy'}</span></p>
                             </td>
                             
                         </tr>
@@ -592,25 +532,6 @@
                 <p style="margin-bottom:0pt; text-align:justify; line-height:108%; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                 <table style="margin-right: auto; margin-left: auto; margin-bottom: 0pt; padding: 0pt; border-collapse: collapse; width: 100%;">
                     <tbody>
-                        <tr>
-                            <td style="width:145pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:justify; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td rowspan="2" style="width:145.05pt; padding:0pt 5.4pt; vertical-align:middle;">
-                                <p style="margin-bottom:0pt; text-align:justify; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:145.05pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:justify; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="width:145pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:justify; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                            <td style="width:145.05pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:justify; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
-                            </td>
-                        </tr>
                         <tr>
                             <td style="width:145pt; padding:0pt 5.4pt; vertical-align:top;">
                                 <p style="margin-bottom:0pt; text-align:justify; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
