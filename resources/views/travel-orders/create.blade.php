@@ -108,7 +108,7 @@
                                     <!-- Per Diem -->
                                     <div class="md:col-span-1">
                                         <label for="per_diem" class="block text-sm font-medium text-gray-700 mb-1">Per Diem</label>
-                                        <input type="number" id="per_diem" name="per_diem" required
+                                        <input type="number" id="per_diem" name="per_diem" min="0" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                             placeholder="Per Diem">
                                     </div>
@@ -116,7 +116,7 @@
                                     <!-- Number of Labor -->
                                     <div class="md:col-span-1">
                                         <label for="laborer_assistant" class="block text-sm font-medium text-gray-700 mb-1">Number of Labor/Assistant</label>
-                                        <input type="number" id="laborer_assistant" name="laborer_assistant" required
+                                        <input type="number" id="laborer_assistant" name="laborer_assistant" min="0" required
                                             class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                             placeholder="Number of Labor/Assistant">
                                     </div>

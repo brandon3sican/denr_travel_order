@@ -44,7 +44,7 @@ class RoleManagementController extends Controller
         // Get all available roles
         $roles = TravelOrderRole::all();
 
-        return view('role-management.role-management', [
+        return view('role-management.index', [
             'users' => $users,
             'roles' => $roles
         ]);

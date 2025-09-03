@@ -11,6 +11,15 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $showSignatureAlert = false;
+        $userSignature = null;
+        
+        // Check if user needs to upload a signature
+        if (!$user->is_admin && (!$user->employee || !$user->employee->signature)) {
+            $showSignatureAlert = true;
+        } else {
+            $userSignature = $user->employee->signature;
+        }
         
         // Base query for travel orders
         $baseQuery = $user->is_admin 
@@ -65,7 +74,9 @@ class DashboardController extends Controller
             'totalTravelOrders' => $totalTravelOrders,
             'pendingRequests' => $pendingRequests,
             'completedRequests' => $completedRequests,
-            'cancelledRequests' => $cancelledRequests
+            'cancelledRequests' => $cancelledRequests,
+            'showSignatureAlert' => $showSignatureAlert,
+            'userSignature' => $userSignature,
         ]);
     }
     public function show($id)

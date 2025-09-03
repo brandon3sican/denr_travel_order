@@ -61,21 +61,20 @@ Route::middleware('auth')->group(function () {
     
     // Additional custom routes for travel orders
     Route::prefix('travel-order')->group(function () {
-        Route::get('/my-orders', [MyTravelOrderController::class, 'index'])->name('my-travel-orders');
+        Route::get('/my-orders', [MyTravelOrderController::class, 'index'])->name('my-orders');
         Route::post('/{id}/status', [TravelOrderController::class, 'updateStatus'])->name('travel-orders.update-status');
         
         // Approval workflow routes
         Route::get('/for-approval', [TravelOrderController::class, 'forApproval'])->name('for-approval');
         Route::get('/for-recommendation', [TravelOrderController::class, 'forRecommendation'])->name('for-recommendation');
-        Route::get('/all-orders', [TravelOrderController::class, 'index'])->name('all-travel-orders');
+        Route::get('/all-orders', [TravelOrderController::class, 'index'])->name('admin.index');
     });
 
-    Route::get('/role-management', [RoleManagementController::class, 'index'])->name('role-management');
-    Route::post('/role-management/{user}/update-role', [RoleManagementController::class, 'updateRole'])->name('role-management.update-role');
-    
-    // Alias for the show route to match both singular and plural forms
-    Route::get('travel-order/{travel_order}', [TravelOrderController::class, 'show'])->name('travel-order.show');
-    Route::get('travel-orders/{travel_order}', [TravelOrderController::class, 'show']);
+    // Role Management Routes
+    Route::prefix('role-management')->name('role-management.')->group(function () {
+        Route::get('/', [RoleManagementController::class, 'index'])->name('index');
+        Route::post('/{user}/update-role', [RoleManagementController::class, 'updateRole'])->name('update-role');
+    });
     
     // Status Management Routes
     Route::prefix('status-management')->group(function () {

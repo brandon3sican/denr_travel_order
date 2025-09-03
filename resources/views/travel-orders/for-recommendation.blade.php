@@ -1,9 +1,8 @@
 @extends('layout.app')
 
-@include('components.approvals.approval-filters')
-
 @push('scripts')
     <script src="{{ asset('js/approval-filters.js') }}"></script>
+    <script src="{{ asset('js/travel-order-actions.js') }}"></script>
 @endpush
 
 @section('content')
@@ -15,7 +14,7 @@
                 <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
-                <h2 class="text-xl font-semibold text-gray-800">All Travel Orders</h2>
+                <h2 class="text-xl font-semibold text-gray-800">Travel Orders For Recommendation</h2>
             </div>
             <div class="flex items-center space-x-4">
                 <button class="relative p-2 text-gray-600 hover:text-gray-900">
@@ -83,7 +82,7 @@
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase cursor-pointer hover:bg-gray-700" onclick="sortTable(0)">
                                     <div class="flex items-center">
                                         Date Created
-                                        <span class="sort-icon ml-1">
+                                        <span id="dateCreatedSort" class="ml-1">
                                             <i class="fas fa-sort"></i>
                                         </span>
                                     </div>
@@ -91,13 +90,11 @@
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Employee</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Purpose</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">Destination</th>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase cursor-pointer hover:bg-gray-700" onclick="sortTable(3)">
-                                    <div class="flex items-center">
-                                        Travel Date
-                                        <span class="sort-icon ml-1">
-                                            <i class="fas fa-sort"></i>
-                                        </span>
-                                    </div>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase cursor-pointer hover:bg-gray-700" onclick="sortTable(4)">
+                                    Travel Date
+                                    <span id="dateCreatedSort" class="ml-1">
+                                        <i class="fas fa-sort"></i>
+                                    </span>
                                 </th>
                                 <th class="px-3 py-2 text-center text-xs font-medium text-white font-bold uppercase">Status</th>
                                 <th class="px-3 py-2 text-center text-xs font-medium text-white font-bold uppercase">Action</th>
@@ -106,8 +103,8 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($travelOrders as $order)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-3 py-2 whitespace-nowrap" data-sort-value="{{ \Carbon\Carbon::parse($order->created_at)->toIso8601String() }}">
-                                    <div class="text-medium text-gray-500">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</div>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <div class="text-medium text-gray-500">{{ $order->created_at->format('M d, Y') }}</div>
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap">
                                     <div class="font-medium">{{ $order->employee->first_name }} {{ $order->employee->last_name }}</div>
@@ -119,8 +116,8 @@
                                 <td class="px-3 py-2 whitespace-nowrap">
                                     <div class="font-medium text-gray-500">{{ $order->destination }}</div>
                                 </td>
-                                <td class="px-3 py-2 whitespace-nowrap" data-sort-value="{{ \Carbon\Carbon::parse($order->departure_date)->toIso8601String() }}">
-                                    <div class="font-medium">{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <div>{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>
                                     <div class="text-xs text-gray-500">to {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</div>
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap text-center">
@@ -142,21 +139,21 @@
                                 <td class="px-3 py-2 whitespace-nowrap text-center">
                                     <button onclick="showTravelOrder({{ $order->id }})" 
                                         class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
-                                         View
+                                        View
                                     </button>
-                                    <button onclick="approve({{ $order->id }})" 
-                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                        {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
-                                        Approve
+                                    <button onclick="recommend({{ $order->id }})" 
+                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-24"
+                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
+                                        Recommend
                                     </button>
                                     <button onclick="reject({{ $order->id }})" 
-                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                        {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
+                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20"
+                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
                                         Reject
-                                    </button>
+                                     </button>
                                 </td>
                             </tr>
-                                @empty
+                            @empty
                                     <tr>
                                         <td colspan="7" class="px-3 py-4 text-center text-gray-500 text-sm">
                                             No travel orders found.

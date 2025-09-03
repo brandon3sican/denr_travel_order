@@ -1,41 +1,11 @@
 // Function to handle recommendation of a travel order
 function recommend(orderId) {
-    if (confirm('Are you sure you want to recommend this travel order for approval?')) {
-        updateTravelOrderStatus(orderId, 'for approval');
-    }
+    showRecommendModal(orderId);
 }
 
 // Function to handle approval of a travel order
 function approve(orderId) {
-    if (confirm('Are you sure you want to approve this travel order? This action cannot be undone.')) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
-        fetch(`/travel-order/${orderId}/approve`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                _token: csrfToken
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(`Travel order has been approved successfully.\nTravel Order Number: ${data.travel_order_number}`);
-                window.location.reload();
-            } else {
-                throw new Error(data.message || 'Failed to approve travel order');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert(error.message || 'An error occurred while approving the travel order. Please try again.');
-        });
-    }
+    showApproveModal(orderId);
 }
 
 // Function to handle rejection of a travel order

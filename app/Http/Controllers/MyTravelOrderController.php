@@ -15,7 +15,7 @@ class MyTravelOrderController extends Controller
             ->latest()
             ->paginate($perPage);
 
-        return view('travel-order.my-travel-orders', [
+        return view('travel-orders.index', [
             'travelOrders' => $travelOrders
         ]);
     }
