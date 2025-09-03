@@ -7,10 +7,15 @@ The Role Management system controls user access and permissions within the DENR 
 ## Roles and Permissions
 
 ### Signature Requirements
-- All roles except Super Admin and Admin must have a valid signature uploaded to participate in the approval workflow
+- All roles except Super Admin must have a valid signature uploaded to participate in the approval workflow
 - Signatures are validated before any approval/recommendation action
 - The system enforces signature requirements at both the UI and API levels
 - Signature updates are logged for audit purposes
+- Users are prompted to upload a signature upon first login
+- Signatures must be verified before performing any workflow actions
+- Signature usage is tracked and logged with timestamps
+- Multiple signature formats are supported (uploaded image or drawn)
+- Signatures can be updated but previous versions are archived
 
 ### Default Roles
 
@@ -45,9 +50,17 @@ The Role Management system controls user access and permissions within the DENR 
    - View department-specific reports
    - Export recommendation history with signatures
    - Receive notifications requiring signature verification
+   - Must type "RECOMMEND" to confirm actions
+   - Can view signature upload status of employees in their department
+   - Receives alerts for pending signatures in their workflow
 
 4. **Approver**
    - Approve/reject travel orders
+   - Must type "APPROVE" or "REJECT" to confirm actions
+   - View signature verification status for recommenders
+   - Can request signature verification from recommenders
+   - Receives alerts for signature-related issues
+   - Can view signature audit logs for their approvals
    - View travel orders requiring approval
    - Must have a valid signature to approve orders
    - Generate official travel order numbers with digital signature

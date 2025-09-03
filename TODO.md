@@ -33,19 +33,31 @@
 
 ### User Management
 - [x] User Profile
+- [x] Signature upload and management
+- [x] First-time login signature prompt
+- [x] Signature verification system
 - [ ] User listing (Admin)
 - [ ] Create/Edit/Deactivate users
 - [ ] Password reset functionality
+
+## Recently Completed (v1.2.0)
+- [x] Added type-to-confirm modals for all critical actions
+- [x] Implemented first-time login signature prompt
+- [x] Added signature verification workflow
+- [x] Enhanced security with action confirmation
+- [x] Improved user onboarding experience
 
 ## Technical Tasks
 
 ### Frontend
 - [x] Responsive layout
+- [x] Type-to-confirm modals for critical actions
+- [x] Signature upload interface
 - [ ] Form validation
 - [ ] Loading states
 - [ ] Error handling
-- [ ] Success/Error notifications
-- [ ] Confirmation dialogs
+- [x] Success/Error notifications
+- [x] Confirmation dialogs with type verification
 - [x] Travel orders print template
 
 ### Backend

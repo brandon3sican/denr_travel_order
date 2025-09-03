@@ -1,6 +1,13 @@
 # DENR Travel Order Information System (DENR-TOIS)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?logo=laravel)](https://laravel.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![PHP](https://img.shields.io/badge/PHP-8.1+-777BB4?logo=php)](https://php.net/)
+
 A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 10, Tailwind CSS 3, and Livewire. This system streamlines the process of creating, managing, and tracking travel orders within the organization with a modern, responsive interface.
+
+> **Latest Update (September 2023)**: Added enhanced signature verification system with type-to-confirm modals for all critical actions and improved user onboarding flow.
 
 ## 🚀 Key Features
 

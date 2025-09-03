@@ -11,12 +11,40 @@ This document outlines the complete workflow of a travel order from creation to 
    - Signatures are required for both recommendation and approval actions
    - Signatures are stored securely in the `public/signatures` directory
    - Each user can have only one active signature at a time
+   - New users are prompted to upload or draw their signature immediately after first login
 
 2. **Signature Management**
    - Users can upload or draw their signature in the profile section
    - Signatures must be uploaded in PNG format
    - The system automatically resizes and optimizes uploaded signatures
    - Users can update their signature at any time
+
+## Security Features
+
+### Type-to-Confirm Modals
+- **Critical Actions Require Confirmation**:
+  - Recommending a travel order
+  - Approving a travel order
+  - Rejecting a travel order
+  - Deleting a travel order
+  
+- **Confirmation Process**:
+  - User must type the action word (e.g., "RECOMMEND", "APPROVE") to confirm
+  - Prevents accidental submissions
+  - Provides an additional layer of security
+  - Matches the action button text in uppercase
+
+### Signature Upload Prompt
+- **First Login Experience**:
+  - Users without a signature see a modal prompt after login
+  - Clear instructions for signature upload
+  - Option to upload an image or use the built-in signature pad
+  - "I'll do it later" option available
+
+- **Ongoing Reminders**:
+  - Alert banner on dashboard for users without signatures
+  - Reminder when attempting to perform actions that require a signature
+  - Clear visual indicators of signature status
 
 ## Workflow States
 

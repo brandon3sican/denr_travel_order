@@ -43,9 +43,14 @@ The DENR Travel Order System is a modern web application built with Laravel 10, 
 - Middleware for route protection
 - Password reset functionality
 - Email verification
+- Signature verification for workflow actions
+- Type-to-confirm modals for critical actions
 
 ### 2. User Management
 - Employee profiles with digital signatures
+- Signature upload and management
+- First-time login signature requirement
+- Signature usage tracking
 - Role assignments
 - Department/division management
 - Signature management
@@ -128,6 +133,22 @@ storage/
 
 tests/                 # Test files
 ```
+
+## Security Features
+
+### Signature Security
+- **Mandatory Signature Upload**: Required before participating in workflow
+- **Signature Verification**: Digital verification of all signatures
+- **Signature Audit Trail**: Logs all signature usage
+- **Type-to-Confirm**: Critical actions require typing the action word
+- **Session Protection**: Automatic logout after period of inactivity
+
+### Data Protection
+- **Encryption**: Sensitive data encrypted at rest
+- **CSRF Protection**: All forms protected with CSRF tokens
+- **XSS Prevention**: Output encoding and content security policy
+- **Input Validation**: Strict validation of all user inputs
+- **Rate Limiting**: Protection against brute force attacks
 
 ## Key Features
 

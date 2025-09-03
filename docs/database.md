@@ -44,10 +44,14 @@ This document outlines the database schema, relationships, and key tables used i
 - `employee_id` (bigint, foreign key to employees.id)
 - `signature_data` (longtext, nullable) - Base64 encoded signature image
 - `signature_path` (string, nullable) - Path to stored signature file
-- `mime_type` (string) - MIME type of the signature image
+- `signature_url` (string, nullable) - Full URL to the signature image
+- `mime_type` (string) - MIME type of the signature image (image/png, image/jpeg)
 - `is_active` (boolean, default: true) - Indicates if this is the active signature
 - `created_at` (timestamp)
 - `updated_at` (timestamp)
+- `last_used_at` (timestamp, nullable) - When the signature was last used for approval/recommendation
+- `ip_address` (string, nullable) - IP address from which signature was uploaded
+- `user_agent` (string, nullable) - User agent information from signature upload
 - `deleted_at` (timestamp, nullable)
 
 #### 4. travel_orders
@@ -166,11 +170,14 @@ This document outlines the database schema, relationships, and key tables used i
 ## Enums
 
 ### Travel Order Status
-- `draft` - Initial draft state
-- `for_recommendation` - Submitted and awaiting recommendation
-- `for_approval` - Recommended and awaiting approval
-- `approved` - Fully approved
-- `rejected` - Rejected by recommender or approver
+- `draft` (1) - Initial draft state
+- `for_recommendation` (2) - Submitted and awaiting recommendation
+- `for_approval` (3) - Recommended and awaiting approval
+- `approved` (4) - Fully approved with signatures
+- `rejected` (5) - Rejected by recommender or approver
+- `cancelled` (6) - Cancelled by creator or admin
+
+> **Note**: Status IDs are used in the application logic to determine workflow progression and signature visibility. For example, status 4 (Approved) hides recommender and approver signatures in the UI.
 - `cancelled` - Cancelled by creator or admin
 - `completed` - Travel has been completed
 
