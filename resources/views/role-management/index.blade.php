@@ -135,7 +135,7 @@
                                     </td>
                                     <td class="px-4 py-2 whitespace-nowrap">
                                         <div class="relative w-full max-w-[180px] ml-auto">
-                                            <form action="{{ route('role-management.update-role', $user->id) }}"
+                                            <form action="{{ route('role-management.update-role', $user) }}"
                                                 method="POST" class="w-full">
                                                 @csrf
                                                 <div class="relative">

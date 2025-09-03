@@ -42,7 +42,7 @@ class TravelOrderController extends Controller
             
         $statuses = TravelOrderStatus::all();
             
-        return view('travel-order.for-approval', [
+        return view('travel-orders.for-approval', [
             'travelOrders' => $travelOrders,
             'statuses' => $statuses
         ]);
@@ -159,7 +159,7 @@ class TravelOrderController extends Controller
             
         $statuses = TravelOrderStatus::all();
             
-        return view('travel-order.for-recommendation', [
+        return view('travel-orders.for-recommendation', [
             'travelOrders' => $travelOrders,
             'statuses' => $statuses
         ]);
@@ -261,9 +261,9 @@ class TravelOrderController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        $statuses = \App\Models\TravelOrderStatus::all();
+        $statuses = TravelOrderStatus::all();
 
-        return view('travel-order.all-travel-orders-simple', [
+        return view('travel-orders.admin.index', [
             'travelOrders' => $travelOrders,
             'statuses' => $statuses,
         ]);
@@ -308,7 +308,7 @@ class TravelOrderController extends Controller
             ->orderBy('last_name')
             ->get();
             
-        return view('travel-order.create-travel-order', compact('employee', 'recommenders', 'approvers'));
+        return view('travel-orders.create', compact('employee', 'recommenders', 'approvers'));
     }
 
     public function store(Request $request)
@@ -343,7 +343,7 @@ class TravelOrderController extends Controller
         // You can implement this later using Laravel Notifications
         // Notification::send($recommender, new TravelOrderForRecommendation($travelOrder));
 
-        return redirect()->route('my-travel-orders')->with('success', 'Travel order created successfully!');
+        return redirect()->route('dashboard')->with('success', 'Travel order created successfully!');
     }
 
     public function show($id)

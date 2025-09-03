@@ -432,7 +432,7 @@
                             </td>
                             <td style="width:173.7pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
-                                    ${order.status_id !== 1 ? 
+                                    ${order.status_id !== 1 && order.status_id !== 4? 
                                         (order.recommender_employee?.signature?.signature_url ? 
                                             `<img src="${order.recommender_employee.signature.signature_url}" alt="Recommender Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                             `<!-- No signature found for ${order.recommender_employee?.first_name} ${order.recommender_employee?.middle_name} ${order.recommender_employee?.last_name} -->
@@ -451,7 +451,7 @@
                             </td>
                             <td style="width:163.15pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
-                                    ${order.status_id !== 1 && order.status_id !== 2 ? `
+                                    ${order.status_id !== 1 && order.status_id !== 2 && order.status_id !== 4 ? `
                                         ${order.approver_employee?.signature?.signature_url ? 
                                             `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                             `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} -->
