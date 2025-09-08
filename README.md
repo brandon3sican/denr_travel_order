@@ -1,46 +1,173 @@
-# DENR Travel Order Management System (DENR-TOIS)
+# 🏢 DENR Travel Order Management System (DENR-TOIS)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel)](https://laravel.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php)](https://php.net/)
+[![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/denr-travel-order)](https://github.com/yourusername/denr-travel-order/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/yourusername/denr-travel-order)](https://github.com/yourusername/denr-travel-order/issues)
 
-A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 12, Tailwind CSS 3, and Alpine.js. This system streamlines the process of creating, managing, and tracking travel orders within the organization with a modern, responsive interface.
+A modern, efficient, and secure Travel Order Management System developed for the Department of Environment and Natural Resources (DENR). Built with Laravel 12, Tailwind CSS 3, and Alpine.js, this solution streamlines the entire travel order process from creation to approval and archival.
 
-## 🚀 Key Features
+## 📋 Table of Contents
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Database Structure](#-database-structure)
+- [API Documentation](#-api-documentation)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-### Role-Based Access Control
-- **Admin**: Full system access, user management, and system configuration
-- **Approver**: Review and approve/reject travel orders
-- **Employee**: Create and manage personal travel orders
+## ✨ Key Features
 
-### User Management
-- Secure authentication and authorization
-- Profile management with digital signatures
-- Role-based access control (Admin, Approver, Employee)
-- Employee directory with department/unit filtering
+### 👨‍💼 Role-Based Access Control
+- **Administrators**
+  - Full system configuration and management
+  - User account management and permissions
+  - System monitoring and audit logs
+  - Database maintenance tools
 
-### Travel Order Management
-- Intuitive travel order creation wizard
-- Real-time status tracking (Draft → Pending → For Approval → Approved/Rejected)
-- Comprehensive travel history dashboard
-- Advanced filtering and search functionality
-- Digital approval workflow with notifications
-- Automatic travel order number generation
+- **Approvers**
+  - Review and validate travel requests
+  - Digital approval workflow
+  - Budget verification tools
+  - Departmental reporting
 
-### Dashboard & Reporting
-- Real-time statistics and analytics
-- Filterable reports by date range, status, and department
-- Export to multiple formats (PDF, Excel, CSV)
-- Visual charts and data visualization
+- **Employees**
+  - Intuitive travel order submission
+  - Real-time status tracking
+  - Document upload and management
+  - Travel history and reports
 
-### Document Management
-- Secure digital document storage
-- Version control for travel orders
-- Document approval workflows with audit trail
-- Automatic PDF generation with digital signatures
+### 📝 Travel Order Management
+- **Intelligent Forms**
+  - Dynamic form validation
+  - Auto-save draft functionality
+  - Required field enforcement
+  - Contextual help tooltips
 
-## 🗄️ Database Structure
+- **Workflow Automation**
+  - Multi-level approval chains
+  - Automated notifications
+  - Status change alerts
+  - Deadline reminders
+
+- **Document Generation**
+  - Professional PDF generation
+  - Digital signature support
+  - Customizable templates
+  - Batch processing
+
+### 📊 Analytics & Reporting
+- **Real-time Dashboards**
+  - Travel statistics overview
+  - Departmental spending
+  - Approval turnaround times
+  - Employee travel history
+
+- **Advanced Reporting**
+  - Custom report builder
+  - Export to multiple formats (PDF, Excel, CSV)
+  - Scheduled report delivery
+  - Data visualization tools
+
+### 🔒 Security & Compliance
+- **Data Protection**
+  - End-to-end encryption
+  - Role-based data access
+  - Audit logging
+  - Regular security audits
+
+- **Compliance Features**
+  - Data retention policies
+  - Access control lists
+  - Activity monitoring
+  - Automated backups
+
+## 🗃️ Database Structure
+
+The system utilizes a well-structured relational database designed for performance, scalability, and data integrity. The database schema follows normalization principles to minimize redundancy while maintaining efficient query performance.
+
+### Core Tables Overview
+
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **users** | System authentication and authorization | id, email, is_admin |
+| **employees** | Employee master data | id, email, position_name, div_sec_unit |
+| **travel_orders** | Core travel order records | id, employee_email, status_id, dates |
+| **travel_order_status** | Status workflow definitions | id, name |
+| **employee_signatures** | Digital signature management | id, employee_id, signature_data |
+| **travel_order_numbers** | Document numbering system | id, travel_order_number, travel_order_id |
+
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    users ||--o{ travel_orders : "creates"
+    users ||--o{ travel_orders : "recommends"
+    users ||--o{ travel_orders : "approves"
+    employees ||--o| users : "authenticates"
+    employees ||--o| employee_signatures : "has"
+    travel_order_status ||--o{ travel_orders : "tracks"
+    travel_orders ||--o{ travel_order_numbers : "references"
+    
+    users {
+        bigint id PK
+        string email "Unique"
+        string password "Hashed"
+        boolean is_admin
+        timestamp email_verified_at
+        timestamps
+    }
+    
+    employees {
+        bigint id PK
+        string first_name
+        string last_name
+        string email "Unique"
+        string position_name
+        string div_sec_unit "Division/Section/Unit"
+        timestamps
+    }
+    
+    travel_orders {
+        bigint id PK
+        string employee_email FK
+        bigint status_id FK
+        date departure_date
+        date arrival_date
+        string destination
+        decimal per_diem
+        string purpose
+        timestamps
+    }
+    
+    employee_signatures {
+        bigint id PK
+        bigint employee_id FK
+        text signature_data "Base64 encoded"
+        boolean is_active
+        timestamps
+    }
+    
+    travel_order_status {
+        bigint id PK
+        string name "Unique"
+        timestamps
+    }
+    
+    travel_order_numbers {
+        bigint id PK
+        string travel_order_number "Unique"
+        bigint travel_order_id FK
+        timestamps
+    }
+```
+
+For comprehensive database documentation including field specifications, relationships, and indexing strategy, please refer to [DATABASE.md](DATABASE.md).
 
 ### Entity-Relationship Diagram (Mermaid)
 
