@@ -7,7 +7,7 @@
         <header class="bg-white shadow-sm z-10">
             <div class="flex items-center justify-between p-4">
                 <div class="flex items-center">
-                    <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
+                    <button id="sidebarToggle" class="lg:hidden mr-4 text-gray-600 hover:text-gray-900">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                     <h2 class="text-xl font-semibold text-gray-800">Role Management</h2>
@@ -267,7 +267,15 @@
                 @endif
             </div>
         </main>
-    </div>
+
+        <footer class="bg-white border-t border-gray-200 mt-8">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <p class="text-sm text-gray-500">&copy; {{ date('Y') }} Department of Environment and Natural
+                        Resources. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
     @include('role-management.partials.scripts')

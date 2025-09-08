@@ -6,7 +6,14 @@
 
         <!-- Modal panel -->
         <div class="inline-block w-full max-w-4xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all sm:my-8">
-            <div class="bg-white px-4 sm:p-6">
+            <div class="bg-white px-4 sm:p-6 relative">
+                <!-- Close button in top-right corner -->
+                <button type="button" onclick="closeOrderModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 focus:outline-none">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
                 <div class="sm:flex sm:items-start">
                     <div class="w-full">
                         <div class="overflow-y-auto" id="orderDetails">

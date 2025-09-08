@@ -7,7 +7,7 @@
         <header class="bg-white shadow-sm z-10">
             <div class="flex items-center justify-between p-4">
                 <div class="flex items-center">
-                    <button id="sidebarToggle" class="mr-4 text-gray-600 hover:text-gray-900">
+                    <button id="sidebarToggle" class="lg:hidden mr-4 text-gray-600 hover:text-gray-900">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                     <h2 class="text-xl font-semibold text-gray-800">Digital Signature</h2>
@@ -156,36 +156,46 @@
                         </div>
                     </div>
                     @if (isset($signature) && $signature)
-                    <div class="bg-white rounded-lg shadow overflow-hidden text-center mt-4 border-2">
-                        <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
-                            <h3 class="text-lg font-medium text-gray-900 flex items-center">
-                                <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Your Current Signature
-                            </h3>
-                        </div>
-                        <div class="px-6 py-5">
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                                <div class="flex-1">
-                                    <div class="inline-block bg-white p-4 border border-gray-500 rounded-lg shadow-sm">
-                                        <img src="{{ $signature->signature_data }}" alt="Your Signature"
-                                            class="h-20" />
+                        <div class="bg-white rounded-lg shadow overflow-hidden text-center mt-4 border-2">
+                            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                                <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                                    <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Your Current Signature
+                                </h3>
+                            </div>
+                            <div class="px-6 py-5">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                    <div class="flex-1">
+                                        <div class="inline-block bg-white p-4 border border-gray-500 rounded-lg shadow-sm">
+                                            <img src="{{ $signature->signature_data }}" alt="Your Signature"
+                                                class="h-20" />
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-500">
+                                            Last updated: {{ $signature->updated_at->format('M d, Y \a\t h:i A') }}
+                                        </p>
                                     </div>
-                                    <p class="mt-2 text-sm text-gray-500">
-                                        Last updated: {{ $signature->updated_at->format('M d, Y \a\t h:i A') }}
-                                    </p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
                 </div>
 
-                
+
             </div>
+        </main>
+
+        <footer class="bg-white border-t border-gray-200 mt-8">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <p class="text-sm text-gray-500">&copy; {{ date('Y') }} Department of Environment and Natural
+                        Resources. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
     @include('signature.partials.styles')

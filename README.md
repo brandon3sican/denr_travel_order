@@ -1,512 +1,172 @@
-# DENR Travel Order Information System (DENR-TOIS)
+# DENR Travel Order Management System
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?logo=laravel)](https://laravel.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![PHP](https://img.shields.io/badge/PHP-8.1+-777BB4?logo=php)](https://php.net/)
+A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel and Tailwind CSS.
 
-A comprehensive Travel Order Management System for the Department of Environment and Natural Resources (DENR) built with Laravel 10, Tailwind CSS 3, and Livewire. This system streamlines the process of creating, managing, and tracking travel orders within the organization with a modern, responsive interface.
+## 🚀 Features
 
-> **Latest Update (September 2023)**: Added enhanced signature verification system with type-to-confirm modals for all critical actions and improved user onboarding flow.
+### User Management
+- Role-based access control (Admin, Approver, Employee)
+- User authentication and authorization
+- Profile management
+- Digital signature upload and verification
 
-## 🚀 Key Features
+### Travel Order Management
+- Create and submit travel orders
+- Track order status (Pending, For Approval, Approved, Rejected)
+- View travel history
+- Filter and search functionality
+- Digital approval workflow
 
-- **Modern, Responsive UI** - Built with Tailwind CSS for a clean, professional look that works on all devices
-- **Advanced Filtering** - Powerful filtering system with date range picker for easy data retrieval
-- **Role-Based Access Control** - Fine-grained permissions for different user roles
-- **Real-time Updates** - Livewire-powered components for seamless user experience
-- **Comprehensive Reporting** - Generate detailed travel order reports with filtering options
-- **Email Notifications** - Automatic notifications for travel order status updates
-- **Digital Signatures** - Secure digital signatures for document approval with signature verification
-- **Document Generation** - Generate and print travel orders in PDF format with embedded signatures
+### Reporting
+- Generate travel order reports
+- Filter by date range, status, and department
+- Export to PDF/Excel
 
-## 📋 System Workflow
+### Document Management
+- Digital document storage
+- Version control
+- Document approval workflows
 
-### Signature Requirements
-- All users must upload their digital signature before participating in the workflow
-- Signatures are stored securely in the `public/signatures` directory
-- Each user can have only one active signature at a time
-- Signatures are required for both recommendation and approval actions
+## 🗄️ Database Structure
 
-### Travel Order Request Process
+### Tables
 
-1. **Request Creation**
-   - Any user can create a travel order request
-   - Each request requires:
-     - Basic travel details (dates, destination, purpose)
-     - Selection of one Recommender
-     - Selection of one Approver
-   - System validations:
-     - User must have a valid signature uploaded
-     - Recommender and Approver must be different users
-     - User cannot be both Recommender and Approver for the same request
-     - User cannot be Recommender/Approver for their own request
-     - Recommender and Approver must have valid signatures
-   - Status: Set to "Pending/For Recommendation" upon creation
+1. **users**
+   - id (PK)
+   - email (unique)
+   - email_verified_at (timestamp)
+   - password
+   - is_admin (boolean)
+   - remember_token
+   - timestamps
 
-2. **Recommendation Phase**
-   - The assigned Recommender receives the travel order
-   - System verifies Recommender has a valid signature
-   - Actions available:
-     - Review travel order details
-     - Attach digital signature to recommend
-     - Forward to Approver
-   - Status: Changes to "For Approval" after recommendation
-   - System logs the recommendation with timestamp and signature
+2. **employees**
+   - id (PK)
+   - first_name
+   - middle_name (nullable)
+   - last_name
+   - suffix (nullable)
+   - sex
+   - email (unique)
+   - emp_status
+   - position_name
+   - assignment_name
+   - div_sec_unit
+   - timestamps
 
-3. **Approval Phase**
-   - The assigned Approver receives the travel order
-   - System verifies Approver has a valid signature
-   - Actions available:
-     - Review travel order and recommendation
-     - Verify Recommender's signature
-     - Attach digital signature to approve
-     - System automatically assigns an official travel order number upon approval
-     - System generates PDF with all required signatures and verification hashes
-   - Status: Changes to "Approved" with O.R. number
-   - System logs the approval with timestamp and signature
+3. **travel_order_status**
+   - id (PK)
+   - name (unique)
+   - timestamps
 
-### User Roles and Permissions
+4. **travel_orders**
+   - id (PK)
+   - employee_email (FK -> users.email)
+   - employee_salary (decimal)
+   - destination
+   - purpose (text)
+   - departure_date (date)
+   - arrival_date (date)
+   - recommender (FK -> users.email)
+   - approver (FK -> users.email)
+   - appropriation
+   - per_diem (decimal)
+   - laborer_assistant (decimal)
+   - remarks (nullable)
+   - status_id (FK -> travel_order_status.id)
+   - timestamps
 
-- **Regular Users**
-  - Can create and manage their own travel orders
-  - Can be assigned as Recommender or Approver for other users' requests
-  - Cannot approve or recommend their own requests
+5. **employee_signatures**
+   - id (PK)
+   - employee_id (FK -> employees.id)
+   - signature_data (text)
+   - created_at
+   - updated_at
 
-- **Recommenders**
-  - Can recommend travel orders assigned to them
-  - Must provide e-signature when recommending
-  - Cannot recommend their own travel orders
+## 🛠️ Prerequisites
 
-- **Approvers**
-  - Can approve travel orders assigned to them
-  - Must provide e-signature when approving
-  - System assigns official travel order number upon approval
-  - Cannot approve their own travel orders
-
-- **Admins**
-  - Full system access
-  - Can manage users and roles
-  - Can override or reassign requests if needed
-
-### Status Flow
-1. Pending/For Recommendation → For Approval → Approved (with O.R. number)
-2. Can be Rejected at any stage with appropriate reason
-3. Special Status: Cancelled (for terminated requests)
-
-## 🚀 Recent Updates
-
-- **Database Seeding**
-  - Fixed duplicate email entries in user seeding
-  - Enhanced seeders with `updateOrCreate` to prevent duplicates
-  - Improved data consistency across related tables
-
-- **User Interface**
-  - Updated role management view for better user experience
-  - Improved display of user names in the interface
-  - Removed redundant modals for cleaner UI
-
-- **Security**
-  - Enhanced data validation in seeders
-  - Improved foreign key constraints
-  - Better error handling for database operations
-
-## ✨ Features
-
-- **Modern Dashboard**
-  - Real-time statistics and key metrics
-  - Quick overview of pending and completed travel orders
-  - Interactive charts and visualizations
-
-- **Advanced Travel Order Management**
-  - Intuitive travel order creation wizard
-  - Comprehensive view of all travel orders
-  - Advanced filtering and search capabilities
-  - Status tracking with visual indicators
-  - Export functionality for reports
-
-- **Employee Management**
-  - Detailed employee profiles with contact information
-  - Department and position tracking
-  - Employee performance metrics
-
-- **User Management**
-  - Role-based access control (Admin, Approver, Employee)
-  - User activity logging
-  - Password management and security
-
-- **Document Management**
-  - Digital document storage
-  - Version control for travel orders
-  - Document approval workflows
-
-- **Responsive Design**
-  - Mobile-first approach
-  - Optimized for all screen sizes
-  - Touch-friendly interface
-
-- **Real-time Updates**
-  - Live status updates
-  - Instant notifications
-  - Activity feed
-
-## ✅ To-Do List
-
-### 🚀 In Progress
-
-#### Travel Order Creation
-- [ ] Implement date validations:
-  - Departure date must be at least 1 day after current date
-  - Arrival date must be on or after departure date
-- [ ] Create navigation for users to view travel orders where they are:
-  - Requestor (their own requests)
-  - Recommender (assigned to them)
-  - Approver (assigned to them)
-- [ ] Implement e-signature requirements:
-  - Users must upload e-signature before creating requests
-  - Store e-signatures securely in personal storage
-  - Require e-signature verification for recommendations/approvals
-- [ ] Ensure successful data insertion with proper error handling
-- [ ] Comprehensive testing and UI/UX improvements
-
-#### Approval Workflow
-- [ ] Implement recommendation phase:
-  - Recommender receives notification of new travel order
-  - System requires e-signature for recommendation
-  - Forward to Approver after recommendation
-- [ ] Implement approval phase:
-  - Approver receives notification of pending approval
-  - System requires e-signature for approval
-  - Handle rejection workflow with reason
-
-### 📅 Upcoming
-
-- [ ] **Travel Order Number Assignment**
-  - Implement automatic generation of travel order numbers
-  - Format: TBD (To Be Decided)
-  - Ensure uniqueness and sequential numbering
-
-- [ ] **Document Generation**
-  - Create travel order document template
-  - Implement PDF generation with all details
-  - Include e-signatures and approval stamps
-
-- [ ] **Notification System**
-  - Email notifications for:
-    - New travel order assignment (to Recommender)
-    - Recommendation results (to Requestor and Approver)
-    - Approval/Rejection results (to Requestor)
-  - In-app notifications
-  - Status update alerts
-
-- [ ] **Reporting**
-  - Generate travel order reports
-  - Filter by date range, status, department
-  - Export to Excel/PDF
-
-## 📚 Documentation
-
-For detailed documentation about the system's architecture, database design, and workflows, please see the [Documentation](./docs/index.md) directory.
-
-## Prerequisites
-
-- PHP 8.1 or higher
+- PHP 8.2 or higher
 - Composer
 - Node.js & NPM
 - MySQL 5.7+ or MariaDB 10.3+
 - Web server (Apache/Nginx)
-- Git
 
-## Installation
+## 🚀 Installation
 
-### 1. Clone the Repository
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/denr-travel-order.git
+   cd denr-travel-order
+   ```
 
-```bash
-git clone https://github.com/brandon3sican/denr_travel_order.git
-cd denr_travel_order
-```
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
 
-### 2. Install PHP Dependencies
+3. **Install NPM dependencies**
+   ```bash
+   npm install
+   ```
 
-```bash
-composer install
-```
-
-### 3. Install NPM Dependencies
-
-```bash
-npm install
-npm run build
-```
-
-### 4. Configure Environment
-
-1. Copy the example environment file:
+4. **Create environment file**
    ```bash
    cp .env.example .env
    ```
 
-2. Generate application key:
+5. **Generate application key**
    ```bash
    php artisan key:generate
    ```
 
-3. Update the following variables in the `.env` file:
+6. **Configure database**
+   Update your `.env` file with your database credentials:
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
    DB_DATABASE=denr_travel_order
-   DB_USERNAME=your_db_username
-   DB_PASSWORD=your_db_password
-   
-   MAIL_MAILER=smtp
-   MAIL_HOST=your_mail_host
-   MAIL_PORT=587
-   MAIL_USERNAME=your_mail_username
-   MAIL_PASSWORD=your_mail_password
-   MAIL_ENCRYPTION=tls
-   MAIL_FROM_ADDRESS=no-reply@denr.gov.ph
-   MAIL_FROM_NAME="DENR Travel Order System"
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
    ```
 
-### 5. Run Database Migrations and Seeders
-
-```bash
-php artisan migrate --seed
-```
-
-### 6. Set Storage Link
-
-```bash
-php artisan storage:link
-```
-
-## 🚀 Running the Project
-
-### Development Environment
-
-1. **Start the Laravel development server**:
+7. **Run migrations and seeders**
    ```bash
-   php artisan serve
+   php artisan migrate --seed
    ```
-   This will start the server at `http://127.0.0.1:8000`
 
-2. **Run Vite development server** (for hot-reloading of assets):
+8. **Link storage**
    ```bash
-   npm run dev
+   php artisan storage:link
    ```
-   This will start Vite's development server for hot module replacement.
 
-3. **Access the application**:
-   - Frontend: http://localhost:8000
-   - Vite dev server: http://localhost:5173 (for assets)
-
-### Production Environment
-
-1. **Build assets for production**:
+9. **Compile assets**
    ```bash
    npm run build
    ```
 
-2. **Optimize the application**:
-   ```bash
-   php artisan optimize
-   php artisan view:cache
-   php artisan route:cache
-   php artisan config:cache
-   ```
+10. **Start the development server**
+    ```bash
+    php artisan serve
+    ```
 
-3. **Configure your web server**:
-   - Point your web server (Apache/Nginx) to the `/public` directory
-   - Set the document root to the `public` directory
-   - Configure URL rewriting as per Laravel's documentation
+## 🔧 Development
 
-4. **Set proper permissions**:
-   ```bash
-   chmod -R 755 storage
-   chmod -R 755 bootstrap/cache
-   ```
-
-### Using Laravel Sail (Docker)
-
-If you have Docker installed, you can use Laravel Sail:
-
-1. Install dependencies:
-   ```bash
-   docker run --rm \
-     -u "$(id -u):$(id -g)" \
-     -v $(pwd):/var/www/html \
-     -w /var/www/html \
-     laravelsail/php82-composer:latest \
-     composer install --ignore-platform-reqs
-   ```
-
-2. Start the Sail environment:
-   ```bash
-   ./vendor/bin/sail up -d
-   ```
-
-3. Run database migrations:
-   ```bash
-   ./vendor/bin/sail artisan migrate --seed
-   ```
-
-4. Access the application at: http://localhost
-
-## Project Structure
-
-```
-resources/views/
-├── dashboard/              # Dashboard views
-├── layout/                 # Main layout templates
-├── travel-order/           # Travel order related views
-│   ├── create-travel-order.blade.php
-│   └── my-travel-orders.blade.php
-└── user-management/        # User management views
-```
-
-## Available Routes
-
-- `/` - Login page
-- `/dashboard` - Main dashboard
-- `/travel-order/create` - Create new travel order
-- `/travel-order/my-orders` - View my travel orders
-- `/user-management` - User management console
-
-## Development
-
-### Frontend Assets
-
-Compile assets with:
+### Running the development server
 ```bash
+php artisan serve
 npm run dev
-# or for production
-npm run build
 ```
 
-### Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `APP_ENV` | Application environment (local, production, etc.) |
-| `APP_DEBUG` | Enable/disable debug mode |
-| `APP_URL` | Application URL |
-| `DB_*` | Database connection settings |
-| `MAIL_*` | Email configuration |
-
-## Default Login Credentials
-
-- **Admin User**
-  - Email: admin@denr.gov.ph
-  - Password: password
-
-- **Regular User**
-  - Email: user@denr.gov.ph
-  - Password: password
-
-## License
-
-This project is open-source and available under the [MIT License](LICENSE).
-
-## Contact
-
-For any inquiries, please contact the development team at it-support@denr.gov.ph
-
-## 🛠 Installation
-
-1. Clone the repository
-2. Run `composer install`
-3. Copy `.env.example` to `.env` and configure your database settings
-4. Run `php artisan key:generate`
-5. Run migrations and seed the database: `php artisan migrate --seed`
-6. Install Node.js dependencies: `npm install`
-7. Build assets: `npm run build`
-8. Link storage: `php artisan storage:link`
-9. Start the development server: `php artisan serve`
-
-### Environment Variables
-
-Make sure to set these environment variables in your `.env` file:
-
-```
-APP_NAME="DENR Travel Order System"
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://localhost:8000
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=denr_travel_order
-DB_USERNAME=root
-DB_PASSWORD=
-
-MAIL_MAILER=smtp
-MAIL_HOST=mailhog
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="hello@example.com"
-MAIL_FROM_NAME="${APP_NAME}"
-```
-
-### Seeding Test Data
-
-To populate the database with test data, run:
-
+### Running tests
 ```bash
-php artisan db:seed --class=DatabaseSeeder
+php artisan test
 ```
 
-This will create:
-- Admin user (email: admin@example.com, password: password)
-- Sample employees and roles
-- Test travel orders
-
-## 📊 API Documentation
-
-### Available Endpoints
-
-- `GET /api/travel-orders` - List all travel orders (with filters)
-- `POST /api/travel-orders` - Create a new travel order
-- `GET /api/travel-orders/{id}` - Get a specific travel order
-- `PUT /api/travel-orders/{id}` - Update a travel order
-- `DELETE /api/travel-orders/{id}` - Delete a travel order
-
-### Authentication
-
-All API endpoints require authentication. Include the API token in the `Authorization` header:
-
+### Code style
+```bash
+./vendor/bin/pint
 ```
-Authorization: Bearer your-api-token
-```
-
-## 🛡 Security
-
-- All passwords are hashed using bcrypt
-- CSRF protection is enabled
-- Input validation on all forms
-- Rate limiting on authentication endpoints
-- SQL injection prevention using Eloquent ORM
-- XSS protection with Blade templating engine
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 📝 License
 
@@ -514,4 +174,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ## 📞 Contact
 
-For any questions or support, please contact the development team at [your-email@example.com](mailto:your-email@example.com).
+For any inquiries, please contact the development team.
