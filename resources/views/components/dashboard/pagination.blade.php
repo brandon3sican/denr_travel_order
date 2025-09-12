@@ -1,7 +1,7 @@
 @props(['paginator'])
 
 @if ($paginator->hasPages())
-    <div class="mt-4 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+    <div class="m-4 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
         <p class="text-sm text-gray-600">
             @if ($paginator->count() > 0)
                 Showing <span class="font-medium">{{ $paginator->firstItem() }}</span> to
@@ -11,7 +11,7 @@
                 No results found
             @endif
         </p>
-        
+
         <div class="flex items-center space-x-1">
             {{-- Previous Page Link --}}
             @if ($paginator->onFirstPage())
@@ -28,7 +28,8 @@
             {{-- Pagination Elements --}}
             @foreach ($paginator->getUrlRange(1, $paginator->lastPage()) as $page => $url)
                 @if ($page == $paginator->currentPage())
-                    <span class="px-3 py-1 border rounded-md text-sm font-medium bg-blue-600 text-white border-blue-600">
+                    <span
+                        class="px-3 py-1 border rounded-md text-sm font-medium bg-blue-600 text-white border-blue-600">
                         {{ $page }}
                     </span>
                 @else

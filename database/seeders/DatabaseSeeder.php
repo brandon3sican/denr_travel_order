@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         
         // Run seeders in correct order
         $this->call([
-            TableSeeder::class,
+            // TableSeeder::class,
             TravelOrderSeeder::class,
         ]);
         

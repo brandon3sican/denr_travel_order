@@ -26,8 +26,8 @@
                     <div class="px-6 py-4 border-b border-gray-200 bg-white rounded-t-lg">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                             <div class="mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-gray-800">Recent Travel Orders</h3>
-                                <p class="text-sm text-gray-600 mt-1">Track and manage all travel order requests</p>
+                                <h3 class="text-xl font-bold text-gray-800">My Travel Orders</h3>
+                                <p class="text-sm text-gray-600 mt-1">Track and manage my travel order requests</p>
                             </div>
                             <div class="flex items-center space-x-3">
                                 <div class="relative">
@@ -52,100 +52,101 @@
                         </div>
                     </div>
                 </div>
-                <!-- Orders Table -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-800 text-white">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                    onclick="sortTable(0)">Date Created</th>
-                                @if (auth()->user()->is_admin)
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                        onclick="sortTable(1)">Employee</th>
-                                @endif
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                    onclick="sortTable(2)">Destination</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                    onclick="sortTable(3)">Purpose</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                    onclick="sortTable(4)">Arrival Date</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                    onclick="sortTable(5)">Departure Date</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                    onclick="sortTable(6)">Status</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                    onclick="sortTable(7)">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($travelOrders as $order)
-                                <tr data-status="{{ strtolower($order->status->name ?? '') }}">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $order->destination }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $order->purpose }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                        {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                        {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            @if ($order->status_id == 1) bg-yellow-100 text-yellow-800 @endif
-                                            @if ($order->status_id == 2) bg-blue-100 text-blue-800 @endif
-                                            @if ($order->status_id == 3) bg-green-100 text-green-800 @endif
-                                            @if ($order->status_id == 4) bg-red-100 text-red-800 @endif
-                                            @if ($order->status_id == 5) bg-gray-100 text-gray-800 @endif
-                                            @if ($order->status_id == 6) bg-purple-100 text-purple-800 @endif
-                                            "
-                                            data-status="{{ strtolower($order->status->name ?? '') }}">
-                                            {{ $order->status->name ?? 'N/A' }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        <button onclick="showTravelOrder({{ $order->id }})"
-                                            class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
-                                            View
-                                        </button>
-                                        @if ($order->status_id == 1)
-                                            {{-- Only show edit for pending orders --}}
-                                            <button onclick="editTravelOrder({{ $order->id }})"
-                                                class="text-yellow-600 hover:text-yellow-900 border border-yellow-600 px-2 py-1 rounded mr-3 w-20">
-                                                Edit
-                                            </button>
+                <!-- Orders Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                    @php
+                        $counter = ($travelOrders->currentPage() - 1) * $travelOrders->perPage() + 1;
+                    @endphp
+                    @forelse($travelOrders as $order)
+                        @php
+                            $statusBgClass = '';
+                            if ($order->status_id == 1) {
+                                $statusBgClass = 'bg-yellow-50';
+                            } elseif ($order->status_id == 2) {
+                                $statusBgClass = 'bg-blue-50';
+                            } elseif ($order->status_id == 3) {
+                                $statusBgClass = 'bg-green-50';
+                            } elseif ($order->status_id == 4) {
+                                $statusBgClass = 'bg-red-50';
+                            } elseif ($order->status_id == 5) {
+                                $statusBgClass = 'bg-gray-50';
+                            } elseif ($order->status_id == 6) {
+                                $statusBgClass = 'bg-purple-50';
+                            }
+                        @endphp
+                        <div class="{{ $statusBgClass }} rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300 relative pt-8 pl-5 pr-8"
+                            data-status="{{ strtolower($order->status->name ?? '') }}">
+                            <div
+                                class="absolute top-0 left-0 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-br-lg h-8 w-8 flex items-center justify-center text-sm font-bold shadow-lg">
+                                <span class="drop-shadow-sm">{{ $counter++ }}</span>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <span class="text-xs text-gray-500">Created on</span>
+                                        <p class="text-sm font-medium text-gray-900">
+                                            {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
+                                        </p>
+                                    </div>
+                                    <span
+                                        class="px-2 py-1 text-xs font-semibold rounded-full 
+                                        @if ($order->status_id == 1) bg-yellow-100 text-yellow-800 @endif
+                                        @if ($order->status_id == 2) bg-blue-100 text-blue-800 @endif
+                                        @if ($order->status_id == 3) bg-green-100 text-green-800 @endif
+                                        @if ($order->status_id == 4) bg-red-100 text-red-800 @endif
+                                        @if ($order->status_id == 5) bg-gray-100 text-gray-800 @endif
+                                        @if ($order->status_id == 6) bg-purple-100 text-purple-800 @endif">
+                                        {{ $order->status->name ?? 'N/A' }}
+                                    </span>
+                                </div>
 
-                                            <button type="button"
-                                                class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20"
-                                                onclick="confirmDelete({{ $order->id }})">
-                                                Delete
-                                            </button>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
-                                        No travel orders found.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                <div class="mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ $order->destination }}</h3>
+                                    <p class="text-sm text-gray-600 line-clamp-2">{{ $order->purpose }}</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                                    <div>
+                                        <span class="text-gray-500 block">Arrival</span>
+                                        <span
+                                            class="font-medium">{{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 block">Departure</span>
+                                        <span
+                                            class="font-medium">{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                                    <button onclick="showTravelOrder({{ $order->id }})"
+                                        class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-indigo-600 text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        <i class="far fa-eye mr-2"></i> View
+                                    </button>
+
+                                    @if ($order->status_id == 1)
+                                        <button onclick="editTravelOrder({{ $order->id }})"
+                                            class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-yellow-600 text-sm font-medium rounded-md text-yellow-600 bg-white hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                            <i class="far fa-edit mr-2"></i> Edit
+                                        </button>
+
+                                        <button type="button" onclick="confirmDelete({{ $order->id }})"
+                                            class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-red-600 text-sm font-medium rounded-md text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                            <i class="far fa-trash-alt mr-2"></i> Delete
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-10">
+                            <div class="text-gray-400 mb-4">
+                                <i class="fas fa-inbox text-4xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-1">No travel orders found</h3>
+                            <p class="text-gray-500">Get started by creating a new travel order.</p>
+                        </div>
+                    @endforelse
                 </div>
 
                 <!-- Pagination -->

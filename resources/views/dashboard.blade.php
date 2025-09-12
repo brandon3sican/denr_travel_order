@@ -137,31 +137,39 @@
                 <!-- Recent Travel Orders -->
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-white rounded-t-lg">
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                            <div class="mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-gray-800">Recent Travel Orders</h3>
-                                <p class="text-sm text-gray-600 mt-1">Track and manage all travel order requests</p>
+                        <div class="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+                            <div class="sm:mb-0">
+                                <h3 class="text-base sm:text-lg md:text-lg font-bold text-gray-800">Recent Travel Orders
+                                </h3>
+                                <p class="hidden md:block text-xs sm:text-sm text-gray-600 mt-0.5">Track and manage all
+                                    travel order requests</p>
                             </div>
 
-                            <x-dashboard.search-filter :statuses="$statusOptions" :currentStatus="request('status')" :searchQuery="request('search')" />
+                            <div class="w-full sm:w-auto">
+                                <x-dashboard.search-filter :statuses="$statusOptions" :currentStatus="request('status')" :searchQuery="request('search')" />
+                            </div>
                         </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <x-dashboard.table-header :isAdmin="auth()->user()->is_admin" />
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($travelOrders as $order)
-                                    <x-dashboard.travel-order-row :order="$order" :isAdmin="auth()->user()->is_admin" />
-                                @empty
-                                    <tr>
-                                        <td colspan="{{ auth()->user()->is_admin ? '8' : '7' }}"
-                                            class="px-6 py-4 text-center text-sm text-gray-500">
-                                            No travel orders found.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                    <div class="overflow-x-auto -mx-4 sm:mx-0">
+                        <div class="inline-block min-w-full align-middle">
+                            <div class="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-300">
+                                    <x-dashboard.table-header :isAdmin="auth()->user()->is_admin" />
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @forelse($travelOrders as $order)
+                                            <x-dashboard.travel-order-row :order="$order" :isAdmin="auth()->user()->is_admin" />
+                                        @empty
+                                            <tr>
+                                                <td colspan="{{ auth()->user()->is_admin ? '8' : '7' }}"
+                                                    class="px-4 py-8 text-center text-sm sm:text-base text-gray-500">
+                                                    No travel orders found.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <x-dashboard.pagination :paginator="$travelOrders" />
                 </div>

@@ -60,7 +60,6 @@
                 </div>
             </div>
 
-
             <div class="bg-white rounded-lg shadow overflow-hidden mt-2">
                 <!-- Travel Orders Table -->
                 <div class="bg-white rounded shadow overflow-hidden mt-2">
@@ -68,79 +67,45 @@
                         <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead class="bg-gray-800">
                                 <tr>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase cursor-pointer hover:bg-gray-700"
-                                        onclick="sortTable(0)">
-                                        <div class="flex items-center">
-                                            Date Created
-                                            <span class="sort-icon ml-1">
-                                                <i class="fas fa-sort"></i>
-                                            </span>
-                                        </div>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase">
+                                        Travel Order Details
                                     </th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">
-                                        Employee</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">
-                                        Purpose</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase">
-                                        Destination</th>
-                                    <th class="px-3 py-2 text-left text-xs font-medium text-white font-bold uppercase cursor-pointer hover:bg-gray-700"
-                                        onclick="sortTable(3)">
-                                        <div class="flex items-center">
-                                            Travel Date
-                                            <span class="sort-icon ml-1">
-                                                <i class="fas fa-sort"></i>
-                                            </span>
-                                        </div>
+                                    <th
+                                        class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase w-1/6">
+                                        Action
                                     </th>
-                                    <th class="px-3 py-2 text-center text-xs font-medium text-white font-bold uppercase">
-                                        Status</th>
-                                    <th class="px-3 py-2 text-center text-xs font-medium text-white font-bold uppercase">
-                                        Action</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($travelOrders as $order)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-3 py-2 whitespace-nowrap"
-                                            data-sort-value="{{ \Carbon\Carbon::parse($order->created_at)->toIso8601String() }}">
-                                            <div class="text-medium text-gray-500">
-                                                {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div class="font-medium">{{ $order->employee->first_name }}
-                                                {{ $order->employee->last_name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $order->employee->position_name }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div class="font-medium text-gray-500">{{ $order->purpose }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap">
-                                            <div class="font-medium text-gray-500">{{ $order->destination }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap"
-                                            data-sort-value="{{ \Carbon\Carbon::parse($order->departure_date)->toIso8601String() }}">
-                                            <div class="font-medium">
-                                                {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</div>
-                                            <div class="text-xs text-gray-500">to
-                                                {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-center">
-                                            @php
-                                                $statusColors = [
-                                                    'for recommendation' => 'bg-yellow-100 text-yellow-800',
-                                                    'for approval' => 'bg-blue-100 text-blue-800',
-                                                    'approved' => 'bg-green-100 text-green-800',
-                                                    'disapproved' => 'bg-red-100 text-red-800',
-                                                    'cancelled' => 'bg-gray-100 text-gray-800',
-                                                    'completed' => 'bg-purple-100 text-purple-800',
-                                                ];
-                                                $statusColor =
-                                                    $statusColors[strtolower($order->status->name)] ??
-                                                    'bg-gray-100 text-gray-800';
-                                            @endphp
-                                            <span class="px-2 py-0.5 text-xs font-medium rounded-full {{ $statusColor }}">
-                                                {{ $order->status->name }}
-                                            </span>
+                                        <td class="px-6 py-4">
+                                            <div class="space-y-2">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="font-medium text-gray-900">
+                                                        {{ $order->employee->first_name }} {{ $order->employee->last_name }}
+                                                        <span
+                                                            class="text-gray-500 text-sm">({{ $order->employee->position_name }})</span>
+                                                    </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        Created: {{ $order->created_at->format('M d, Y') }}
+                                                    </div>
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-medium">Purpose:</span> {{ $order->purpose }}
+                                                </div>
+                                                <div class="text-sm">
+                                                    <span class="font-medium">Destination:</span> {{ $order->destination }}
+                                                </div>
+                                                <div class="flex items-center space-x-4 text-sm">
+                                                    <div>
+                                                        <span class="font-medium">Travel Dates:</span>
+                                                        {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
+                                                        to
+                                                        {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td class="px-3 py-2 whitespace-nowrap text-center">
                                             <button onclick="showTravelOrder({{ $order->id }})"

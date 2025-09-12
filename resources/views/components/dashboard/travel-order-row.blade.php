@@ -1,53 +1,62 @@
 @props(['order', 'isAdmin' => false])
 
-<tr>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
+@php
+    $statusName = $order->status->name ?? '';
+    $statusClass =
+        [
+            'For Recommendation' => 'bg-yellow-100 text-yellow-800',
+            'For Approval' => 'bg-blue-100 text-blue-800',
+            'Approved' => 'bg-green-100 text-green-800',
+            'Disapproved' => 'bg-red-100 text-red-800',
+            'Cancelled' => 'bg-gray-100 text-gray-800',
+            'Completed' => 'bg-purple-100 text-purple-800',
+        ][$statusName] ?? 'bg-gray-100 text-gray-800';
+
+    $departure = \Carbon\Carbon::parse($order->departure_date);
+    $arrival = \Carbon\Carbon::parse($order->arrival_date);
+    $days = $departure->diffInDays($arrival) + 1;
+@endphp
+
+<tr class="hover:bg-gray-50">
+    <!-- Travel Order Details Column -->
+    <td class="px-6 py-4">
+        <div class="space-y-2">
+            <div class="flex items-center justify-between">
+                <div class="font-medium text-gray-900">
+                    {{ $order->employee ? $order->employee->first_name . ' ' . $order->employee->last_name : 'N/A' }}
+                    @if ($order->employee?->position_name)
+                        <span class="text-gray-500 text-sm">({{ $order->employee->position_name }})</span>
+                    @endif
+                </div>
+                <div class="text-sm text-gray-500">
+                    Created: {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
+                </div>
+            </div>
+            <div class="text-sm">
+                <span class="font-medium">Purpose:</span> {{ $order->purpose ?? 'N/A' }}
+            </div>
+            <div class="text-sm">
+                <span class="font-medium">Destination:</span> {{ $order->destination ?? 'N/A' }}
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="text-sm">
+                    <span class="font-medium">Travel Dates:</span>
+                    {{ $departure->format('M d, Y') }} to {{ $arrival->format('M d, Y') }}
+                    <span class="text-gray-500">({{ $days }} {{ Str::plural('day', $days) }})</span>
+                </div>
+                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClass }}">
+                    {{ $order->status->name ?? 'Unknown' }}
+                </span>
+            </div>
+        </div>
     </td>
-    
-    @if($isAdmin)
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {{ $order->employee ? $order->employee->first_name . ' ' . $order->employee->last_name : 'N/A' }}
-        </td>
-    @endif
-    
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {{ $order->destination ?? 'N/A' }}
-    </td>
-    
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {{ $order->purpose ?? 'N/A' }}
-    </td>
-    
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-        {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
-    </td>
-    
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-        {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
-    </td>
-    
-    <td class="px-6 py-4 whitespace-nowrap text-center">
-        @php
-            $statusName = $order->status->name ?? '';
-            $statusClass = [
-                'For Recommendation' => 'bg-yellow-100 text-yellow-800',
-                'For Approval' => 'bg-blue-100 text-blue-800',
-                'Approved' => 'bg-green-100 text-green-800',
-                'Disapproved' => 'bg-red-100 text-red-800',
-                'Cancelled' => 'bg-gray-100 text-gray-800',
-                'Completed' => 'bg-purple-100 text-purple-800',
-            ][$statusName] ?? 'bg-gray-100 text-gray-800';
-        @endphp
-        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
-            {{ $order->status->name ?? 'Unknown' }}
-        </span>
-    </td>
-    
+
+    <!-- Action Column -->
     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
         <button onclick="showTravelOrder({{ $order->id }})"
-            class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
-            View
+            class="text-blue-600 hover:text-blue-900 border border-blue-600 px-2 py-1 rounded text-xs sm:text-sm w-16 sm:w-20">
+            <i class="fas fa-eye sm:hidden"></i>
+            <span class="hidden sm:inline">View</span>
         </button>
     </td>
 </tr>

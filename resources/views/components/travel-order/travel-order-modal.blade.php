@@ -5,13 +5,16 @@
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
 
         <!-- Modal panel -->
-        <div class="inline-block w-full max-w-4xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all sm:my-8">
+        <div
+            class="inline-block w-full max-w-4xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all sm:my-8">
             <div class="bg-white px-4 sm:p-6 relative">
                 <!-- Close button in top-right corner -->
-                <button type="button" onclick="closeOrderModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 focus:outline-none">
+                <button type="button" onclick="closeOrderModal()"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 focus:outline-none">
                     <span class="sr-only">Close</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
                 <div class="sm:flex sm:items-start">
@@ -23,10 +26,12 @@
                 </div>
             </div>
             <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button type="button" id="printButton" class="hidden inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm">
+                <button type="button" id="printButton"
+                    class="hidden inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm">
                     <i class="fas fa-print mr-2"></i> Print
                 </button>
-                <button type="button" onclick="closeOrderModal()" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                <button type="button" onclick="closeOrderModal()"
+                    class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                     Close
                 </button>
             </div>
@@ -35,77 +40,99 @@
 </div>
 
 @push('scripts')
-<script>
-    // Function to show travel order details in modal
-    async function showTravelOrder(orderId) {
-        try {
-            console.log('Opening travel order:', orderId);
-            
-            // Show loading state
-            const modal = document.getElementById('orderModal');
-            const orderDetails = document.getElementById('orderDetails');
-            orderDetails.innerHTML = `
+    <script>
+        // Function to show travel order details in modal
+        async function showTravelOrder(orderId) {
+            try {
+                console.log('Opening travel order:', orderId);
+
+                // Show loading state
+                const modal = document.getElementById('orderModal');
+                const orderDetails = document.getElementById('orderDetails');
+                orderDetails.innerHTML = `
                 <div class="flex justify-center items-center">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     <span class="ml-3 text-gray-700">Loading travel order details...</span>
                 </div>
             `;
-            
-            // Show the modal
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            
-            // Get CSRF token
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            // Fetch order details
-            console.log('Fetching order details...');
-            const response = await fetch(`/travel-orders/${orderId}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                },
-                credentials: 'same-origin'
-            });
-            
-            console.log('Response status:', response.status);
-            
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('Error response:', errorData);
-                throw new Error(errorData.message || 'Failed to fetch order details');
-            }
-            
-            const order = await response.json();
-            console.log('Order data:', order);
-            
-            // Format dates
-            const formatDate = (dateString) => {
-                if (!dateString) return 'N/A';
-                const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                return new Date(dateString).toLocaleDateString('en-US', options);
-            };
 
-            // Get status class and text
-            const statusInfo = {
-                1: { class: 'bg-yellow-100 text-yellow-800', text: 'Pending' },
-                2: { class: 'bg-blue-100 text-blue-800', text: 'Approved' },
-                3: { class: 'bg-green-100 text-green-800', text: 'Completed' },
-                4: { class: 'bg-red-100 text-red-800', text: 'Disapproved' },
-                5: { class: 'bg-gray-100 text-gray-800', text: 'For Recommendation' }
-            }[order.status_id] || { class: 'bg-gray-100 text-gray-800', text: 'Unknown' };
+                // Show the modal
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
 
-            // Format currency
-            const formatCurrency = (amount) => {
-                if (!amount) return '₱0.00';
-                return '₱' + parseFloat(amount).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                // Get CSRF token
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                // Fetch order details
+                console.log('Fetching order details...');
+                const response = await fetch(`/travel-orders/${orderId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                    },
+                    credentials: 'same-origin'
                 });
-            };
 
-            // Create HTML for order details
-            const detailsHtml = `
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Error response:', errorData);
+                    throw new Error(errorData.message || 'Failed to fetch order details');
+                }
+
+                const order = await response.json();
+                console.log('Order data:', order);
+
+                // Format dates
+                const formatDate = (dateString) => {
+                    if (!dateString) return 'N/A';
+                    const options = {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    };
+                    return new Date(dateString).toLocaleDateString('en-US', options);
+                };
+
+                // Get status class and text
+                const statusInfo = {
+                    1: {
+                        class: 'bg-yellow-100 text-yellow-800',
+                        text: 'Pending'
+                    },
+                    2: {
+                        class: 'bg-blue-100 text-blue-800',
+                        text: 'Approved'
+                    },
+                    3: {
+                        class: 'bg-green-100 text-green-800',
+                        text: 'Completed'
+                    },
+                    4: {
+                        class: 'bg-red-100 text-red-800',
+                        text: 'Disapproved'
+                    },
+                    5: {
+                        class: 'bg-gray-100 text-gray-800',
+                        text: 'For Recommendation'
+                    }
+                } [order.status_id] || {
+                    class: 'bg-gray-100 text-gray-800',
+                    text: 'Unknown'
+                };
+
+                // Format currency
+                const formatCurrency = (amount) => {
+                    if (!amount) return '₱0.00';
+                    return '₱' + parseFloat(amount).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                };
+
+                // Create HTML for order details
+                const detailsHtml = `
             <div style="margin-right: 90px; margin-left: 90px; margin-top: 50px; margin-bottom: 50px;">
                 <table style="margin-right: auto; margin-left: auto; padding: 0pt;">
                     <tbody>
@@ -443,7 +470,7 @@
                                         (order.recommender_employee?.signature?.signature_url ? 
                                             `<img src="${order.recommender_employee.signature.signature_url}" alt="Recommender Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                             `<!-- No signature found for ${order.recommender_employee?.first_name} ${order.recommender_employee?.middle_name} ${order.recommender_employee?.last_name} -->
-                                            <p>signature</p>`
+                                                                        <p>signature</p>`
                                         ) : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
@@ -459,12 +486,12 @@
                             <td style="width:163.15pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
                                     ${order.status_id !== 1 && order.status_id !== 2 && order.status_id !== 4 ? `
-                                        ${order.approver_employee?.signature?.signature_url ? 
-                                            `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
-                                            `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} -->
+                                                                    ${order.approver_employee?.signature?.signature_url ? 
+                                                                        `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
+                                                                        `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} -->
                                             <p>signature</p>`
-                                        }
-                                    ` : '<br><br>'
+                                                                    }
+                                                                ` : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
                                         <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
@@ -548,7 +575,7 @@
                                     ${order.employee?.signature?.signature_url ? 
                                         `<img src="${order.employee.signature.signature_url}" class="text-center" alt="Employee Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                         `<!-- No signature found for ${order.employee?.first_name} ${order.employee?.middle_name} ${order.employee?.last_name} -->
-                                        <p>signature</p>`
+                                                                    <p>signature</p>`
                                     }
                                     <p style="margin-top: 0px; line-height:normal; font-size:10pt;">
                                         <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
@@ -576,30 +603,102 @@
                 </table>
             </div>
             `;
-            
-            // Update modal content
-            orderDetails.innerHTML = detailsHtml;
-            
-            // Show print button for approved or completed orders
-            const printButton = document.getElementById('printButton');
-            if ([3, 6].includes(order.status_id)) {
-                printButton.classList.remove('hidden');
-                printButton.onclick = () => window.print();
-            } else {
-                printButton.classList.add('hidden');
-            }
-            
-        } catch (error) {
-            console.error('Error loading travel order:', error);
-            let errorMessage = 'Failed to load travel order details. Please try again.';
-            
-            if (error.message.includes('Failed to fetch')) {
-                errorMessage = 'Unable to connect to the server. Please check your internet connection.';
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-            
-            orderDetails.innerHTML = `
+
+                // Update modal content
+                orderDetails.innerHTML = detailsHtml;
+
+                // Show print button if user has permission
+                const printButton = document.getElementById('printButton');
+                if (printButton) {
+                    printButton.classList.remove('hidden');
+                    printButton.onclick = () => {
+                        const printContent = document.getElementById('orderDetails').innerHTML;
+                        const originalContents = document.body.innerHTML;
+
+                        // Create a print-specific stylesheet
+                        const printStyles = `
+                            @media print {
+                                body * {
+                                    visibility: hidden;
+                                    margin: 0;
+                                    padding: 0;
+                                }
+                                #print-section, #print-section * {
+                                    visibility: visible;
+                                }
+                                #print-section {
+                                    position: absolute;
+                                    left: 0;
+                                    top: 1mm;
+                                    width: 100%;
+                                    padding: 0 15mm 15mm 15mm;
+                                    margin: 0;
+                                    font-size: 12px;
+                                    line-height: 0;
+                                }
+                                @page {
+                                    size: A4;
+                                    margin: 0;
+                                    padding: 0;
+                                }
+                                table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                }
+                            }
+                        `;
+
+                        // Create a temporary div for printing
+                        const printSection = document.createElement('div');
+                        printSection.id = 'print-section';
+                        printSection.innerHTML = printContent;
+
+                        // Add styles
+                        const style = document.createElement('style');
+                        style.innerHTML = printStyles;
+
+                        // Prepare the print document
+                        const printWindow = window.open('', '', 'width=800,height=600');
+                        printWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>Travel Order #${orderId}</title>
+                                <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+                                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+                                <style>${printStyles}</style>
+                            </head>
+                            <body>
+                                ${printSection.outerHTML}
+                                <script>
+                                    window.onload = function() {
+                                        window.print();
+                                        setTimeout(function() {
+                                            window.close();
+                                        }, 100);
+                                    };
+                                <\/script>
+                            </body>
+                            </html>
+                        `);
+
+                        printWindow.document.close();
+                    };
+                } else {
+                    printButton.classList.add('hidden');
+                }
+
+            } catch (error) {
+                console.error('Error loading travel order:', error);
+                let errorMessage = 'Failed to load travel order details. Please try again.';
+
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Unable to connect to the server. Please check your internet connection.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+
+                orderDetails.innerHTML = `
                 <div class="bg-red-50 border-l-4 border-red-400 p-4">
                     <div class="flex">
                         <div class="flex-shrink-0">
@@ -620,32 +719,32 @@
                     </button>
                 </div>
             `;
+            }
         }
-    }
-    
-    // Close modal function
-    function closeOrderModal() {
-        document.getElementById('orderModal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-    
-    // Close modal when clicking outside
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('orderModal');
-        if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
+
+        // Close modal function
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('orderModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeOrderModal();
+                    }
+                });
+            }
+
+            // Close with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
                     closeOrderModal();
                 }
             });
-        }
-        
-        // Close with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeOrderModal();
-            }
         });
-    });
-</script>
+    </script>
 @endpush

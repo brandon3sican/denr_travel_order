@@ -202,7 +202,7 @@ class TravelOrderController extends Controller
 
     public function index()
     {
-        $perPage = request()->input('per_page', 10);
+        $perPage = request()->input('per_page', 6);
         $search = request()->input('search');
         $status = request()->input('status');
         $dateRange = request()->input('date_range');
@@ -374,15 +374,20 @@ class TravelOrderController extends Controller
         };
 
         // Add signature URLs for all relevant employees
+        $employeeData = [];
+        
         if ($travelOrder->employee) {
-            $travelOrder->employee = $addSignatureUrl($travelOrder->employee);
+            $employeeData['employee'] = $addSignatureUrl($travelOrder->employee);
         }
         if ($travelOrder->recommenderEmployee) {
-            $travelOrder->recommenderEmployee = $addSignatureUrl($travelOrder->recommenderEmployee);
+            $employeeData['recommender_employee'] = $addSignatureUrl($travelOrder->recommenderEmployee);
         }
         if ($travelOrder->approverEmployee) {
-            $travelOrder->approverEmployee = $addSignatureUrl($travelOrder->approverEmployee);
+            $employeeData['approver_employee'] = $addSignatureUrl($travelOrder->approverEmployee);
         }
+        
+        // Add the employee data to the travel order as a new property
+        $travelOrder->employee_data = (object)$employeeData;
 
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json($travelOrder);

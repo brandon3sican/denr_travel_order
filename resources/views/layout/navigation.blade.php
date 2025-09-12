@@ -4,8 +4,10 @@
         <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-8 w-8">
         <h1 class="text-xl font-bold ml-3 text-white">DENR:TOIS</h1>
     </div>
-    <button id="mobile-menu-button" type="button" class="text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle menu">
-        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <button id="mobile-menu-button" type="button" class="text-gray-300 hover:text-white focus:outline-none"
+        aria-label="Toggle menu">
+        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
     </button>
@@ -15,14 +17,17 @@
 <div id="mobile-menu-modal" class="fixed inset-0 z-50 hidden">
     <!-- Backdrop -->
     <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-75"></div>
-    
+
     <!-- Menu Content -->
-    <div class="fixed inset-y-0 right-0 w-4/5 max-w-sm bg-gray-800 text-white shadow-lg transform transition-transform duration-300 ease-in-out translate-x-full">
+    <div
+        class="fixed inset-y-0 right-0 w-4/5 max-w-sm bg-gray-800 text-white shadow-lg transform transition-transform duration-300 ease-in-out translate-x-full">
         <div class="flex justify-between items-center p-4 border-b border-gray-700">
             <h2 class="text-xl font-bold">Menu</h2>
             <button id="close-menu" class="text-gray-300 hover:text-white focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
                 </svg>
             </button>
         </div>
@@ -33,7 +38,8 @@
 </div>
 
 <!-- Sidebar (Desktop) -->
-<div id="sidebar" class="hidden lg:block lg:static lg:translate-x-0 w-56 bg-gray-800 text-white z-40 h-screen overflow-y-auto transition-all duration-200 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+<div id="sidebar"
+    class="hidden lg:block lg:static lg:translate-x-0 w-56 bg-gray-800 text-white z-40 h-screen overflow-y-auto transition-all duration-200 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
     <div class="p-2 border-b border-gray-700">
         <div class="flex items-center justify-center">
             <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-6 w-6">
@@ -43,7 +49,8 @@
     <nav class="py-0.5">
         <!-- Main Section -->
         <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Main</div>
-        <a href="{{ route('dashboard') }}" class="flex items-center px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('dashboard') ? 'bg-gray-700' : '' }}">
+        <a href="{{ route('dashboard') }}"
+            class="flex items-center px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('dashboard') ? 'bg-gray-700' : '' }}">
             <i class="fas fa-tachometer-alt w-4 text-center text-gray-400 text-xs"></i>
             <span class="ml-2 text-xs">Dashboard</span>
         </a>
@@ -51,13 +58,15 @@
         @if (!auth()->user()->is_admin)
             <!-- Travel Orders Section -->
             <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel</div>
-            <a href="{{ route('my-orders') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('my-orders') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('my-orders') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('my-orders') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-suitcase w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">My Orders</span>
+                <span class="ml-2">My Travel Orders</span>
             </a>
-            <a href="{{ route('travel-orders.create') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.create') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('travel-orders.create') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.create') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-plus-circle w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">New Order</span>
+                <span class="ml-2">New Travel Order</span>
             </a>
         @endif
 
@@ -70,13 +79,15 @@
             <!-- Approvals Section -->
             <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Approvals</div>
             @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
-                <a href="{{ route('for-recommendation') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-recommendation') ? 'bg-gray-700' : '' }}">
+                <a href="{{ route('for-recommendation') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-recommendation') ? 'bg-gray-700' : '' }}">
                     <i class="fas fa-clipboard-check w-4 text-center text-gray-400 text-xs"></i>
                     <span class="ml-2">For Recommendation</span>
                 </a>
             @endif
             @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
-                <a href="{{ route('for-approval') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-approval') ? 'bg-gray-700' : '' }}">
+                <a href="{{ route('for-approval') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-approval') ? 'bg-gray-700' : '' }}">
                     <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
                     <span class="ml-2">For Approval</span>
                 </a>
@@ -86,47 +97,56 @@
         @if (auth()->user()->is_admin)
             <!-- Admin Section -->
             <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Management</div>
-            <a href="{{ route('travel-orders.index') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.index') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('travel-orders.index') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.index') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">All Orders</span>
+                <span class="ml-2">All Travel Orders</span>
             </a>
-            <a href="{{ route('role-management.index') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('role-management*') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('role-management.index') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('role-management*') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-user-shield w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Roles</span>
             </a>
-            <a href="{{ route('status-management.index') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('status-management.*') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('status-management.index') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('status-management.*') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-tasks w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Status</span>
             </a>
 
             <!-- Reports Section -->
-            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Reports</div>
-            <a href="{{ route('reports.approval-metrics') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.approval-metrics') ? 'bg-gray-700' : '' }}">
+            {{-- <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Reports</div>
+            <a href="{{ route('reports.approval-metrics') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.approval-metrics') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-chart-pie w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Metrics</span>
             </a>
-            <a href="{{ route('reports.travel-volume') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.travel-volume') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('reports.travel-volume') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.travel-volume') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-chart-line w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Volume</span>
             </a>
-            <a href="{{ route('reports.employee-travel') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.employee-travel') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('reports.employee-travel') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.employee-travel') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-users w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Employees</span>
             </a>
-            <a href="{{ route('reports.department') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.department') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('reports.department') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.department') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-building w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Departments</span>
-            </a>
+            </a> --}}
         @endif
 
         <!-- User Section -->
         <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Account</div>
-        <a href="#" id="profileLink" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
+        <a href="#" id="profileLink"
+            class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
             <i class="fas fa-user-cog w-4 text-center text-gray-400 text-xs"></i>
             <span class="ml-2">My Profile</span>
         </a>
         @if (!auth()->user()->is_admin)
-            <a href="{{ route('signature.index') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('signature.index') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('signature.index') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('signature.index') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-signature w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Signature</span>
             </a>
@@ -301,17 +321,17 @@
         const mobileMenuModal = document.getElementById('mobile-menu-modal');
         const mobileMenuContent = mobileMenuModal?.querySelector('.overflow-y-auto');
         const sidebar = document.getElementById('sidebar');
-        
+
         // Move sidebar content to mobile menu
         if (mobileMenuContent && sidebar) {
             const sidebarContent = sidebar.innerHTML;
             mobileMenuContent.innerHTML = sidebarContent;
         }
-        
+
         function toggleMobileMenu(show) {
             const menuPanel = mobileMenuModal?.querySelector('.transform');
             if (!menuPanel) return;
-            
+
             if (show) {
                 mobileMenuModal.classList.remove('hidden');
                 setTimeout(() => {
@@ -331,32 +351,32 @@
         if (mobileMenuButton) {
             mobileMenuButton.addEventListener('click', () => toggleMobileMenu(true));
         }
-        
+
         // Close mobile menu
         if (closeMenuButton) {
             closeMenuButton.addEventListener('click', () => toggleMobileMenu(false));
         }
-        
+
         // Close when clicking on backdrop
         const backdrop = document.getElementById('mobile-menu-backdrop');
         if (backdrop) {
             backdrop.addEventListener('click', () => toggleMobileMenu(false));
         }
-        
+
         // Close menu when clicking on a navigation link
         document.addEventListener('click', (e) => {
             if (e.target.closest('#mobile-menu-modal a')) {
                 toggleMobileMenu(false);
             }
         });
-        
+
         // Handle window resize
         function handleResize() {
             if (window.innerWidth >= 1024) { // lg breakpoint
                 toggleMobileMenu(false);
             }
         }
-        
+
         window.addEventListener('resize', handleResize);
     });
 </script>
