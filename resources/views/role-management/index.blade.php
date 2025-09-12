@@ -7,9 +7,6 @@
         <header class="bg-white shadow-sm z-10">
             <div class="flex items-center justify-between p-4">
                 <div class="flex items-center">
-                    <button id="sidebarToggle" class="lg:hidden mr-4 text-gray-600 hover:text-gray-900">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
                     <h2 class="text-xl font-semibold text-gray-800">Role Management</h2>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -135,8 +132,8 @@
                                     </td>
                                     <td class="px-4 py-2 whitespace-nowrap">
                                         <div class="relative w-full max-w-[180px] ml-auto">
-                                            <form action="{{ route('role-management.update-role', $user) }}"
-                                                method="POST" class="w-full">
+                                            <form action="{{ route('role-management.update-role', $user) }}" method="POST"
+                                                class="w-full">
                                                 @csrf
                                                 <div class="relative">
                                                     <select name="role_id" onchange="this.form.submit()"

@@ -1,6 +1,40 @@
-<!-- Sidebar -->
-<div id="sidebar" class="w-64 bg-gray-800 text-white">
-    <div class="p-4 border-b border-gray-700">
+<!-- Mobile Menu Button (Hamburger) -->
+<div class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gray-800 p-4 flex justify-between items-center">
+    <div class="flex items-center">
+        <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-8 w-8">
+        <h1 class="text-xl font-bold ml-3 text-white">DENR:TOIS</h1>
+    </div>
+    <button id="mobile-menu-button" type="button" class="text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle menu">
+        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+    </button>
+</div>
+
+<!-- Mobile Menu Modal -->
+<div id="mobile-menu-modal" class="fixed inset-0 z-50 hidden">
+    <!-- Backdrop -->
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-75"></div>
+    
+    <!-- Menu Content -->
+    <div class="fixed inset-y-0 right-0 w-4/5 max-w-sm bg-gray-800 text-white shadow-lg transform transition-transform duration-300 ease-in-out translate-x-full">
+        <div class="flex justify-between items-center p-4 border-b border-gray-700">
+            <h2 class="text-xl font-bold">Menu</h2>
+            <button id="close-menu" class="text-gray-300 hover:text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="overflow-y-auto h-[calc(100%-60px)]">
+            <!-- Sidebar content will be moved here by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar (Desktop) -->
+<div id="sidebar" class="hidden lg:block lg:static lg:translate-x-0 w-64 bg-gray-800 text-white z-40 h-screen overflow-y-auto">
+    <div class="p-4 border-b border-gray-700 pt-16 lg:pt-4">
         <div class="flex items-center">
             <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-8 w-8">
             <h1 class="text-xl font-bold ml-3">DENR:TOIS</h1>
@@ -258,3 +292,71 @@
     </nav>
     @include('components.header')
 </div>
+
+<!-- Mobile Menu Toggle Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMenuButton = document.getElementById('close-menu');
+        const mobileMenuModal = document.getElementById('mobile-menu-modal');
+        const mobileMenuContent = mobileMenuModal?.querySelector('.overflow-y-auto');
+        const sidebar = document.getElementById('sidebar');
+        
+        // Move sidebar content to mobile menu
+        if (mobileMenuContent && sidebar) {
+            const sidebarContent = sidebar.innerHTML;
+            mobileMenuContent.innerHTML = sidebarContent;
+        }
+        
+        function toggleMobileMenu(show) {
+            const menuPanel = mobileMenuModal?.querySelector('.transform');
+            if (!menuPanel) return;
+            
+            if (show) {
+                mobileMenuModal.classList.remove('hidden');
+                setTimeout(() => {
+                    menuPanel.classList.remove('translate-x-full');
+                }, 10);
+                document.body.classList.add('overflow-hidden');
+            } else {
+                menuPanel.classList.add('translate-x-full');
+                setTimeout(() => {
+                    mobileMenuModal.classList.add('hidden');
+                }, 300);
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        // Open mobile menu
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => toggleMobileMenu(true));
+        }
+        
+        // Close mobile menu
+        if (closeMenuButton) {
+            closeMenuButton.addEventListener('click', () => toggleMobileMenu(false));
+        }
+        
+        // Close when clicking on backdrop
+        const backdrop = document.getElementById('mobile-menu-backdrop');
+        if (backdrop) {
+            backdrop.addEventListener('click', () => toggleMobileMenu(false));
+        }
+        
+        // Close menu when clicking on a navigation link
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('#mobile-menu-modal a')) {
+                toggleMobileMenu(false);
+            }
+        });
+        
+        // Handle window resize
+        function handleResize() {
+            if (window.innerWidth >= 1024) { // lg breakpoint
+                toggleMobileMenu(false);
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+    });
+</script>

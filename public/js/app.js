@@ -14,18 +14,24 @@ const orderDetails = document.getElementById('orderDetails');
 // Pagination variables
 let currentPage = 1;
 const itemsPerPage = 5;
-const totalPages = Math.ceil(travelOrders.length / itemsPerPage);
+const travelOrders = window.travelOrders || [];
+let totalPages = 1;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize with any existing travel orders
+    if (window.travelOrders) {
+        totalPages = Math.ceil(window.travelOrders.length / itemsPerPage);
+    }
+    
     // Set up event listeners
     setupEventListeners();
     
-    // Render the initial view
-    renderDashboard();
-    
-    // Update pagination info
-    updatePaginationInfo();
+    // Only render dashboard if we have travel orders
+    if (travelOrders.length > 0) {
+        renderDashboard();
+        updatePaginationInfo();
+    }
 });
 
 // Set up event listeners
@@ -103,15 +109,25 @@ function renderDashboard() {
     // Clear existing rows
     ordersTableBody.innerHTML = '';
     
-    // Calculate start and end indices for current page
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage, travelOrders.length);
+    // Check if we have travel orders
+    if (!travelOrders || travelOrders.length === 0) {
+        ordersTableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                    No travel orders found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
     
-    // Get orders for current page
-    const paginatedOrders = travelOrders.slice(startIndex, endIndex);
+    // Calculate start and end index for current page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentOrders = travelOrders.slice(startIndex, endIndex);
     
     // Add rows to table
-    paginatedOrders.forEach(order => {
+    currentOrders.forEach(order => {
         const row = document.createElement('tr');
         
         // Format dates
