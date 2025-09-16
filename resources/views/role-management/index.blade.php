@@ -10,34 +10,6 @@
                     <h2 class="text-xl font-semibold text-gray-800">Role Management</h2>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <input type="text" id="searchUsers" placeholder="Search users..."
-                            class="pl-8 pr-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                        <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                    </div>
-
-                    <!-- Assignment/Division Filter -->
-                    <div class="relative">
-                        <select id="assignmentFilter"
-                            class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">All Assignments</option>
-                            @php
-                                $assignments = \App\Models\Employee::select('assignment_name')
-                                    ->distinct()
-                                    ->whereNotNull('assignment_name')
-                                    ->orderBy('assignment_name')
-                                    ->pluck('assignment_name');
-                            @endphp
-                            @foreach ($assignments as $assignment)
-                                <option value="{{ $assignment }}">{{ $assignment }}</option>
-                            @endforeach
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </div>
-                    </div>
                     <button class="relative p-2 text-gray-600 hover:text-gray-900">
                         <i class="fas fa-bell text-xl"></i>
                         <span
@@ -50,122 +22,163 @@
         <!-- Page Content -->
         <main class="flex-1 overflow-y-auto p-4">
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <!-- Search and Filter Section -->
+                <div class="p-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <!-- Search Input -->
+                        <div class="relative flex-1 max-w-md">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <input type="text" id="searchUsers" placeholder="Search by name, email, or position..."
+                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
+                        </div>
+
+                        <!-- Assignment Filter -->
+                        <div class="relative w-full sm:w-64">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                            </div>
+                            <select id="assignmentFilter"
+                                class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
+                                <option value="">All Assignments</option>
+                                @php
+                                    $assignments = \App\Models\Employee::select('assignment_name')
+                                        ->distinct()
+                                        ->whereNotNull('assignment_name')
+                                        ->orderBy('assignment_name')
+                                        ->pluck('assignment_name');
+                                @endphp
+                                @foreach ($assignments as $assignment)
+                                    <option value="{{ $assignment }}">{{ $assignment }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <!-- Users Table -->
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-800">
                             <tr>
-                                <th scope="col"
-                                    class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">
-                                    Employee Name</th>
-                                <th scope="col"
-                                    class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">
-                                    Position</th>
-                                <th scope="col"
-                                    class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">
-                                    Assignment</th>
-                                <th scope="col"
-                                    class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">
-                                    Division/Section/Unit</th>
-                                <th scope="col"
-                                    class="px-4 py-2 text-left text-white text-xs font-medium uppercase tracking-wider">
-                                    Current Role</th>
-                                <th scope="col"
-                                    class="px-4 py-2 text-right text-white text-xs font-medium uppercase tracking-wider">
-                                    Change Role</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase">Employee Details
+                                </th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase w-1/3">Role
+                                    Management</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($users as $user)
-                                <tr>
-                                    <td class="px-4 py-2 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-8 w-8">
-                                                <span
-                                                    class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-500">
-                                                    <span
-                                                        class="text-xs font-medium leading-none text-white">{{ substr($user->first_name, 0, 1) }}</span>
-                                                </span>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-start">
+                                            @php
+                                                $firstLetter = strtoupper(substr($user->first_name, 0, 1));
+                                                $colors = [
+                                                    'bg-blue-500',
+                                                    'bg-green-500',
+                                                    'bg-purple-500',
+                                                    'bg-pink-500',
+                                                    'bg-indigo-500',
+                                                ];
+                                                $bgColor = $colors[ord($firstLetter) % count($colors)];
+                                            @endphp
+                                            <div
+                                                class="h-10 w-10 rounded-full {{ $bgColor }} flex-shrink-0 flex items-center justify-center text-white font-bold">
+                                                {{ $firstLetter }}
                                             </div>
-                                            <div class="ml-2">
-                                                <div class="text-xs font-medium text-gray-900">{{ $user->first_name }}
-                                                    {{ $user->last_name }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2 whitespace-nowrap">
-                                        <div class="text-xs text-gray-900">{{ $user->employee->position_name ?? 'N/A' }}
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2 whitespace-nowrap">
-                                        <div class="text-xs text-gray-900">{{ $user->employee->assignment_name ?? 'N/A' }}
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2 whitespace-nowrap">
-                                        <div class="text-xs text-gray-900">{{ $user->employee->div_sec_unit ?? 'N/A' }}
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2 whitespace-nowrap">
-                                        @if ($user->travelOrderRoles->isNotEmpty())
-                                            @foreach ($user->travelOrderRoles as $role)
-                                                @php
-                                                    $roleColors = [
-                                                        'admin' => 'bg-blue-600 text-white',
-                                                        'recommender' => 'bg-yellow-500 text-gray-900',
-                                                        'approver' => 'bg-green-600 text-white',
-                                                        'user' => 'bg-gray-300 text-black',
-                                                    ];
-                                                    $roleName = strtolower($role->name);
-                                                    $roleClass = $roleColors[$roleName] ?? 'bg-gray-500 text-white';
-                                                @endphp
-                                                <span
-                                                    class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-md shadow-sm {{ $roleClass }} mr-1.5 mb-1.5 border border-gray-200">
-                                                    {{ $role->name }}
-                                                </span>
-                                            @endforeach
-                                        @else
-                                            <span
-                                                class="px-1.5 py-0.5 inline-flex text-2xs leading-4 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                No Role
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-2 whitespace-nowrap">
-                                        <div class="relative w-full max-w-[180px] ml-auto">
-                                            <form action="{{ route('role-management.update-role', $user) }}" method="POST"
-                                                class="w-full">
-                                                @csrf
-                                                <div class="relative">
-                                                    <select name="role_id" onchange="this.form.submit()"
-                                                        onfocus="this.classList.add('bg-blue-50')"
-                                                        onblur="this.classList.remove('bg-blue-50')"
-                                                        class="appearance-none w-full pl-3 pr-8 py-1.5 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer transition-all duration-150 hover:border-blue-400"
-                                                        style="background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\"); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1.5em 1.5em;">
-                                                        <option value="" class="text-gray-400">Select Role</option>
-                                                        @foreach ($roles as $role)
-                                                            <option value="{{ $role->id }}"
-                                                                {{ $user->travelOrderRoles->contains('id', $role->id) ? 'selected' : '' }}
-                                                                class="py-1">
-                                                                {{ $role->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div
-                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                                        <svg class="h-4 w-4 text-gray-500" fill="none"
-                                                            viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                        </svg>
-                                                    </div>
+                                            <div class="ml-3">
+                                                <div class="font-medium text-gray-900">
+                                                    {{ $user->first_name }}{{ $user->middle_name ? ' ' . $user->middle_name : '' }}
+                                                    {{ $user->last_name }}{{ $user->suffix ? ' ' . $user->suffix : '' }}
                                                 </div>
-                                            </form>
+                                                <div class="text-gray-500 text-xs mb-1">{{ $user->email }}</div>
+                                                <div class="space-y-0.5">
+                                                    <div class="text-gray-700"><span class="font-medium">Position:</span>
+                                                        {{ $user->employee->position_name ?? 'N/A' }}</div>
+                                                    <div class="text-gray-700"><span class="font-medium">Assignment:</span>
+                                                        {{ $user->employee->assignment_name ?? 'N/A' }}</div>
+                                                    <div class="text-gray-700"><span class="font-medium">Division:</span>
+                                                        {{ $user->employee->division_name ?? 'N/A' }}</div>
+                                                </div>
+                                                @if ($user->travelOrderRoles->isNotEmpty())
+                                                    <div class="mt-1.5 flex flex-wrap gap-1">
+                                                        @foreach ($user->travelOrderRoles as $role)
+                                                            @php
+                                                                $roleColors = [
+                                                                    'admin' => 'bg-blue-600 text-white',
+                                                                    'recommender' => 'bg-yellow-500 text-gray-900',
+                                                                    'approver' => 'bg-green-600 text-white',
+                                                                    'user' => 'bg-gray-300 text-black',
+                                                                ];
+                                                                $roleClass =
+                                                                    $roleColors[strtolower($role->name)] ??
+                                                                    'bg-gray-500 text-white';
+                                                            @endphp
+                                                            <span
+                                                                class="px-1.5 py-0.5 text-xs rounded {{ $roleClass }}">{{ $role->name }}</span>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <span
+                                                        class="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-800 mt-1.5">No
+                                                        Role Assigned</span>
+                                                @endif
+                                            </div>
                                         </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <form action="{{ route('role-management.update-role', $user) }}" method="POST"
+                                            class="space-y-2">
+                                            @csrf
+                                            <div class="relative">
+                                                <select name="role_id" onchange="this.form.submit()"
+                                                    class="block w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer transition duration-150">
+                                                    <option value="" class="text-gray-400">Change Role</option>
+                                                    @foreach ($roles as $role)
+                                                        <option value="{{ $role->id }}"
+                                                            {{ $user->travelOrderRoles->contains('id', $role->id) ? 'selected' : '' }}
+                                                            class="py-2 px-3 hover:bg-blue-50">
+                                                            {{ ucfirst($role->name) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </form>
+                                        @if ($user->travelOrderRoles->isNotEmpty())
+                                            <div class="mt-2">
+                                                <div class="text-xs font-medium text-gray-500 mb-1">Current Role</div>
+                                                <div class="flex flex-wrap gap-1.5">
+                                                    @foreach ($user->travelOrderRoles as $role)
+                                                        @php
+                                                            $roleColors = [
+                                                                'admin' =>
+                                                                    'bg-blue-100 text-blue-800 border border-blue-200',
+                                                                'recommender' =>
+                                                                    'bg-yellow-100 text-yellow-800 border border-yellow-200',
+                                                                'approver' =>
+                                                                    'bg-green-100 text-green-800 border border-green-200',
+                                                                'user' =>
+                                                                    'bg-gray-100 text-gray-800 border border-gray-200',
+                                                            ];
+                                                            $roleClass =
+                                                                $roleColors[strtolower($role->name)] ??
+                                                                'bg-gray-100 text-gray-800 border border-gray-200';
+                                                        @endphp
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $roleClass }}">
+                                                            <i class="fas fa-user-tag text-xs mr-1.5"></i>
+                                                            {{ ucfirst($role->name) }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    <td colspan="2" class="px-6 py-4 text-center text-sm text-gray-500">
                                         No users found.
                                     </td>
                                 </tr>
@@ -265,7 +278,7 @@
             </div>
         </main>
 
-        <footer class="bg-white border-t border-gray-200 mt-8">
+        <footer class="bg-white border-t border-gray-200 mt-4">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <p class="text-sm text-gray-500">&copy; {{ date('Y') }} Department of Environment and Natural

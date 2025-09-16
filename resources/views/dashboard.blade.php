@@ -45,16 +45,11 @@
                             </div>
                         </div>
 
-                        <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+                        <div class="mt-6 text-center">
                             <a href="{{ route('signature.index') }}"
                                 class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                 <i class="fas fa-upload mr-2"></i> Upload/Draw Signature Now
                             </a>
-                            <button type="button"
-                                onclick="document.getElementById('signatureRequiredModal').classList.add('hidden')"
-                                class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                I'll do it later
-                            </button>
                         </div>
 
                         <div class="mt-6 text-center">
@@ -150,19 +145,48 @@
                             </div>
                         </div>
                     </div>
-                    <div class="overflow-x-auto -mx-4 sm:mx-0">
+                    <div class="overflow-x-auto -mx-2 sm:mx-0 shadow-sm">
                         <div class="inline-block min-w-full align-middle">
-                            <div class="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                                <table class="min-w-full divide-y divide-gray-300">
+                            <div class="bg-white border border-gray-200 overflow-hidden">
+                                <table class="min-w-full divide-y divide-gray-200">
                                     <x-dashboard.table-header :isAdmin="auth()->user()->is_admin" />
-                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                    <tbody class="bg-white divide-y divide-gray-100">
                                         @forelse($travelOrders as $order)
-                                            <x-dashboard.travel-order-row :order="$order" :isAdmin="auth()->user()->is_admin" />
-                                        @empty
+                                            <tr
+                                                class="relative group hover:bg-gray-50 transition-colors duration-150 ease-in-out border-b border-gray-100 last:border-0">
+                                                <x-dashboard.travel-order-row :order="$order" :isAdmin="auth()->user()->is_admin" />
+                                            @empty
                                             <tr>
                                                 <td colspan="{{ auth()->user()->is_admin ? '8' : '7' }}"
-                                                    class="px-4 py-8 text-center text-sm sm:text-base text-gray-500">
-                                                    No travel orders found.
+                                                    class="px-6 py-12 text-center">
+                                                    <div class="flex flex-col items-center justify-center space-y-4">
+                                                        <svg class="w-16 h-16 text-gray-300" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="1.5"
+                                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                                                            </path>
+                                                        </svg>
+                                                        <div class="space-y-1">
+                                                            <p class="text-base font-medium text-gray-700">No travel orders
+                                                                found</p>
+                                                            <p class="text-sm text-gray-500">Get started by creating a new
+                                                                travel order</p>
+                                                        </div>
+                                                        @if (auth()->user()->can('create', App\Models\TravelOrder::class))
+                                                            <a href="{{ route('travel-orders.create') }}"
+                                                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">
+                                                                <svg class="-ml-1 mr-2 h-4 w-4" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24"
+                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                                </svg>
+                                                                New Travel Order
+                                                            </a>
+                                                        @endif
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforelse

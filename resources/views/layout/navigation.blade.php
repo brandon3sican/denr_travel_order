@@ -39,7 +39,7 @@
 
 <!-- Sidebar (Desktop) -->
 <div id="sidebar"
-    class="hidden lg:block lg:static lg:translate-x-0 w-56 bg-gray-800 text-white z-40 h-screen overflow-y-auto transition-all duration-200 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+    class="hidden lg:block lg:static lg:translate-x-0 w-80 bg-gray-800 text-white z-40 h-screen overflow-y-auto transition-all duration-200 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
     <div class="p-2 border-b border-gray-700">
         <div class="flex items-center justify-center">
             <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-6 w-6">
@@ -52,7 +52,7 @@
         <a href="{{ route('dashboard') }}"
             class="flex items-center px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('dashboard') ? 'bg-gray-700' : '' }}">
             <i class="fas fa-tachometer-alt w-4 text-center text-gray-400 text-xs"></i>
-            <span class="ml-2 text-xs">Dashboard</span>
+            <span class="ml-2 text-lg">Dashboard</span>
         </a>
 
         @if (!auth()->user()->is_admin)
@@ -61,12 +61,12 @@
             <a href="{{ route('my-orders') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('my-orders') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-suitcase w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">My Travel Orders</span>
+                <span class="ml-2 text-lg">My Travel Orders</span>
             </a>
             <a href="{{ route('travel-orders.create') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.create') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-plus-circle w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">New Travel Order</span>
+                <span class="ml-2 text-lg">New Travel Order</span>
             </a>
         @endif
 
@@ -82,14 +82,14 @@
                 <a href="{{ route('for-recommendation') }}"
                     class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-recommendation') ? 'bg-gray-700' : '' }}">
                     <i class="fas fa-clipboard-check w-4 text-center text-gray-400 text-xs"></i>
-                    <span class="ml-2">For Recommendation</span>
+                    <span class="ml-2 text-lg">For Recommendation</span>
                 </a>
             @endif
             @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
                 <a href="{{ route('for-approval') }}"
                     class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-approval') ? 'bg-gray-700' : '' }}">
                     <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                    <span class="ml-2">For Approval</span>
+                    <span class="ml-2 text-lg">For Approval</span>
                 </a>
             @endif
         @endif
@@ -100,17 +100,17 @@
             <a href="{{ route('travel-orders.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.index') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">All Travel Orders</span>
+                <span class="ml-2 text-lg">All Travel Orders</span>
             </a>
             <a href="{{ route('role-management.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('role-management*') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-user-shield w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">Roles</span>
+                <span class="ml-2 text-lg">Roles</span>
             </a>
             <a href="{{ route('status-management.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('status-management.*') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-tasks w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">Status</span>
+                <span class="ml-2 text-lg">Status</span>
             </a>
 
             <!-- Reports Section -->
@@ -142,13 +142,13 @@
         <a href="#" id="profileLink"
             class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
             <i class="fas fa-user-cog w-4 text-center text-gray-400 text-xs"></i>
-            <span class="ml-2">My Profile</span>
+            <span class="ml-2 text-lg">My Profile</span>
         </a>
         @if (!auth()->user()->is_admin)
             <a href="{{ route('signature.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('signature.index') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-signature w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">Signature</span>
+                <span class="ml-2 text-lg">Signature</span>
             </a>
         @endif
 

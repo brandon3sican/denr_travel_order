@@ -120,7 +120,7 @@
             </div>
         </div>
 
-        <footer class="bg-white border-t border-gray-200 mt-8">
+        <footer class="bg-white border-t border-gray-200 mt-4">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <p class="text-sm text-gray-500">&copy; {{ date('Y') }} Department of Environment and Natural

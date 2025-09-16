@@ -129,16 +129,24 @@
                     @forelse($travelOrders as $order)
                         @php
                             $statusBgClass = '';
-                            if ($order->status_id == 1) $statusBgClass = 'bg-yellow-50';
-                            elseif ($order->status_id == 2) $statusBgClass = 'bg-blue-50';
-                            elseif ($order->status_id == 3) $statusBgClass = 'bg-green-50';
-                            elseif ($order->status_id == 4) $statusBgClass = 'bg-red-50';
-                            elseif ($order->status_id == 5) $statusBgClass = 'bg-gray-50';
-                            elseif ($order->status_id == 6) $statusBgClass = 'bg-purple-50';
+                            if ($order->status_id == 1) {
+                                $statusBgClass = 'bg-yellow-50';
+                            } elseif ($order->status_id == 2) {
+                                $statusBgClass = 'bg-blue-50';
+                            } elseif ($order->status_id == 3) {
+                                $statusBgClass = 'bg-green-50';
+                            } elseif ($order->status_id == 4) {
+                                $statusBgClass = 'bg-red-50';
+                            } elseif ($order->status_id == 5) {
+                                $statusBgClass = 'bg-gray-50';
+                            } elseif ($order->status_id == 6) {
+                                $statusBgClass = 'bg-purple-50';
+                            }
                         @endphp
                         <div class="{{ $statusBgClass }} rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300 relative pt-8 pl-5 pr-8"
-                             data-status="{{ strtolower($order->status->name ?? '') }}">
-                            <div class="absolute top-0 left-0 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-br-lg h-8 w-8 flex items-center justify-center text-sm font-bold shadow-lg">
+                            data-status="{{ strtolower($order->status->name ?? '') }}">
+                            <div
+                                class="absolute top-0 left-0 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-br-lg h-8 w-8 flex items-center justify-center text-sm font-bold shadow-lg">
                                 <span class="drop-shadow-sm">{{ $counter++ }}</span>
                             </div>
                             <div class="p-5">
@@ -246,7 +254,7 @@
             </div>
         </main>
 
-        <footer class="bg-white border-t border-gray-200 mt-8">
+        <footer class="bg-white border-t border-gray-200 mt-4">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <p class="text-sm text-gray-500">&copy; {{ date('Y') }} Department of Environment and Natural
