@@ -17,8 +17,8 @@ class DatabaseSeeder extends Seeder
         
         // Run seeders in correct order
         $this->call([
-            // TableSeeder::class,
-            TravelOrderSeeder::class,
+            TableSeeder::class,
+            //TravelOrderSeeder::class,
         ]);
         
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

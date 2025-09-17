@@ -9,58 +9,159 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <style>
+        .login-container {
+            background-image: url("{{ asset('images/bg.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #ffffff6e ;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+        }
+        .denr-logo {
+            width: 120px;
+            height: auto;
+            margin: 0 auto 1.5rem;
+            display: block;
+        }
+        .login-title {
+            color: #1a365d;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .login-subtitle {
+            color: #4a5568;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            outline: none;
+        }
+        .btn-login {
+            width: 100%;
+            background-color: #2b6cb0;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-login:hover {
+            background-color: #2c5282;
+        }
+        .error-message {
+            background-color: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            color: #c53030;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        <div class="text-center mb-4">
-            <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-20 mx-auto mb-4">
-            <h1 class="text-2xl font-bold text-gray-800">Travel Order Information System</h1>
-            <p class="text-gray-600 mt-2">Sign in to your account</p>
+<body class="login-container">
+    <div class="login-box">
+        <div class="text-center">
+            <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="denr-logo">
+            <h1 class="login-title">TRAVEL ORDER INFORMATION SYSTEM</h1>
+            <p class="login-subtitle">Sign in to start your session</p>
         </div>
 
         @if ($errors->any())
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
+            <div class="error-message">
                 <p class="font-bold">Login Failed</p>
                 <p>{{ $errors->first() }}</p>
             </div>
         @endif
 
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <form method="POST" action="{{ route('login') }}" class="space-y-6">
-                @csrf
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-gray-400"></i>
-                        </div>
-                        <input id="email" name="email" type="email" value="{{ old('email') }}" required
-                            autofocus
-                            class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-2 sm:text-sm border border-gray-300 rounded-md"
-                            placeholder="you@denr.gov.ph">
-                    </div>
-                </div>
+        <form method="POST" action="{{ route('login') }}" class="space-y-4">
+            @csrf
+            <div class="input-group">
+                <span class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                </span>
+                <input id="email" name="email" type="email" value="{{ old('email') }}" 
+                    required autofocus
+                    class="form-input"
+                    placeholder="Email">
+            </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
-                        </div>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required
-                            class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-2 sm:text-sm border border-gray-300 rounded-md"
-                            placeholder="••••••••">
-                    </div>
-                </div>
-                <div>
-                    <button type="submit"
-                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Sign in
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="input-group">
+                <span class="input-icon">
+                    <i class="fas fa-lock"></i>
+                </span>
+                <input id="password" name="password" type="password" 
+                    autocomplete="current-password" required
+                    class="form-input pr-10"
+                    placeholder="Password">
+                <button type="button" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                    onclick="togglePassword('password')">
+                    <i class="fas fa-eye" id="togglePassword"></i>
+                </button>
+            </div>
+            
+            <script>
+                function togglePassword(inputId) {
+                    const input = document.getElementById(inputId);
+                    const icon = document.getElementById('togglePassword');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                }
+            </script>
+
+            <button type="submit" class="btn-login">
+                SIGN IN
+            </button>
+        </form>
     </div>
     </div>
 
