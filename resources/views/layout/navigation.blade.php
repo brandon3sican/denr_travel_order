@@ -1,5 +1,5 @@
 <!-- Mobile Menu Button (Hamburger) -->
-<div class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gray-800 p-4 flex justify-between items-center">
+<div class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gray-800 p-6 flex justify-between items-center">
     <div class="flex items-center">
         <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-8 w-8">
         <h1 class="text-xl font-bold ml-3 text-white">DENR:TOIS</h1>
@@ -40,10 +40,10 @@
 <!-- Sidebar (Desktop) -->
 <div id="sidebar"
     class="hidden lg:block lg:static lg:translate-x-0 w-80 bg-gray-800 text-white z-40 h-screen overflow-y-auto transition-all duration-200 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-    <div class="p-2 border-b border-gray-700">
+    <div class="p-4 border-b border-gray-700">
         <div class="flex items-center justify-center">
             <img src="{{ asset('images/denr-logo.png') }}" alt="DENR Logo" class="h-6 w-6">
-            <h1 class="text-base font-bold ml-2">DENR:TOIS</h1>
+            <h1 class="text-base font-bold ml-1">DENR:TOIS</h1>
         </div>
     </div>
     <nav class="py-0.5">
