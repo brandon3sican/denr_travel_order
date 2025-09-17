@@ -141,6 +141,79 @@ class TravelOrderController extends Controller
     }
     
     /**
+     * Display travel orders history
+     *
+     * @return \Illuminate\View\View
+     */
+    public function history()
+    {
+        return view('travel-orders.history');
+    }
+    
+    /**
+     * Mark a travel order as completed
+     *
+     * @param  \App\Models\TravelOrder  $travel_order
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function complete(TravelOrderModel $travel_order, Request $request)
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'documents' => 'required|array|min:1',
+                'documents.*' => 'required|file|mimes:pdf|max:10240', // 10MB max per file
+            ]);
+            
+            // Check if the travel order can be marked as completed
+            if ($travel_order->status->name !== 'Approved') {
+                return response()->json([
+                    'message' => 'Only approved travel orders can be marked as completed.'
+                ], 422);
+            }
+            
+            // Process file uploads
+            $uploadedFiles = [];
+            
+            if ($request->hasFile('documents')) {
+                $path = "travel-orders/{$travel_order->id}/documents";
+                
+                foreach ($request->file('documents') as $file) {
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs($path, $fileName, 'public');
+                    $uploadedFiles[] = [
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $filePath,
+                        'mime_type' => $file->getClientMimeType(),
+                        'size' => $file->getSize(),
+                    ];
+                }
+            }
+            
+            // Update travel order status to completed
+            $completedStatus = TravelOrderStatus::where('name', 'Completed')->firstOrFail();
+            $travel_order->update([
+                'status_id' => $completedStatus->id,
+                'completed_at' => now(),
+                'completed_by' => Auth::user()->id,
+                'documents' => $uploadedFiles,
+            ]);
+            
+            return response()->json([
+                'message' => 'Travel order has been marked as completed successfully.',
+                'data' => $travel_order->fresh()
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error completing travel order: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to complete travel order. ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
      * Display travel orders that need recommendation
      *
      * @return \Illuminate\View\View

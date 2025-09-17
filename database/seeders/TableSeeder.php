@@ -65,30 +65,7 @@ class TableSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $user2 = 'user2@denr.gov.ph';
-        User::create([
-            'email' => $user2,
-            'password' => Hash::make('password123'),
-            'is_admin' => false,
-            'email_verified_at' => now(),
-        ]);
-
-        Employee::create([
-            'first_name' => 'User2',
-            'middle_name' => 'A2',
-            'last_name' => 'System2',
-            'suffix' => null,
-            'sex' => 'M',
-            'email' => $user2,
-            'emp_status' => 'Active',
-            'position_name' => 'User2',
-            'assignment_name' => 'DENR - Regional Office',
-            'div_sec_unit' => 'Office of the Regional Executive Director',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $email3 = 'recommender@denr.gov.ph';
+        $email3 = 'supervisor@denr.gov.ph';
         User::create([
             'email' => $email3,
             'password' => Hash::make('password123'),
@@ -97,44 +74,21 @@ class TableSeeder extends Seeder
         ]);
 
         Employee::create([
-            'first_name' => 'Recommender',
-            'middle_name' => 'User',
-            'last_name' => 'Account',
+            'first_name' => 'Immediate',
+            'middle_name' => 'Bisor',
+            'last_name' => 'Supervisor',
             'suffix' => null,
             'sex' => 'M',
             'email' => $email3,
             'emp_status' => 'Active',
-            'position_name' => 'Recommender',
+            'position_name' => 'Immediate Supervisor',
             'assignment_name' => 'DENR - Regional Office',
             'div_sec_unit' => 'Office of the Regional Executive Director',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        $recommender2 = 'recommender2@denr.gov.ph';
-        User::create([
-            'email' => $recommender2,
-            'password' => Hash::make('password123'),
-            'is_admin' => false,
-            'email_verified_at' => now(),
-        ]);
-
-        Employee::create([
-            'first_name' => 'Recommender2',
-            'middle_name' => 'User2',
-            'last_name' => 'Account2',
-            'suffix' => null,
-            'sex' => 'M',
-            'email' => $recommender2,
-            'emp_status' => 'Active',
-            'position_name' => 'Recommender2',
-            'assignment_name' => 'DENR - Regional Office',
-            'div_sec_unit' => 'Office of the Regional Executive Director',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $email4 = 'approver@denr.gov.ph';
+        $email4 = 'chief@denr.gov.ph';
         User::create([
             'email' => $email4,
             'password' => Hash::make('password123'),
@@ -143,44 +97,21 @@ class TableSeeder extends Seeder
         ]);
 
         Employee::create([
-            'first_name' => 'Approver',
-            'middle_name' => 'User',
-            'last_name' => 'Account',
+            'first_name' => 'Division',
+            'middle_name' => 'Chip',
+            'last_name' => 'Chief',
             'suffix' => null,
             'sex' => 'M',
             'email' => $email4,
             'emp_status' => 'Active',
-            'position_name' => 'Approver',
+            'position_name' => 'Division Chief',
             'assignment_name' => 'DENR - Regional Office',
             'div_sec_unit' => 'Office of the Regional Executive Director',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        $approver2 = 'approver2@denr.gov.ph';
-        User::create([
-            'email' => $approver2,
-            'password' => Hash::make('password123'),
-            'is_admin' => false,
-            'email_verified_at' => now(),
-        ]);
-
-        Employee::create([
-            'first_name' => 'Approver2',
-            'middle_name' => 'User2',
-            'last_name' => 'Account2',
-            'suffix' => null,
-            'sex' => 'M',
-            'email' => $approver2,
-            'emp_status' => 'Active',
-            'position_name' => 'Approver2',
-            'assignment_name' => 'DENR - Regional Office',
-            'div_sec_unit' => 'Office of the Regional Executive Director',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $email5 = 'both@denr.gov.ph';
+        $email5 = 'director@denr.gov.ph';
         User::create([
             'email' => $email5,
             'password' => Hash::make('password123'),
@@ -189,14 +120,14 @@ class TableSeeder extends Seeder
         ]);
 
         Employee::create([
-            'first_name' => 'Both',
-            'middle_name' => 'User',
-            'last_name' => 'Account',
+            'first_name' => 'Regional',
+            'middle_name' => 'Executive',
+            'last_name' => 'Director',
             'suffix' => null,
             'sex' => 'M',
             'email' => $email5,
             'emp_status' => 'Active',
-            'position_name' => 'Recommender and Approver',
+            'position_name' => 'Regional Executive Director',
             'assignment_name' => 'DENR - Regional Office',
             'div_sec_unit' => 'Office of the Regional Executive Director',
             'created_at' => now(),
@@ -245,27 +176,15 @@ class TableSeeder extends Seeder
             'travel_order_role_id' => 2,
         ]);
         UserTravelOrderRole::create([
-            'user_email' => 'user2@denr.gov.ph',
-            'travel_order_role_id' => 2,
-        ]);
-        UserTravelOrderRole::create([
-            'user_email' => 'recommender@denr.gov.ph',
+            'user_email' => 'supervisor@denr.gov.ph',
             'travel_order_role_id' => 3,
         ]);
         UserTravelOrderRole::create([
-            'user_email' => 'recommender2@denr.gov.ph',
-            'travel_order_role_id' => 3,
-        ]);
-        UserTravelOrderRole::create([
-            'user_email' => 'approver@denr.gov.ph',
+            'user_email' => 'director@denr.gov.ph',
             'travel_order_role_id' => 4,
         ]);
         UserTravelOrderRole::create([
-            'user_email' => 'approver2@denr.gov.ph',
-            'travel_order_role_id' => 4,
-        ]);
-        UserTravelOrderRole::create([
-            'user_email' => 'both@denr.gov.ph',
+            'user_email' => 'chief@denr.gov.ph',
             'travel_order_role_id' => 5,
         ]);
     }

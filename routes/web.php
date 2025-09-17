@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
 
     // Travel Order Routes
     Route::resource('travel-orders', TravelOrderController::class);
+    Route::post('travel-orders/{travel_order}/complete', [TravelOrderController::class, 'complete'])->name('travel-orders.complete');
 
     Route::get('travel-order-print/{id}', [TravelOrderController::class, 'print'])->name('travel-order.print');
     
@@ -68,6 +69,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/for-approval', [TravelOrderController::class, 'forApproval'])->name('for-approval');
         Route::get('/for-recommendation', [TravelOrderController::class, 'forRecommendation'])->name('for-recommendation');
         Route::get('/all-orders', [TravelOrderController::class, 'index'])->name('admin.index');
+        
+        // Travel Orders History
+        Route::get('/history', [TravelOrderController::class, 'history'])->name('travel-orders.history');
     });
 
     // Role Management Routes

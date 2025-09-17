@@ -66,6 +66,7 @@
             border: 1px solid #e2e8f0;
             border-radius: 0.375rem;
             font-size: 0.95rem;
+            color: #000000;
             transition: all 0.2s;
         }
         .form-input:focus {

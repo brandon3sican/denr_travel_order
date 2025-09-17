@@ -168,11 +168,11 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <!-- Recommender Selection -->
                                         <div class="relative">
-                                            <label for="recommender" class="block text-sm font-medium text-gray-700 mb-1">Recommender</label>
+                                            <label for="recommender" class="block text-sm font-medium text-gray-700 mb-1">Immediate Supervisor</label>
                                             <div class="relative">
                                                 <select id="recommender" name="recommender" required
                                                     class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                                    <option value="" disabled selected>Select recommender</option>
+                                                    <option value="" disabled selected>Select</option>
                                                     @foreach($recommenders as $recommender)
                                                         <option value="{{ $recommender->email }}">
                                                             {{ $recommender->first_name }} {{ $recommender->last_name }}
@@ -191,11 +191,11 @@
 
                                         <!-- Approver Selection -->
                                         <div class="relative">
-                                            <label for="approver" class="block text-sm font-medium text-gray-700 mb-1">Approver</label>
+                                            <label for="approver" class="block text-sm font-medium text-gray-700 mb-1">Division Chief/Agency Head</label>
                                             <div class="relative">
                                                 <select id="approver" name="approver" required
                                                     class="appearance-none block w-full bg-white border-2 border-gray-300 rounded-md shadow py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                                    <option value="" disabled selected>Select approver</option>
+                                                    <option value="" disabled selected>Select</option>
                                                     @foreach($approvers as $approver)
                                                         <option value="{{ $approver->email }}">
                                                             {{ $approver->first_name }} {{ $approver->last_name }}
