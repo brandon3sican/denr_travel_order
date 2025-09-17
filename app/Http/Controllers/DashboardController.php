@@ -29,13 +29,29 @@ class DashboardController extends Controller
         // Apply search filter if provided
         $search = request()->input('search');
         if ($search) {
-            $baseQuery->where(function($query) use ($search) {
-                $query->where('destination', 'like', "%{$search}%")
-                      ->orWhere('purpose', 'like', "%{$search}%")
-                      ->orWhereHas('employee', function($q) use ($search) {
-                          $q->where('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
-                      });
+            $searchTerm = trim($search);
+            $searchTerm = strtolower($searchTerm);
+            
+            // Split the search term into parts
+            $nameParts = explode(' ', $searchTerm);
+            
+            $baseQuery->whereHas('employee', function($q) use ($nameParts) {
+                // If search has multiple parts, treat as first and last name
+                if (count($nameParts) > 1) {
+                    $firstName = $nameParts[0];
+                    $lastName = end($nameParts);
+                    
+                    $q->where(function($query) use ($firstName, $lastName) {
+                        $query->whereRaw('LOWER(first_name) = ?', [$firstName])
+                              ->whereRaw('LOWER(last_name) = ?', [$lastName]);
+                    });
+                } else {
+                    // Single word search - check first or last name
+                    $q->where(function($query) use ($nameParts) {
+                        $query->whereRaw('LOWER(first_name) = ?', [$nameParts[0]])
+                              ->orWhereRaw('LOWER(last_name) = ?', [$nameParts[0]]);
+                    });
+                }
             });
         }
 
@@ -64,7 +80,7 @@ class DashboardController extends Controller
 
         // Calculate statistics
         $totalTravelOrders = $allTravelOrders->count();
-        $pendingRequests = $allTravelOrders->where('status_id', 1)->count();
+        $pendingRequests = $allTravelOrders->whereIn('status_id', [1, 4])->count(); // Including both Pending (1) and For Approval (4) statuses
         $completedRequests = $allTravelOrders->whereIn('status_id', [2, 3])->count(); // Assuming 2=Approved, 3=Completed
         $cancelledRequests = $allTravelOrders->where('status_id', 5)->count();
 

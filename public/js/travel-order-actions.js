@@ -73,10 +73,37 @@ function updateTravelOrderStatus(orderId, status) {
     })
     .then(data => {
         if (data.success) {
-            // Show success message
-            alert(`Travel order has been ${status === 'for approval' ? 'recommended for approval' : 'rejected'} successfully.`);
-            // Reload the page to reflect changes
-            window.location.reload();
+            // Create and show toast notification
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 z-50 flex items-center p-4 mb-4 text-green-800 bg-green-100 rounded-lg shadow-lg border border-green-200 transition-opacity duration-300';
+            toast.role = 'alert';
+            
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-check-circle text-green-500 text-xl mr-3';
+            
+            const message = document.createElement('div');
+            message.className = 'text-sm font-medium';
+            message.textContent = `Travel order has been ${status === 'for approval' ? 'recommended for approval' : 'rejected'} successfully.`;
+            
+            const closeButton = document.createElement('button');
+            closeButton.type = 'button';
+            closeButton.className = 'ml-4 text-green-600 hover:text-green-800';
+            closeButton.innerHTML = '&times;';
+            closeButton.onclick = () => toast.remove();
+            
+            toast.appendChild(icon);
+            toast.appendChild(message);
+            toast.appendChild(closeButton);
+            document.body.appendChild(toast);
+            
+            // Auto-remove toast after 15 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 15000);
+            
+            // Reload the page after a short delay to show the toast
+            setTimeout(() => window.location.reload(), 1000);
         } else {
             throw new Error(data.message || 'Failed to update status');
         }

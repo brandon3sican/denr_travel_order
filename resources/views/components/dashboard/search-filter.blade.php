@@ -38,17 +38,4 @@
             </div>
         </form>
     </div>
-    <div class="relative">
-        <div class="relative">
-            <input type="text" name="search" id="searchInput" value="{{ $searchQuery }}" placeholder="Search..."
-                class="block w-full pl-4 pr-10 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                onkeypress="if(event.key === 'Enter') { document.getElementById('filterForm').submit(); }">
-            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <button type="submit" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-        <input type="hidden" name="status" value="{{ $currentStatus }}">
-    </div>
 </div>

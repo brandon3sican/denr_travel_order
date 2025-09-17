@@ -96,21 +96,29 @@
 
         @if (auth()->user()->is_admin)
             <!-- Admin Section -->
-            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Management</div>
+            <!-- Travel Order -->
+            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel Orders</div>
             <a href="{{ route('travel-orders.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.index') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2 text-lg">All Travel Orders</span>
             </a>
+            <a href="{{ route('travel-orders.history') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.history') ? 'bg-gray-700' : '' }}">
+                <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
+                <span class="ml-2 text-lg">Travel Orders History</span>
+            </a>
+
+            <!-- Management -->
+            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Management</div>
             <a href="{{ route('role-management.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('role-management*') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-user-shield w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">Roles</span>
+                <span class="ml-2 text-lg">Roles Management</span>
             </a>
             <a href="{{ route('status-management.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('status-management.*') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-tasks w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">Status</span>
+                <span class="ml-2 text-lg">Status Management</span>
             </a>
 
             <!-- Reports Section -->

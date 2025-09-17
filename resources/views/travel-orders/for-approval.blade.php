@@ -137,8 +137,23 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="7" class="px-3 py-4 text-center text-gray-500 text-sm">
-                                                No travel orders found.
+                                            <td colspan="2" class="px-3 py-8 text-center">
+                                                <div class="flex flex-col items-center justify-center space-y-2">
+                                                    <i class="fas fa-search text-gray-400 text-4xl"></i>
+                                                    <p class="text-gray-500 text-sm font-medium">
+                                                        @if(request()->has('search') && !empty(request('search')))
+                                                            No match found for "{{ request('search') }}"
+                                                        @else
+                                                            No travel orders found.
+                                                        @endif
+                                                    </p>
+                                                    @if(request()->has('search') && !empty(request('search')))
+                                                        <button onclick="document.getElementById('search').value = ''; document.querySelector('form').submit();" 
+                                                            class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                            <i class="fas fa-undo-alt mr-1"></i> Clear search
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforelse

@@ -24,7 +24,7 @@
             <div class="flex items-center justify-between">
                 <div class="font-medium text-gray-900">
                     <i class="fas fa-user w-4 text-center text-gray-400 text-xs"></i>
-                    {{ $order->employee ? $order->employee->first_name . ' ' . $order->employee->last_name : 'N/A' }}
+                    {{ $order->employee ? $order->employee->first_name . ' ' . $order->employee->middle_name . ' ' . $order->employee->last_name : 'N/A' }}
                     @if ($order->employee?->position_name)
                         <span class="text-gray-500 text-sm">({{ $order->employee->position_name }})</span>
                     @endif
