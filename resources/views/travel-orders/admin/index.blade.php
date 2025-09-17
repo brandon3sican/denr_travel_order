@@ -183,14 +183,14 @@
 
                                 <div class="grid grid-cols-2 gap-4 text-sm mb-4">
                                     <div>
-                                        <span class="text-gray-500 block">Arrival</span>
-                                        <span
-                                            class="font-medium">{{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</span>
-                                    </div>
-                                    <div>
                                         <span class="text-gray-500 block">Departure</span>
                                         <span
                                             class="font-medium">{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 block">Arrival</span>
+                                        <span
+                                            class="font-medium">{{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</span>
                                     </div>
                                 </div>
 

@@ -92,20 +92,17 @@
                                                 <div class="space-y-2">
                                                     <div class="flex items-center justify-between">
                                                         <div class="font-medium text-gray-900">
-                                                            {{ $order->employee->first_name }}
-                                                            {{ $order->employee->middle_name }}
-                                                            {{ $order->employee->last_name }}
+                                                            <i class="fas fa-user w-4 text-center text-gray-400 text-xs"></i> {{ $order->employee->first_name }} {{ $order->employee->middle_name }} {{ $order->employee->last_name }}
                                                             <span
                                                                 class="text-gray-500 text-sm">({{ $order->employee->position_name }})</span>
                                                         </div>
-                                                        <div class="text-sm text-gray-500">
-                                                            Created: {{ $order->created_at->format('M d, Y') }}
-                                                        </div>
                                                     </div>
                                                     <div class="text-sm">
+                                                        <i class="fas fa-briefcase w-4 text-center text-gray-400 text-xs"></i>
                                                         <span class="font-medium">Purpose:</span> {{ $order->purpose }}
                                                     </div>
                                                     <div class="text-sm">
+                                                        <i class="fas fa-map-marker-alt w-4 text-center text-gray-400 text-xs"></i>
                                                         <span class="font-medium">Destination:</span>
                                                         {{ $order->destination }}
                                                     </div>
@@ -117,22 +114,28 @@
                                                             {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
                                                         </div>
                                                     </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        Created: {{ $order->created_at->format('M d, Y') }}
+                                                    </div>  
                                                 </div>
                                             </td>
                                             <td class="px-3 py-2 whitespace-nowrap text-center">
                                                 <button onclick="showTravelOrder({{ $order->id }})"
-                                                    class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
-                                                    View
+                                                    class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 lg:w-20 md:w-15 sm:w-15">
+                                                    <i class="fas fa-eye sm:hidden"></i>
+                                                    <span class="hidden sm:inline">View</span>
                                                 </button>
                                                 <button onclick="recommend({{ $order->id }})"
-                                                    class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-24"
+                                                    class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 lg:w-28 md:w-15 sm:w-15"
                                                     {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
-                                                    Recommend
+                                                    <i class="fas fa-thumbs-up sm:hidden"></i>
+                                                    <span class="hidden sm:inline">Recommend</span>
                                                 </button>
                                                 <button onclick="reject({{ $order->id }})"
-                                                    class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20"
+                                                    class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 lg:w-28 md:w-15 sm:w-15"
                                                     {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
-                                                    Reject
+                                                    <i class="fas fa-thumbs-down sm:hidden"></i>
+                                                    <span class="hidden sm:inline">Reject</span>
                                                 </button>
                                             </td>
                                         </tr>

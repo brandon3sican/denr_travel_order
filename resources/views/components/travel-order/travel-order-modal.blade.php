@@ -369,11 +369,25 @@
                         </tr>
                         <tr>
                             <td style="width:452.5pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <div style="font-family:'Times New Roman'; font-size:10pt;">
-                                    ${order.purpose ? order.purpose.split(';').map((purpose, index) => 
-                                        `<div>${index + 1}. ${purpose.trim()}</div>`
-                                    ).join('') : 'N/A'}
+                                <div style="font-family:'Times New Roman'; font-size:10pt;" class="print-purpose">
+                                    ${order.purpose ? order.purpose.replace(/;+$/, '').split(';')
+                                        .map(purpose => purpose.trim())
+                                        .filter(purpose => purpose !== '')
+                                        .map((purpose, index) => 
+                                            `<div style="margin-bottom: 6pt;">${index + 1}. ${purpose}</div>`
+                                        ).join('\n') : 'N/A'}
                                 </div>
+                                <style>
+                                    @media print {
+                                        .print-purpose {
+                                            white-space: pre-line;
+                                            line-height: 0.5;
+                                        }
+                                        .print-purpose div {
+                                            margin-bottom: 0.5pt !important;
+                                        }
+                                    }
+                                </style>
                             </td>
                         </tr>
                     </tbody>
@@ -631,7 +645,7 @@
                                     left: 0;
                                     top: 1mm;
                                     width: 100%;
-                                    padding: 0 15mm 15mm 15mm;
+                                    padding: 0;
                                     margin: 0;
                                     font-size: 12px;
                                     line-height: 0;
@@ -639,7 +653,7 @@
                                 @page {
                                     size: A4;
                                     margin: 0;
-                                    padding: 0;
+                                    padding: 0 1mm 1mm 1mm;
                                 }
                                 table {
                                     width: 100%;
