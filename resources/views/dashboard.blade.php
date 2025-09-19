@@ -45,22 +45,251 @@
                             </div>
                         </div>
 
-                        <div class="mt-6 text-center">
-                            <a href="{{ route('signature.index') }}"
-                                class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <i class="fas fa-upload mr-2"></i> Upload/Draw Signature Now
-                            </a>
+                        <!-- Hidden logout form -->
+                        <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">
+                            @csrf
+                        </form>
+
+                        <!-- User Agreement Modal -->
+                        <div id="userAgreementModal"
+                            class="fixed inset-0 bg-black bg-opacity-60 items-center justify-center z-60 hidden"
+                            role="dialog" aria-modal="true" aria-labelledby="agreementTitle">
+                            <div class="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
+                                <!-- Alert Header (severity emphasis) -->
+                                <div class="px-6 py-4 border-b bg-red-50 sticky top-0 z-10">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-exclamation-triangle text-red-600 text-2xl mr-3"></i>
+                                            <h3 id="agreementTitle" class="text-xl font-semibold text-gray-900">Important:
+                                                Digital Signature User Agreement</h3>
+                                        </div>
+                                        <button type="button" id="closeAgreementModal"
+                                            class="text-gray-500 hover:text-gray-700" aria-label="Close">
+                                            <i class="fas fa-times text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Scrollable Content -->
+                                <div id="agreementContent" class="p-6 overflow-y-auto"
+                                    style="max-height: calc(90vh - 128px);">
+                                    <div class="prose prose-sm max-w-none">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-3">Purpose and Scope</h4>
+                                        <p class="text-gray-700 mb-4">
+                                            Your digital signature is a legal representation of your identity and will be
+                                            used to authorize travel orders. <strong>This e‑signature is strictly and
+                                                exclusively for use within the DENR Travel Order Information System (TOIS)
+                                                and will not be used for any other application or purpose.</strong>
+                                        </p>
+
+                                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                                            <p class="text-yellow-800 text-sm">
+                                                Please read the following carefully. Proceeding indicates your
+                                                acknowledgment and agreement.
+                                            </p>
+                                        </div>
+
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-3">Terms and Conditions</h4>
+                                        <ol class="list-decimal pl-5 space-y-3 text-sm text-gray-800">
+                                            <li>
+                                                <strong>Legal Binding:</strong> Your digital signature has the same legal
+                                                effect as a handwritten signature.
+                                            </li>
+                                            <li>
+                                                <strong>Authorized Use (Exclusivity):</strong> This signature will be used
+                                                <strong>only</strong> within the DENR TOIS to sign travel orders and
+                                                directly related TOIS documents. It will <strong>not</strong> be shared
+                                                with, exported to, or utilized by any other system or for any other purpose.
+                                            </li>
+                                            <li>
+                                                <strong>Security:</strong> Your signature is stored securely and used solely
+                                                for its intended purpose.
+                                            </li>
+                                            <li>
+                                                <strong>Accuracy:</strong> You confirm the signature you provide is your
+                                                official handwritten signature.
+                                            </li>
+                                            <li>
+                                                <strong>Prohibited Use:</strong> Do not provide another person’s signature
+                                                or authorize use outside TOIS. Suspected misuse may result in access
+                                                restrictions and administrative action consistent with DENR policies.
+                                            </li>
+                                            <li>
+                                                <strong>Record Keeping:</strong> Actions performed with your e‑signature may
+                                                be logged for audit and compliance.
+                                            </li>
+                                        </ol>
+
+                                        <div class="mt-6 flex items-start bg-blue-50 border border-blue-100 rounded-md p-3">
+                                            <input id="agreeExclusive" type="checkbox"
+                                                class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                                            <label for="agreeExclusive" class="ml-3 text-sm text-blue-900">
+                                                I acknowledge and agree that my e‑signature will be used
+                                                <strong>exclusively</strong> within the DENR Travel Order Information System
+                                                (TOIS) for travel orders and directly related TOIS documents.
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sticky Footer Actions -->
+                                <div class="px-6 py-4 bg-gray-50 border-t sticky bottom-0">
+                                    <div class="flex items-center justify-end space-x-3">
+                                        <button type="button" id="cancelBtn"
+                                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                            Cancel
+                                        </button>
+                                        <button type="button" id="acceptBtn"
+                                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 opacity-50 cursor-not-allowed"
+                                            disabled>
+                                            I Understand and Agree
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mt-6 text-center">
                             <p class="text-sm text-gray-500">You can also upload your signature later from the signature
                                 menu.</p>
                         </div>
+
+                        <!-- Secondary Confirmation Modal -->
+                        <div id="confirmAgreementModal"
+                            class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-[61] hidden"
+                            role="dialog" aria-modal="true" aria-labelledby="confirmAgreementTitle">
+                            <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+                                <div class="px-5 py-4 border-b bg-yellow-50">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-exclamation-circle text-yellow-600 text-xl mr-2"></i>
+                                        <h4 id="confirmAgreementTitle" class="text-lg font-semibold text-gray-900">Confirm
+                                            Acceptance</h4>
+                                    </div>
+                                </div>
+                                <div class="px-5 py-4 text-sm text-gray-700">
+                                    <p>Please confirm that you understand your e‑signature will be used
+                                        <strong>exclusively</strong> within DENR TOIS for travel orders and you agree to the
+                                        terms stated.
+                                    </p>
+                                </div>
+                                <div class="px-5 py-4 bg-gray-50 border-t flex items-center justify-end space-x-2">
+                                    <button type="button" id="confirmNo"
+                                        class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">No,
+                                        Go Back</button>
+                                    <button type="button" id="confirmYes"
+                                        class="px-4 py-2 border border-transparent rounded-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Yes,
+                                        I Agree</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 text-center">
+                            <button type="button" id="openAgreementModal"
+                                class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <i class="fas fa-upload mr-2"></i> Upload/Draw Signature Now
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     @endif
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = document.getElementById('userAgreementModal');
+                const openModalBtn = document.getElementById('openAgreementModal');
+                const closeModalBtn = document.getElementById('closeAgreementModal');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const acceptBtn = document.getElementById('acceptBtn');
+                const agreeExclusive = document.getElementById('agreeExclusive');
+                const content = document.getElementById('agreementContent');
+                const confirmModal = document.getElementById('confirmAgreementModal');
+                const confirmYes = document.getElementById('confirmYes');
+                const confirmNo = document.getElementById('confirmNo');
+
+                function openModal() {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                    // Reset button state each time it opens
+                    acceptBtn.disabled = true;
+                    acceptBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    if (agreeExclusive) agreeExclusive.checked = false;
+                    content.scrollTop = 0;
+                }
+
+                function logoutUser() {
+                    const form = document.getElementById('logoutForm');
+                    if (form) form.submit();
+                }
+
+                function closeModal() {
+                    // Any attempt to close the agreement forces logout
+                    logoutUser();
+                }
+
+                function openConfirm() {
+                    confirmModal.classList.remove('hidden');
+                    confirmModal.classList.add('flex');
+                }
+
+                function closeConfirm() {
+                    confirmModal.classList.add('hidden');
+                    confirmModal.classList.remove('flex');
+                }
+
+                function isScrolledToBottom(el) {
+                    const threshold = 5; // px tolerance
+                    return el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
+                }
+
+                function updateAcceptState() {
+                    const scrolled = isScrolledToBottom(content);
+                    const checked = agreeExclusive ? agreeExclusive.checked : true;
+                    if (scrolled && checked) {
+                        acceptBtn.disabled = false;
+                        acceptBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        acceptBtn.disabled = true;
+                        acceptBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                }
+
+                openModalBtn.addEventListener('click', openModal);
+                closeModalBtn.addEventListener('click', closeModal);
+                cancelBtn.addEventListener('click', closeModal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal();
+                });
+
+                content.addEventListener('scroll', updateAcceptState);
+                if (agreeExclusive) agreeExclusive.addEventListener('change', updateAcceptState);
+
+                acceptBtn.addEventListener('click', function() {
+                    if (!acceptBtn.disabled) {
+                        openConfirm();
+                    }
+                });
+
+                // 'No, Go Back' should only close the confirmation modal
+                confirmNo.addEventListener('click', closeConfirm);
+                confirmYes.addEventListener('click', function() {
+                    // proceed to signature page
+                    window.location.href = '{{ route('signature.index') }}';
+                });
+
+                // Force logout if user presses Escape to dismiss
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        logoutUser();
+                    }
+                });
+            });
+        </script>
+    @endpush
+
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Top Navigation -->
