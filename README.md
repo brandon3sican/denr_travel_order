@@ -99,7 +99,7 @@ A modern, efficient, and secure Travel Order Management System developed for the
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/denr_travel_order.git
+   git clone https://github.com/brandon3sican/denr_travel_order.git
    cd denr-travel-order
    ```
 
