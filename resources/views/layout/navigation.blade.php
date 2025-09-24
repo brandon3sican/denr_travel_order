@@ -148,7 +148,7 @@
         <!-- User Section -->
         <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Account</div>
         <a href="#" id="profileLink"
-            class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
+            class="js-open-profile flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
             <i class="fas fa-user-cog w-4 text-center text-gray-400 text-xs"></i>
             <span class="ml-2 text-lg">My Profile</span>
         </a>
@@ -201,12 +201,12 @@
                         <!-- Profile Header -->
                         <div class="text-center mb-6">
                             <div
-                                class="h-24 w-24 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-3xl text-blue-600 font-bold mb-3 border-4 border-white shadow-lg">
+                                class="h-20 w-20 sm:h-24 sm:w-24 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-2xl sm:text-3xl text-blue-600 font-bold mb-3 border-4 border-white shadow-lg">
                                 {{ $firstName ? strtoupper(substr($firstName, 0, 1)) : 'U' }}
                             </div>
-                            <h4 class="text-xl font-semibold text-white">{{ $fullName }}</h4>
-                            <p class="text-sm text-blue-600 font-medium mt-1">{{ $position }}</p>
-                            <p class="text-xs text-gray-100 mt-1">{{ $email }}</p>
+                            <h4 class="text-lg sm:text-xl font-semibold text-white">{{ $fullName }}</h4>
+                            <p class="text-sm text-blue-300 font-medium mt-1">{{ $position }}</p>
+                            <p class="text-xs text-gray-100 mt-1 break-words">{{ $email }}</p>
                         </div>
 
                         <!-- Profile Details -->
@@ -249,14 +249,17 @@
             </div>
         </div>
 
+
         <script>
             // Wait for the DOM to be fully loaded
             document.addEventListener('DOMContentLoaded', function() {
                 // Get modal elements
                 const modal = document.getElementById('profileModal');
                 const modalContent = document.getElementById('modalContent');
-                const profileLink = document.getElementById('profileLink');
                 const closeButton = document.querySelector('[onclick="closeModal()"]');
+                // Mobile modal elements
+                const mobileProfileModal = document.getElementById('profileModalMobile');
+                const mobileModalContent = document.getElementById('modalContentMobile');
 
                 // Show modal with animation
                 function showModal() {
@@ -265,6 +268,18 @@
                     void modal.offsetWidth;
                     modalContent.classList.remove('opacity-0', 'scale-95');
                     modalContent.classList.add('opacity-100', 'scale-100');
+                }
+
+                // Show mobile modal with slide-up animation
+                function showMobileProfileModal() {
+                    if (!mobileProfileModal || !mobileModalContent) return;
+                    mobileProfileModal.classList.remove('hidden');
+                    // Force reflow
+                    void mobileModalContent.offsetWidth;
+                    mobileModalContent.classList.remove('translate-y-4', 'opacity-0');
+                    mobileModalContent.classList.add('translate-y-0', 'opacity-100');
+                    mobileProfileModal.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('overflow-hidden');
                 }
 
                 // Close modal with animation
@@ -276,13 +291,50 @@
                     }, 200);
                 }
 
-                // Event Listeners
-                if (profileLink) {
-                    profileLink.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        showModal();
-                    });
+                function closeMobileProfileModal() {
+                    if (!mobileProfileModal || !mobileModalContent) return;
+                    mobileModalContent.classList.remove('translate-y-0', 'opacity-100');
+                    mobileModalContent.classList.add('translate-y-4', 'opacity-0');
+                    setTimeout(() => {
+                        mobileProfileModal.classList.add('hidden');
+                        mobileProfileModal.setAttribute('aria-hidden', 'true');
+                        document.body.classList.remove('overflow-hidden');
+                    }, 200);
                 }
+
+                // Event Listeners (delegated) for profile open, works in sidebar and mobile menu
+                document.addEventListener('click', function(e) {
+                    const trigger = e.target.closest('.js-open-profile');
+                    if (trigger) {
+                        e.preventDefault();
+                        // If coming from mobile menu, close it first if present
+                        const mobileMenuModal = document.getElementById('mobile-menu-modal');
+                        if (mobileMenuModal && !mobileMenuModal.classList.contains('hidden')) {
+                            // Reuse toggleMobileMenu if available
+                            const panel = mobileMenuModal.querySelector('.transform');
+                            if (panel) {
+                                panel.classList.add('translate-x-full');
+                                setTimeout(() => { mobileMenuModal.classList.add('hidden'); }, 300);
+                                document.body.classList.remove('overflow-hidden');
+                            }
+                            // Delay opening profile modal until drawer is fully closed
+                            setTimeout(() => {
+                                if (window.innerWidth < 1024) {
+                                    showMobileProfileModal();
+                                } else {
+                                    showModal();
+                                }
+                            }, 320);
+                        } else {
+                            // Open mobile or desktop modal depending on viewport
+                            if (window.innerWidth < 1024) { // lg breakpoint
+                                showMobileProfileModal();
+                            } else {
+                                showModal();
+                            }
+                        }
+                    }
+                });
 
                 if (closeButton) {
                     closeButton.addEventListener('click', closeModal);
@@ -295,10 +347,24 @@
                     }
                 });
 
+                // Close mobile profile modal when clicking on backdrop
+                if (mobileProfileModal) {
+                    mobileProfileModal.addEventListener('click', function(e) {
+                        if (e.target === mobileProfileModal) {
+                            closeMobileProfileModal();
+                        }
+                    });
+                }
+
                 // Close with Escape key
                 document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                        closeModal();
+                    if (e.key === 'Escape') {
+                        if (modal && !modal.classList.contains('hidden')) {
+                            closeModal();
+                        }
+                        if (mobileProfileModal && !mobileProfileModal.classList.contains('hidden')) {
+                            closeMobileProfileModal();
+                        }
                     }
                 });
             });
@@ -315,10 +381,80 @@
                     }, 200);
                 }
             };
+
+            // Expose close for mobile modal
+            window.closeMobileProfileModal = function() {
+                const mobileProfileModal = document.getElementById('profileModalMobile');
+                const mobileModalContent = document.getElementById('modalContentMobile');
+                if (mobileProfileModal && mobileModalContent) {
+                    mobileModalContent.classList.remove('translate-y-0', 'opacity-100');
+                    mobileModalContent.classList.add('translate-y-4', 'opacity-0');
+                    setTimeout(() => {
+                        mobileProfileModal.classList.add('hidden');
+                    }, 200);
+                }
+            };
         </script>
 
     </nav>
     @include('components.header')
+</div>
+
+<!-- Mobile Profile Modal (separate instance for small screens) placed OUTSIDE hidden sidebar -->
+<div id="profileModalMobile" class="fixed inset-0 z-[9999] hidden lg:hidden" aria-hidden="true" style="z-index: 99999;">
+    <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900 bg-opacity-70" style="z-index: 99999;">
+        <div class="bg-white w-full sm:w-[90%] max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl transform transition-all duration-300 translate-y-4 opacity-0" style="z-index: 100000;"
+            id="modalContentMobile">
+            <!-- Header -->
+            <div class="px-5 pt-5 pb-3 flex justify-between items-center border-b bg-gray-800 rounded-t-2xl">
+                <div>
+                    <h3 class="text-lg font-semibold text-white">Employee Profile</h3>
+                    <p class="text-xs text-gray-400">View your profile details.</p>
+                </div>
+                <button onclick="closeMobileProfileModal()" class="text-gray-400 hover:bg-gray-100 p-2 rounded-full">
+                    <i class="fas fa-times text-base"></i>
+                </button>
+            </div>
+            <!-- Content -->
+            <div class="p-5 bg-gray-800 rounded-b-2xl">
+                @php
+                    $user = Auth::user();
+                    $employee = $user->employee;
+                    $firstName = $employee->first_name ?? ($user->first_name ?? '');
+                    $middleName = $employee->middle_name ?? '';
+                    $lastName = $employee->last_name ?? ($user->last_name ?? '');
+                    $suffix = $employee->suffix ?? '';
+                    $email = $employee->email ?? ($user->email ?? '');
+                    $position = $employee->position_name ?? ($user->position_name ?? 'N/A');
+                    $assignment = $employee->assignment_name ?? ($user->assignment_name ?? 'N/A');
+                    $divSecUnit = $employee->div_sec_unit ?? ($user->div_sec_unit ?? 'N/A');
+                    $fullName = trim("$firstName " . ($middleName ? $middleName . ' ' : '') . "$lastName" . ($suffix ? ' ' . $suffix : ''));
+                @endphp
+
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <div class="h-20 w-20 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-2xl text-blue-600 font-bold mb-3 border-4 border-white shadow-lg">
+                        {{ $firstName ? strtoupper(substr($firstName, 0, 1)) : 'U' }}
+                    </div>
+                    <h4 class="text-lg font-semibold text-white">{{ $fullName }}</h4>
+                    <p class="text-xs text-blue-300 mt-0.5">{{ $position }}</p>
+                    <p class="text-xs text-gray-100 mt-1 break-words">{{ $email }}</p>
+                </div>
+
+                <!-- Details -->
+                <div class="space-y-3">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Assignment</p>
+                        <p class="text-sm text-gray-800">{{ $assignment }}</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Division/Section/Unit</p>
+                        <p class="text-sm text-gray-800">{{ $divSecUnit }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Mobile Menu Toggle Script -->
@@ -334,6 +470,16 @@
         if (mobileMenuContent && sidebar) {
             const sidebarContent = sidebar.innerHTML;
             mobileMenuContent.innerHTML = sidebarContent;
+            // Remove any cloned profile modal to avoid duplicate IDs
+            const clonedProfileModal = mobileMenuContent.querySelector('#profileModal');
+            if (clonedProfileModal) {
+                clonedProfileModal.remove();
+            }
+            // Also remove any cloned mobile profile modal to avoid duplicate IDs
+            const clonedMobileProfileModal = mobileMenuContent.querySelector('#profileModalMobile');
+            if (clonedMobileProfileModal) {
+                clonedMobileProfileModal.remove();
+            }
         }
 
         function toggleMobileMenu(show) {
