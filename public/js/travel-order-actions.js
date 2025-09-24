@@ -8,8 +8,50 @@ function approve(orderId) {
     showApproveModal(orderId);
 }
 
+// Helpers to gather client metadata and location
+function getClientMeta() {
+    const ua = navigator.userAgent || '';
+    // Very light parsing; backend also stores full user_agent
+    let device = 'Desktop';
+    if (/Mobi|Android/i.test(ua)) device = 'Mobile';
+    else if (/iPad|Tablet/i.test(ua)) device = 'Tablet';
+
+    // Simple browser detection
+    let browser = 'Unknown';
+    if (/Chrome\//i.test(ua) && !/Edge\//i.test(ua) && !/OPR\//i.test(ua)) browser = 'Chrome';
+    else if (/Edg\//i.test(ua)) browser = 'Edge';
+    else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+    else if (/Safari\//i.test(ua) && !/Chrome\//i.test(ua)) browser = 'Safari';
+    else if (/OPR\//i.test(ua)) browser = 'Opera';
+
+    return {
+        device,
+        browser,
+        platform: navigator.platform || null,
+        screen: { w: window.screen?.width || null, h: window.screen?.height || null },
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
+        language: navigator.language || null,
+        user_agent: ua
+    };
+}
+
+function getLocation() {
+    return new Promise((resolve) => {
+        if (!navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+            }),
+            () => resolve(null),
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 300000 }
+        );
+    });
+}
+
 // Function to handle rejection of a travel order
-function reject(orderId) {
+async function reject(orderId) {
     const reason = prompt('Please provide a reason for rejection (required):');
     if (reason === null) return; // User cancelled
     if (!reason.trim()) {
@@ -19,6 +61,8 @@ function reject(orderId) {
 
     if (confirm('Are you sure you want to reject this travel order? This action cannot be undone.')) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const client_meta = getClientMeta();
+        const location = await getLocation();
         
         fetch(`/travel-order/${orderId}/reject`, {
             method: 'POST',
@@ -30,7 +74,9 @@ function reject(orderId) {
             },
             body: JSON.stringify({
                 reason: reason,
-                _token: csrfToken
+                _token: csrfToken,
+                client_meta,
+                location
             })
         })
         .then(response => response.json())
@@ -50,8 +96,10 @@ function reject(orderId) {
 }
 
 // Function to update travel order status via AJAX
-function updateTravelOrderStatus(orderId, status) {
+async function updateTravelOrderStatus(orderId, status) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const client_meta = getClientMeta();
+    const location = await getLocation();
     
     fetch(`/travel-order/${orderId}/status`, {
         method: 'POST',
@@ -62,7 +110,9 @@ function updateTravelOrderStatus(orderId, status) {
         },
         body: JSON.stringify({
             status: status,
-            _token: csrfToken
+            _token: csrfToken,
+            client_meta,
+            location
         })
     })
     .then(response => {

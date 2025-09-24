@@ -8,6 +8,7 @@ use App\Models\TravelOrder as TravelOrderModel;
 use App\Models\TravelOrderNumber;
 use App\Models\TravelOrderRole;
 use App\Models\TravelOrderStatus;
+use App\Models\TravelOrderStatusHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +38,7 @@ class TravelOrderController extends Controller
             ->whereHas('status', function($query) {
                 $query->where('name', 'For Approval');
             })
-            ->latest()
+            ->oldest()
             ->paginate(10);
             
         $statuses = TravelOrderStatus::all();
@@ -65,10 +66,26 @@ class TravelOrderController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update status to Approved
+            // Capture previous status, then update to Approved
+            $prevStatusName = optional($travelOrder->status)->name ?? null;
             $approvedStatus = TravelOrderStatus::where('name', 'Approved')->first();
             $travelOrder->status_id = $approvedStatus->id;
             $travelOrder->save();
+
+            // Log metadata
+            TravelOrderStatusHistory::create([
+                'travel_order_id' => $travelOrder->id,
+                'user_id' => Auth::id(),
+                'action' => 'approve',
+                'from_status' => $prevStatusName,
+                'to_status' => 'Approved',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+                'device' => $request->input('client_meta.device') ?? null,
+                'browser' => $request->input('client_meta.browser') ?? null,
+                'location' => $request->input('location') ?? null,
+                'client_meta' => $request->input('client_meta') ?? null,
+            ]);
 
             // Generate travel order number (format: TO-YYYYMMDD-XXXX)
             $datePrefix = now()->format('Ymd');
@@ -120,11 +137,27 @@ class TravelOrderController extends Controller
         }
 
         try {
-            // Update status to Disapproved
+            // Capture previous status, then update to Disapproved
+            $prevStatusName = optional($travelOrder->status)->name ?? null;
             $rejectedStatus = TravelOrderStatus::where('name', 'Disapproved')->first();
             $travelOrder->status_id = $rejectedStatus->id;
             $travelOrder->remarks = $request->reason;
             $travelOrder->save();
+
+            // Log metadata
+            TravelOrderStatusHistory::create([
+                'travel_order_id' => $travelOrder->id,
+                'user_id' => Auth::id(),
+                'action' => 'reject',
+                'from_status' => $prevStatusName,
+                'to_status' => 'Disapproved',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+                'device' => $request->input('client_meta.device') ?? null,
+                'browser' => $request->input('client_meta.browser') ?? null,
+                'location' => $request->input('location') ?? null,
+                'client_meta' => $request->input('client_meta') ?? null,
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -147,7 +180,34 @@ class TravelOrderController extends Controller
      */
     public function history()
     {
-        return view('travel-orders.history');
+        $user = Auth::user();
+        $perPage = request()->integer('per_page', 10);
+        $search = request('search');
+
+        $query = TravelOrderModel::with(['employee', 'status'])
+            ->where('employee_email', $user->email);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('destination', 'like', "%{$search}%")
+                  ->orWhere('purpose', 'like', "%{$search}%");
+            });
+        }
+
+        $travelOrders = $query->orderBy('created_at', 'asc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        // Load ALL travel history actions (system-wide) with pagination
+        $allHistory = \App\Models\TravelOrderStatusHistory::with(['travelOrder.status', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('travel-orders.history', [
+            'travelOrders' => $travelOrders,
+            'allHistory' => $allHistory,
+        ]);
     }
     
     /**
@@ -227,7 +287,7 @@ class TravelOrderController extends Controller
             ->whereHas('status', function($query) {
                 $query->where('name', 'For Recommendation');
             })
-            ->latest()
+            ->oldest()
             ->paginate(10);
             
         $statuses = TravelOrderStatus::all();
@@ -330,7 +390,7 @@ class TravelOrderController extends Controller
             }
         }
 
-        $travelOrders = $query->latest('travel_orders.created_at')
+        $travelOrders = $query->orderBy('travel_orders.created_at', 'asc')
             ->paginate($perPage)
             ->withQueryString();
 
@@ -564,10 +624,12 @@ class TravelOrderController extends Controller
     {
         try {
             $request->validate([
-                'status' => 'required|string|in:for approval,disapproved'
+                'status' => 'required|string|in:for approval,disapproved',
+                'location' => 'nullable',
+                'client_meta' => 'nullable',
             ]);
 
-            $travelOrder = TravelOrderModel::findOrFail($id);
+            $travelOrder = TravelOrderModel::with('status')->findOrFail($id);
             $user = Auth::user();
             
             // Check if the user is authorized to update the status
@@ -579,7 +641,14 @@ class TravelOrderController extends Controller
             }
 
             // Get the status ID based on the status name
-            $status = TravelOrderStatus::where('name', ucfirst($request->status))->first();
+            // Normalize input status to DB-friendly name
+            $map = [
+                'for approval' => 'For Approval',
+                'disapproved' => 'Disapproved',
+            ];
+            $requested = strtolower($request->status);
+            $normalized = $map[$requested] ?? null;
+            $status = $normalized ? TravelOrderStatus::where('name', $normalized)->first() : null;
             
             if (!$status) {
                 return response()->json([
@@ -588,7 +657,8 @@ class TravelOrderController extends Controller
                 ], 422);
             }
 
-            // Update the status
+            // Capture previous status, then update the status
+            $prevStatusName = optional($travelOrder->status)->name ?? null;
             $travelOrder->status_id = $status->id;
             
             // If recommending for approval, update the approver if not set
@@ -599,6 +669,22 @@ class TravelOrderController extends Controller
             }
             
             $travelOrder->save();
+
+            // Log metadata
+            $action = $request->status === 'for approval' ? 'recommend' : 'update_status';
+            TravelOrderStatusHistory::create([
+                'travel_order_id' => $travelOrder->id,
+                'user_id' => Auth::id(),
+                'action' => $action,
+                'from_status' => $prevStatusName,
+                'to_status' => $status->name,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+                'device' => $request->input('client_meta.device') ?? null,
+                'browser' => $request->input('client_meta.browser') ?? null,
+                'location' => $request->input('location') ?? null,
+                'client_meta' => $request->input('client_meta') ?? null,
+            ]);
 
             return response()->json([
                 'success' => true,

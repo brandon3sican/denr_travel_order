@@ -67,7 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/all-orders', [TravelOrderController::class, 'index'])->name('admin.index');
         
         // Travel Orders History
-        Route::get('/history', [TravelOrderController::class, 'history'])->name('travel-orders.history');
+        Route::get('/history', [TravelOrderController::class, 'history'])->name('history');
     });
 
     // Role Management Routes
@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [TravelOrderStatusController::class, 'store'])->name('status-management.store');
         Route::put('/{status}', [TravelOrderStatusController::class, 'update'])->name('status-management.update');
         Route::delete('/{status}', [TravelOrderStatusController::class, 'destroy'])->name('status-management.destroy');
+        Route::post('/travel-orders/{id}/reset', [TravelOrderStatusController::class, 'reset'])->name('status-management.reset');
     });
 
     // Profile Routes

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 use App\Models\Employee;
 use App\Models\EmployeeSignature;
+use App\Models\TravelOrderStatusHistory;
 
 class TravelOrder extends Model
 {
@@ -97,5 +98,21 @@ class TravelOrder extends Model
             'approver', // Local key on travel_orders table...
             'id' // Local key on employees table...
         );
+    }
+
+    /**
+     * Get all status histories for this travel order.
+     */
+    public function statusHistories()
+    {
+        return $this->hasMany(TravelOrderStatusHistory::class, 'travel_order_id')->latest();
+    }
+    
+    /**
+     * Get the latest status update for this travel order.
+     */
+    public function latestStatusUpdate()
+    {
+        return $this->hasOne(TravelOrderStatusHistory::class, 'travel_order_id')->latest();
     }
 }

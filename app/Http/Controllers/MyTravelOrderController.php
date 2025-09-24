@@ -11,7 +11,8 @@ class MyTravelOrderController extends Controller
     public function index()
     {
         $perPage = 10;
-        $travelOrders = TravelOrder::where('employee_email', Auth::user()->email)
+        $travelOrders = TravelOrder::with(['status', 'latestStatusUpdate.user', 'employee', 'recommenderEmployee', 'approverEmployee'])
+            ->where('employee_email', Auth::user()->email)
             ->latest()
             ->paginate($perPage);
 

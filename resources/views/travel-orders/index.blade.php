@@ -2,9 +2,10 @@
 
 @section('content')
     <!-- Complete Travel Order Modal -->
-    @foreach($travelOrders as $order)
-        @if($order->status_id == 3)
-            <div id="completeModal{{ $order->id }}" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    @foreach ($travelOrders as $order)
+        @if ($order->status_id == 3)
+            <div id="completeModal{{ $order->id }}"
+                class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
                 <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
                     <div class="mt-3 text-center">
                         <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
@@ -13,31 +14,40 @@
                         <h3 class="text-lg leading-6 font-medium text-gray-900 mt-3">Complete Travel Order</h3>
                         <div class="mt-2 px-7 py-3">
                             <p class="text-sm text-gray-500 mb-4">
-                                Please upload the signed documents for this travel order. The following documents are required:
+                                Please upload the signed documents for this travel order. The following documents are
+                                required:
                             </p>
                             <ul class="text-sm text-left text-gray-600 mb-6 space-y-2">
                                 <li class="flex items-start">
                                     <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                    <span>Signed Certification of Travel Completed (PDF) - Must be signed by the Division Chief/Agency Head</span>
+                                    <span>Signed Certification of Travel Completed (PDF) - Must be signed by the Division
+                                        Chief/Agency Head</span>
                                 </li>
                                 <li class="flex items-start">
                                     <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                    <span>Signed Itinerary of Travel (PDF) - Must be signed by the Immediate Supervisor and the Division Chief/Agency Head</span>
+                                    <span>Signed Itinerary of Travel (PDF) - Must be signed by the Immediate Supervisor and
+                                        the Division Chief/Agency Head</span>
                                 </li>
                             </ul>
                             <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="signedDocuments">
                                     Upload Signed Documents (PDF only)
                                 </label>
-                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                <div
+                                    class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                                     <div class="space-y-1 text-center">
-                                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
+                                            viewBox="0 0 48 48" aria-hidden="true">
+                                            <path
+                                                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                         <div class="flex text-sm text-gray-600">
-                                            <label for="file-upload-{{ $order->id }}" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                            <label for="file-upload-{{ $order->id }}"
+                                                class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                                 <span>Upload files</span>
-                                                <input id="file-upload-{{ $order->id }}" name="file-upload" type="file" class="sr-only" accept=".pdf" multiple>
+                                                <input id="file-upload-{{ $order->id }}" name="file-upload"
+                                                    type="file" class="sr-only" accept=".pdf" multiple>
                                             </label>
                                             <p class="pl-1">or drag and drop</p>
                                         </div>
@@ -46,7 +56,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <p id="file-names-{{ $order->id }}" class="mt-2 text-sm text-gray-500">No files selected</p>
+                                <p id="file-names-{{ $order->id }}" class="mt-2 text-sm text-gray-500">No files selected
+                                </p>
                             </div>
                         </div>
                         <div class="items-center px-4 py-3">
@@ -171,17 +182,45 @@
 
                                 <div class="grid grid-cols-2 gap-4 text-sm mb-4">
                                     <div>
-                                        <span class="text-gray-500 block">Arrival</span>
-                                        <span
-                                            class="font-medium">{{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</span>
-                                    </div>
-                                    <div>
                                         <span class="text-gray-500 block">Departure</span>
                                         <span
                                             class="font-medium">{{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}</span>
                                     </div>
+                                    <div>
+                                        <span class="text-gray-500 block">Arrival</span>
+                                        <span
+                                            class="font-medium">{{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}</span>
+                                    </div>
                                 </div>
 
+                                @if ($order->latestStatusUpdate)
+                                    <div class="mt-3 pt-3 border-t border-gray-100">
+                                        <div class="text-xs text-gray-500 mb-1">Latest Update</div>
+                                        <div class="flex items-center text-xs text-gray-700">
+                                            <div class="flex-shrink-0 mr-2">
+                                                <i class="fas fa-clock text-gray-400"></i>
+                                            </div>
+                                            <div>
+                                                <div>{{ $order->latestStatusUpdate->created_at->format('M d, Y h:i A') }}
+                                                </div>
+                                                <div class="text-xs text-gray-600 font-bold">
+                                                    {{ ucfirst($order->latestStatusUpdate->action) }}
+                                                    @if ($order->latestStatusUpdate->user)
+                                                        by {{ $order->latestStatusUpdate->user->name }}
+                                                        ({{ $order->latestStatusUpdate->user->email }})
+                                                    @endif
+                                                </div>
+                                                @if ($order->latestStatusUpdate->from_status && $order->latestStatusUpdate->to_status)
+                                                    <div class="text-xs text-gray-500 mt-1">
+                                                        Status changed to
+                                                        <span
+                                                            class="font-medium font-bold">{{ ucfirst($order->latestStatusUpdate->to_status) }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
                                     <button onclick="showTravelOrder({{ $order->id }})"
                                         class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-indigo-600 text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -403,70 +442,70 @@
             function openCompleteModal(orderId) {
                 document.getElementById('completeModal' + orderId).classList.remove('hidden');
                 document.body.classList.add('overflow-hidden');
-                
+
                 // Set up file input change handler
                 const fileInput = document.getElementById('file-upload-' + orderId);
                 const fileNames = document.getElementById('file-names-' + orderId);
-                
+
                 fileInput.addEventListener('change', function(e) {
                     const files = Array.from(e.target.files);
                     const invalidFiles = files.filter(file => file.type !== 'application/pdf');
-                    
+
                     if (invalidFiles.length > 0) {
                         alert('Only PDF files are allowed.');
                         e.target.value = '';
                         fileNames.textContent = 'No files selected';
                         return;
                     }
-                    
+
                     if (files.length === 0) {
                         fileNames.textContent = 'No files selected';
                     } else {
                         fileNames.textContent = files.length + ' file' + (files.length > 1 ? 's' : '') + ' selected';
                     }
                 });
-                
+
                 // Enable drag and drop
                 const dropZone = fileInput.closest('div[class*="border-dashed"]');
-                
+
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                     dropZone.addEventListener(eventName, preventDefaults, false);
                 });
-                
+
                 function preventDefaults(e) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
-                
+
                 ['dragenter', 'dragover'].forEach(eventName => {
                     dropZone.addEventListener(eventName, highlight, false);
                 });
-                
+
                 ['dragleave', 'drop'].forEach(eventName => {
                     dropZone.addEventListener(eventName, unhighlight, false);
                 });
-                
+
                 function highlight() {
                     dropZone.classList.add('border-blue-400', 'bg-blue-50');
                 }
-                
+
                 function unhighlight() {
                     dropZone.classList.remove('border-blue-400', 'bg-blue-50');
                 }
-                
+
                 dropZone.addEventListener('drop', handleDrop, false);
-                
+
                 function handleDrop(e) {
                     const dt = e.dataTransfer;
                     const files = dt.files;
                     fileInput.files = files;
-                    
+
                     // Trigger change event
                     const event = new Event('change');
                     fileInput.dispatchEvent(event);
                 }
             }
-            
+
             // Function to close the completion modal
             function closeCompleteModal(orderId) {
                 document.getElementById('completeModal' + orderId).classList.add('hidden');
@@ -475,39 +514,39 @@
                 document.getElementById('file-upload-' + orderId).value = '';
                 document.getElementById('file-names-' + orderId).textContent = 'No files selected';
             }
-            
+
             // Function to submit the completion form
             async function submitCompletion(orderId) {
                 const fileInput = document.getElementById('file-upload-' + orderId);
                 const files = fileInput.files;
-                
+
                 if (files.length === 0) {
                     alert('Please upload at least one PDF file.');
                     return;
                 }
-                
+
                 // Validate file types
                 const invalidFiles = Array.from(files).filter(file => file.type !== 'application/pdf');
                 if (invalidFiles.length > 0) {
                     alert('Only PDF files are allowed.');
                     return;
                 }
-                
+
                 // Disable submit button and show loading state
                 const submitBtn = document.getElementById('complete-btn-' + orderId);
                 const originalText = submitBtn.innerHTML;
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
-                
+
                 try {
                     const formData = new FormData();
                     formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
-                    
+
                     // Add all files to form data
                     Array.from(files).forEach((file, index) => {
                         formData.append(`documents[${index}]`, file);
                     });
-                    
+
                     const response = await fetch(`/travel-orders/${orderId}/complete`, {
                         method: 'POST',
                         body: formData,
@@ -516,9 +555,9 @@
                             'Accept': 'application/json',
                         },
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (response.ok) {
                         // Show success message
                         alert('Travel order marked as completed successfully!');
