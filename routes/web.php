@@ -9,6 +9,7 @@ use App\Http\Controllers\TravelOrderStatusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\SignatureManagementController;
 
 // Root route - redirects to dashboard if authenticated, otherwise to login
 Route::get('/', function () {
@@ -19,14 +20,9 @@ Route::get('/', function () {
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
-    
-    Route::post('login', [AuthenticatedSessionController::class, 'store'])
-        ->name('login.store');
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
 });
-
-// Logout Route
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
@@ -78,6 +74,12 @@ Route::middleware('auth')->group(function () {
     Route::prefix('role-management')->name('role-management.')->group(function () {
         Route::get('/', [RoleManagementController::class, 'index'])->name('index');
         Route::post('/{user}/update-role', [RoleManagementController::class, 'updateRole'])->name('update-role');
+    });
+    
+    // Signature Management (admin UI, controller enforces admin)
+    Route::prefix('signature-management')->name('signature-management.')->group(function () {
+        Route::get('/', [SignatureManagementController::class, 'index'])->name('index');
+        Route::post('/{employee}/reset', [SignatureManagementController::class, 'reset'])->name('reset');
     });
     
     // Status Management Routes

@@ -97,13 +97,15 @@
         @if (auth()->user()->is_admin)
             <!-- Admin Section -->
             <!-- Travel Order -->
-            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel Orders</div>
+            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel Orders
+            </div>
             <a href="{{ route('travel-orders.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.index') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2 text-lg">All Travel Orders</span>
             </a>
-            <a href="{{ route('travel-orders.history') }}" class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.history') ? 'bg-gray-700' : '' }}">
+            <a href="{{ route('travel-orders.history') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.history') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2 text-lg">Travel Orders History</span>
             </a>
@@ -119,6 +121,12 @@
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('status-management.*') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-tasks w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2 text-lg">Status Management</span>
+            </a>
+
+            <a href="{{ route('signature-management.index') }}"
+                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('signature-management.index') ? 'bg-gray-700' : '' }}">
+                <i class="fas fa-signature w-4 text-center text-gray-400 text-xs"></i>
+                <span class="ml-2 text-lg">Signature Management</span>
             </a>
 
             <!-- Reports Section -->
@@ -314,7 +322,9 @@
                             const panel = mobileMenuModal.querySelector('.transform');
                             if (panel) {
                                 panel.classList.add('translate-x-full');
-                                setTimeout(() => { mobileMenuModal.classList.add('hidden'); }, 300);
+                                setTimeout(() => {
+                                    mobileMenuModal.classList.add('hidden');
+                                }, 300);
                                 document.body.classList.remove('overflow-hidden');
                             }
                             // Delay opening profile modal until drawer is fully closed
@@ -401,10 +411,12 @@
 </div>
 
 <!-- Mobile Profile Modal (separate instance for small screens) placed OUTSIDE hidden sidebar -->
-<div id="profileModalMobile" class="fixed inset-0 z-[9999] hidden lg:hidden" aria-hidden="true" style="z-index: 99999;">
-    <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900 bg-opacity-70" style="z-index: 99999;">
-        <div class="bg-white w-full sm:w-[90%] max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl transform transition-all duration-300 translate-y-4 opacity-0" style="z-index: 100000;"
-            id="modalContentMobile">
+<div id="profileModalMobile" class="fixed inset-0 z-[9999] hidden lg:hidden" aria-hidden="true"
+    style="z-index: 99999;">
+    <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900 bg-opacity-70"
+        style="z-index: 99999;">
+        <div class="bg-white w-full sm:w-[90%] max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl transform transition-all duration-300 translate-y-4 opacity-0"
+            style="z-index: 100000;" id="modalContentMobile">
             <!-- Header -->
             <div class="px-5 pt-5 pb-3 flex justify-between items-center border-b bg-gray-800 rounded-t-2xl">
                 <div>
@@ -428,12 +440,18 @@
                     $position = $employee->position_name ?? ($user->position_name ?? 'N/A');
                     $assignment = $employee->assignment_name ?? ($user->assignment_name ?? 'N/A');
                     $divSecUnit = $employee->div_sec_unit ?? ($user->div_sec_unit ?? 'N/A');
-                    $fullName = trim("$firstName " . ($middleName ? $middleName . ' ' : '') . "$lastName" . ($suffix ? ' ' . $suffix : ''));
+                    $fullName = trim(
+                        "$firstName " .
+                            ($middleName ? $middleName . ' ' : '') .
+                            "$lastName" .
+                            ($suffix ? ' ' . $suffix : ''),
+                    );
                 @endphp
 
                 <!-- Header -->
                 <div class="text-center mb-5">
-                    <div class="h-20 w-20 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-2xl text-blue-600 font-bold mb-3 border-4 border-white shadow-lg">
+                    <div
+                        class="h-20 w-20 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-2xl text-blue-600 font-bold mb-3 border-4 border-white shadow-lg">
                         {{ $firstName ? strtoupper(substr($firstName, 0, 1)) : 'U' }}
                     </div>
                     <h4 class="text-lg font-semibold text-white">{{ $fullName }}</h4>
@@ -448,7 +466,8 @@
                         <p class="text-sm text-gray-800">{{ $assignment }}</p>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Division/Section/Unit</p>
+                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                            Division/Section/Unit</p>
                         <p class="text-sm text-gray-800">{{ $divSecUnit }}</p>
                     </div>
                 </div>

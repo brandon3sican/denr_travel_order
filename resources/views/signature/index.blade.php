@@ -209,4 +209,92 @@
 
     @include('signature.partials.styles')
     @include('signature.partials.scripts')
+
+    @if (!isset($signature) || !$signature)
+        <!-- Confirm E-Signature Modal -->
+        <div id="sigConfirmModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="sigConfirmTitle">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl">
+                <div class="px-6 py-4 border-b bg-blue-600 text-white rounded-t-xl">
+                    <h3 id="sigConfirmTitle" class="text-lg font-semibold">Confirm Your E‑Signature</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <p class="text-sm text-gray-700">Before saving, please acknowledge the following:</p>
+                    <label class="flex items-start space-x-2">
+                        <input id="sc_ack1" type="checkbox" class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                        <span class="text-sm text-gray-700">This is my official handwritten signature and I am authorized to use it in official documents.</span>
+                    </label>
+                    <label class="flex items-start space-x-2">
+                        <input id="sc_ack2" type="checkbox" class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                        <span class="text-sm text-gray-700">This signature will appear on printable travel orders (Requester/Recommending/Approving as applicable).</span>
+                    </label>
+                    <label class="flex items-start space-x-2">
+                        <input id="sc_ack3" type="checkbox" class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                        <span class="text-sm text-gray-700">I understand audit metadata (timestamp and actions) will be recorded.</span>
+                    </label>
+                    <div class="flex justify-end space-x-2 pt-2">
+                        <button type="button" id="sc_cancel" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded">Cancel</button>
+                        <button type="button" id="sc_confirm" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded opacity-50 pointer-events-none">Confirm and Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const saveBtn = document.getElementById('save');
+                    const modal = document.getElementById('sigConfirmModal');
+                    const a1 = document.getElementById('sc_ack1');
+                    const a2 = document.getElementById('sc_ack2');
+                    const a3 = document.getElementById('sc_ack3');
+                    const confirmBtn = document.getElementById('sc_confirm');
+                    const cancelBtn = document.getElementById('sc_cancel');
+
+                    if (!saveBtn || !modal) return;
+
+                    function openModal() {
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                        confirmBtn.classList.add('opacity-50','pointer-events-none');
+                        a1.checked = a2.checked = a3.checked = false;
+                    }
+                    function closeModal() {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                    function refreshState() {
+                        const ok = a1.checked && a2.checked && a3.checked;
+                        if (ok) {
+                            confirmBtn.classList.remove('opacity-50','pointer-events-none');
+                        } else {
+                            confirmBtn.classList.add('opacity-50','pointer-events-none');
+                        }
+                    }
+                    a1?.addEventListener('change', refreshState);
+                    a2?.addEventListener('change', refreshState);
+                    a3?.addEventListener('change', refreshState);
+                    cancelBtn?.addEventListener('click', closeModal);
+                    modal?.addEventListener('click', function(e){ if (e.target === modal) closeModal(); });
+
+                    // Intercept the original Save click to show prompts first
+                    saveBtn.addEventListener('click', function (e) {
+                        if (!window.__sigConfirmedOnce) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            openModal();
+                        }
+                    }, true);
+
+                    confirmBtn?.addEventListener('click', function () {
+                        if (a1.checked && a2.checked && a3.checked) {
+                            window.__sigConfirmedOnce = true;
+                            closeModal();
+                            // Trigger the original save action
+                            saveBtn.click();
+                        }
+                    });
+                });
+            </script>
+        @endpush
+    @endif
 @endsection
