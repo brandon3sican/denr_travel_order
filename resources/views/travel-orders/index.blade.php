@@ -20,13 +20,19 @@
                             <ul class="text-sm text-left text-gray-600 mb-6 space-y-2">
                                 <li class="flex items-start">
                                     <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                    <span>Signed Certification of Travel Completed (PDF) - Must be signed by the Division
-                                        Chief/Agency Head</span>
+                                    <span>Signed Certification of Travel Completed (PDF)</span>
                                 </li>
                                 <li class="flex items-start">
                                     <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                    <span>Signed Itinerary of Travel (PDF) - Must be signed by the Immediate Supervisor and
-                                        the Division Chief/Agency Head</span>
+                                    <span>Signed Itinerary of Travel (PDF)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <span>Signed Certificate of Appearance (PDF)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <span>Signed Travel Report (PDF)</span>
                                 </li>
                             </ul>
                             <div class="mb-4">
@@ -206,8 +212,17 @@
                                                 <div class="text-xs text-gray-600 font-bold">
                                                     {{ ucfirst($order->latestStatusUpdate->action) }}
                                                     @if ($order->latestStatusUpdate->user)
-                                                        by {{ $order->latestStatusUpdate->user->name }}
-                                                        ({{ $order->latestStatusUpdate->user->email }})
+                                                        @php
+                                                            $employee = \App\Models\Employee::where(
+                                                                'email',
+                                                                $order->latestStatusUpdate->user->email,
+                                                            )->first();
+                                                        @endphp
+                                                        @if ($employee)
+                                                            by {{ $employee->first_name }}
+                                                            {{ $employee->middle_name ? ' ' . $employee->middle_name . ' ' : ' ' }}
+                                                            {{ $employee->last_name }}
+                                                        @endif
                                                     @endif
                                                 </div>
                                                 @if ($order->latestStatusUpdate->from_status && $order->latestStatusUpdate->to_status)
@@ -713,5 +728,4 @@
             });
         </script>
     @endpush
-
 @endsection

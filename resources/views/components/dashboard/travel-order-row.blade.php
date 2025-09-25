@@ -51,19 +51,21 @@
                 </div>
             </div>
             <div class="flex items-center justify-between">
-                <div class="text-sm">
+                <div class="text-xs">
+                    <i class="fas fa-calendar w-4 text-center text-gray-400 text-xs"></i>
                     <span class="text-gray-500">Created:
                         {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
                     </span>
                 </div>
             </div>
+            <div>
+                <span class="text-xs text-gray-500"><i class="fas fa-circle w-4 text-center text-gray-400 text-xs"></i>
+                    Status:</span>
+                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClass }}">
+                    {{ $order->status->name }}
+                </span>
+            </div>
         </div>
-    </td>
-
-    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClass }}">
-            {{ $order->status->name ?? 'Unknown' }}
-        </span>
     </td>
 
     <!-- Action Column -->

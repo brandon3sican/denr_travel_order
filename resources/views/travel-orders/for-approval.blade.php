@@ -121,17 +121,17 @@
                                             <td class="px-3 py-2 whitespace-nowrap text-center">
                                                 <button onclick="showTravelOrder({{ $order->id }})"
                                                     class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
-                                                    View
+                                                    <i class="fas fa-eye"></i> View
                                                 </button>
                                                 <button onclick="approve({{ $order->id }})"
-                                                    class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-25 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
-                                                    Approve
+                                                    <i class="fas fa-check"></i> Approve
                                                 </button>
                                                 <button onclick="reject({{ $order->id }})"
                                                     class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
-                                                    Reject
+                                                    <i class="fas fa-times"></i> Reject
                                                 </button>
                                             </td>
                                         </tr>
@@ -141,14 +141,15 @@
                                                 <div class="flex flex-col items-center justify-center space-y-2">
                                                     <i class="fas fa-search text-gray-400 text-4xl"></i>
                                                     <p class="text-gray-500 text-sm font-medium">
-                                                        @if(request()->has('search') && !empty(request('search')))
+                                                        @if (request()->has('search') && !empty(request('search')))
                                                             No match found for "{{ request('search') }}"
                                                         @else
                                                             No travel orders found.
                                                         @endif
                                                     </p>
-                                                    @if(request()->has('search') && !empty(request('search')))
-                                                        <button onclick="document.getElementById('search').value = ''; document.querySelector('form').submit();" 
+                                                    @if (request()->has('search') && !empty(request('search')))
+                                                        <button
+                                                            onclick="document.getElementById('search').value = ''; document.querySelector('form').submit();"
                                                             class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
                                                             <i class="fas fa-undo-alt mr-1"></i> Clear search
                                                         </button>
