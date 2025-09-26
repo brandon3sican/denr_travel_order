@@ -63,11 +63,6 @@
                 <i class="fas fa-suitcase w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2 text-lg">My Travel Orders</span>
             </a>
-            <a href="{{ route('travel-orders.create') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.create') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-plus-circle w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">New Travel Order</span>
-            </a>
         @endif
 
         @php
