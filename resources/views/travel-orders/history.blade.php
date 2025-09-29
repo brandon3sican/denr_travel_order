@@ -114,13 +114,12 @@
                                                     to
                                                     {{ \Carbon\Carbon::parse($h->travelOrder->arrival_date)->format('M d, Y') }}
                                                 </div>
-                                                <div class="text-xs text-gray-500">
-                                                    <div class="pt-2">
-                                                        <button onclick="showTravelOrder({{ $h->travelOrder->id }})"
-                                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                                            <i class="fas fa-eye mr-1"></i> View Details
-                                                        </button>
-                                                    </div>
+                                                <div class="text-xs text-gray-500 mt-2">
+                                                    <button onclick="showTravelOrder({{ $h->travelOrder->id }})"
+                                                        class="text-blue-600 hover:text-blue-900">
+                                                        <i class="fas fa-eye"></i>
+                                                        <span class="hidden sm:inline">View Details</span>
+                                                    </button>
                                                 </div>
                                             @endif
                                         </td>
@@ -303,13 +302,12 @@
                                                     to
                                                     {{ \Carbon\Carbon::parse($h->travelOrder->arrival_date)->format('M d, Y') }}
                                                 </div>
-                                                <div class="text-xs text-gray-500">
-                                                    <div class="pt-2">
-                                                        <button onclick="showTravelOrder({{ $h->travelOrder->id }})"
-                                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                                            <i class="fas fa-eye mr-1"></i> View Details
-                                                        </button>
-                                                    </div>
+                                                <div class="text-xs text-gray-500 mt-2">
+                                                    <button onclick="showTravelOrder({{ $h->travelOrder->id }})"
+                                                        class="text-blue-600 hover:text-blue-900">
+                                                        <i class="fas fa-eye"></i>
+                                                        <span class="hidden sm:inline">View Details</span>
+                                                    </button>
                                                 </div>
                                             @endif
                                         </td>
@@ -438,20 +436,19 @@
                             if (isVisible) hasVisibleRows = true;
                         });
 
-                        // Show/hide no results message only when searching
+                        // Show/hide no results message
                         const tbody = table ? table.querySelector('tbody') : null;
                         let noResultsRow = tbody ? tbody.querySelector('tr.no-results') : null;
 
-                        // Only show no results message if there's an active search
-                        if (searchTerm && !hasVisibleRows) {
+                        if (!hasVisibleRows) {
                             if (!noResultsRow && tbody) {
                                 noResultsRow = document.createElement('tr');
                                 noResultsRow.className = 'no-results';
                                 noResultsRow.innerHTML = `
-                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
-                                        No matching records found
-                                    </td>
-                                `;
+                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                            No matching records found
+                        </td>
+                    `;
                                 tbody.appendChild(noResultsRow);
                             }
                         } else if (noResultsRow) {

@@ -144,8 +144,7 @@
                             }
                         @endphp
                         <div class="{{ $statusBgClass }} rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300 relative pt-8 pl-5 pr-8"
-                            data-status="{{ strtolower($order->status->name ?? '') }}"
-                            data-recommender-email="{{ $order->recommender }}" data-approver-email="{{ $order->approver }}">
+                            data-status="{{ strtolower($order->status->name ?? '') }}">
                             <div
                                 class="absolute top-0 left-0 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-br-lg h-8 w-8 flex items-center justify-center text-sm font-bold shadow-lg">
                                 <span class="drop-shadow-sm">{{ $counter++ }}</span>
@@ -200,10 +199,16 @@
                                         class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-indigo-600 text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                         <i class="far fa-eye mr-2"></i> View
                                     </button>
-                                    @if ($order->status_id == 1 || $order->status_id == 2)
+
+                                    @if ($order->status_id == 1)
                                         <button onclick="editTravelOrder({{ $order->id }})"
                                             class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-yellow-600 text-sm font-medium rounded-md text-yellow-600 bg-white hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
                                             <i class="far fa-edit mr-2"></i> Edit
+                                        </button>
+
+                                        <button type="button" onclick="confirmDelete({{ $order->id }})"
+                                            class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-red-600 text-sm font-medium rounded-md text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                            <i class="far fa-trash-alt mr-2"></i> Delete
                                         </button>
                                     @endif
                                 </div>
@@ -262,108 +267,5 @@
     <!-- Include Travel Order Modal Component -->
     @include('components.travel-order.travel-order-modal')
     @include('components.travel-order.travel-order-admin')
-    @include('components.travel-order.edit-approvers-modal', [
-        'recommenders' => $recommenders,
-        'approvers' => $approvers,
-    ])
-
-    @push('scripts')
-        <script>
-            function openEditApproversModal(orderId, currentRecommender, currentApprover) {
-                document.getElementById('travel_order_id').value = orderId;
-                document.getElementById('recommender').value = currentRecommender || '';
-                document.getElementById('approver').value = currentApprover || '';
-                document.getElementById('editApproversModal').classList.remove('hidden');
-            }
-
-            function closeEditApproversModal() {
-                document.getElementById('editApproversModal').classList.add('hidden');
-            }
-
-            // Handle form submission
-            document.getElementById('editApproversForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                const formData = new FormData(this);
-                const travelOrderId = formData.get('travel_order_id');
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                try {
-                    const response = await fetch(`/travel-orders/${travelOrderId}/update-approvers`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            _method: 'PUT',
-                            recommender: formData.get('recommender'),
-                            approver: formData.get('approver')
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        closeEditApproversModal();
-                        showToast('Approvers updated successfully', 'success');
-                        setTimeout(() => window.location.reload(), 1000);
-                    } else {
-                        throw new Error(data.message || 'Failed to update approvers');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showToast(error.message || 'An error occurred while updating approvers', 'error');
-                }
-            });
-
-            function showToast(message, type = 'success') {
-                const toast = document.createElement('div');
-                toast.className =
-                    `fixed top-4 right-4 z-50 flex items-center p-4 mb-4 text-${type === 'success' ? 'green' : 'red'}-800 bg-${type === 'success' ? 'green' : 'red'}-100 rounded-lg shadow-lg border border-${type === 'success' ? 'green' : 'red'}-200 transition-opacity duration-300`;
-                toast.role = 'alert';
-
-                const icon = document.createElement('i');
-                icon.className =
-                    `fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} text-${type === 'success' ? 'green' : 'red'}-500 text-xl mr-3`;
-
-                const messageEl = document.createElement('div');
-                messageEl.className = 'text-sm font-medium';
-                messageEl.textContent = message;
-
-                const closeButton = document.createElement('button');
-                closeButton.type = 'button';
-                closeButton.className = 'ml-4 text-gray-600 hover:text-gray-800';
-                closeButton.innerHTML = '&times;';
-                closeButton.onclick = () => toast.remove();
-
-                toast.appendChild(icon);
-                toast.appendChild(messageEl);
-                toast.appendChild(closeButton);
-                document.body.appendChild(toast);
-
-                // Auto-remove toast after 5 seconds
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 300);
-                }, 5000);
-            }
-
-            // Update the edit buttons after the page loads
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('[onclick^="editTravelOrder"]').forEach(button => {
-                    const orderId = button.getAttribute('onclick').match(/\d+/)[0];
-                    const card = button.closest('[data-status]');
-                    const recommender = card.getAttribute('data-recommender-email') || '';
-                    const approver = card.getAttribute('data-approver-email') || '';
-
-                    button.setAttribute('onclick',
-                        `openEditApproversModal(${orderId}, '${recommender}', '${approver}')`);
-                });
-            });
-        </script>
-    @endpush
 
 @endsection

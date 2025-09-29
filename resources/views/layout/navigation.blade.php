@@ -47,6 +47,10 @@
         </div>
     </div>
     <nav class="py-0.5">
+        @php
+            $user = auth()->user();
+            $hasApprovalRole = $user->travelOrderRoles->whereIn('id', [3, 4, 5])->isNotEmpty();
+        @endphp
         <!-- Main Section -->
         <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Main</div>
         <a href="{{ route('dashboard') }}"
@@ -54,90 +58,80 @@
             <i class="fas fa-tachometer-alt w-4 text-center text-gray-400 text-xs"></i>
             <span class="ml-2 text-lg">Dashboard</span>
         </a>
-
-        @if (!auth()->user()->is_admin)
-            <!-- Travel Orders Section -->
-            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel</div>
-            <a href="{{ route('my-orders') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('my-orders') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-suitcase w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">My Travel Orders</span>
-            </a>
-        @endif
-
-        @php
-            $user = auth()->user();
-            $hasApprovalRole = $user->travelOrderRoles->whereIn('id', [3, 4, 5])->isNotEmpty();
-        @endphp
-
-        @if ($hasApprovalRole && ($user->employee && $user->employee->signature))
-            <!-- Approvals Section -->
-            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Approvals</div>
-            @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
-                <a href="{{ route('for-recommendation') }}"
-                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-recommendation') ? 'bg-gray-700' : '' }}">
-                    <i class="fas fa-clipboard-check w-4 text-center text-gray-400 text-xs"></i>
-                    <span class="ml-2 text-lg">For Recommendation</span>
+        @if (($user->employee && $user->employee->signature) || $user->is_admin)
+            @if (!auth()->user()->is_admin)
+                <!-- Travel Orders Section -->
+                <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel</div>
+                <a href="{{ route('my-orders') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('my-orders') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-suitcase w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">My Travel Orders</span>
                 </a>
             @endif
-            @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
-                <a href="{{ route('for-approval') }}"
-                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-approval') ? 'bg-gray-700' : '' }}">
+
+            @if ($hasApprovalRole && ($user->employee && $user->employee->signature))
+                <!-- Approvals Section -->
+                <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Approvals
+                </div>
+                @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
+                    <a href="{{ route('for-recommendation') }}"
+                        class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-recommendation') ? 'bg-gray-700' : '' }}">
+                        <i class="fas fa-clipboard-check w-4 text-center text-gray-400 text-xs"></i>
+                        <span class="ml-2 text-lg">For Recommendation</span>
+                    </a>
+                @endif
+                @if ($user->travelOrderRoles->whereIn('id', [4, 5])->isNotEmpty())
+                    <a href="{{ route('for-approval') }}"
+                        class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('for-approval') ? 'bg-gray-700' : '' }}">
+                        <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
+                        <span class="ml-2 text-lg">For Approval</span>
+                    </a>
+                @endif
+                <a href="{{ route('history') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.approval-history') ? 'bg-gray-700' : '' }}">
                     <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                    <span class="ml-2 text-lg">For Approval</span>
+                    <span class="ml-2 text-lg">Approval History</span>
                 </a>
             @endif
-            @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
-                <a href=""
-                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('completion') ? 'bg-gray-700' : '' }}">
+
+            @if (auth()->user()->is_admin)
+                <!-- Admin Section -->
+                <!-- Travel Order -->
+                <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel Orders
+                </div>
+                <a href="{{ route('travel-orders.index') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.index') ? 'bg-gray-700' : '' }}">
                     <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                    <span class="ml-2 text-lg">Completion</span>
+                    <span class="ml-2 text-lg">All Travel Orders</span>
                 </a>
-            @endif
-            <a href="{{ route('history') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.approval-history') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">Approval History</span>
-            </a>
-        @endif
+                <a href="{{ route('history') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('history') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">All Approvals History</span>
+                </a>
 
-        @if (auth()->user()->is_admin)
-            <!-- Admin Section -->
-            <!-- Travel Order -->
-            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Travel Orders
-            </div>
-            <a href="{{ route('travel-orders.index') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.index') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">All Travel Orders</span>
-            </a>
-            <a href="{{ route('history') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('history') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">All Approvals History</span>
-            </a>
+                <!-- Management -->
+                <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Management
+                </div>
+                <a href="{{ route('role-management.index') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('role-management*') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-user-shield w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">Roles Management</span>
+                </a>
+                <a href="{{ route('status-management.index') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('status-management.*') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-tasks w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">Status Management</span>
+                </a>
 
-            <!-- Management -->
-            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Management</div>
-            <a href="{{ route('role-management.index') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('role-management*') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-user-shield w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">Roles Management</span>
-            </a>
-            <a href="{{ route('status-management.index') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('status-management.*') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-tasks w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">Status Management</span>
-            </a>
+                <a href="{{ route('signature-management.index') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('signature-management.index') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-signature w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">Signature Management</span>
+                </a>
 
-            <a href="{{ route('signature-management.index') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('signature-management.index') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-signature w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2 text-lg">Signature Management</span>
-            </a>
-
-            <!-- Reports Section -->
-            {{-- <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Reports</div>
+                <!-- Reports Section -->
+                {{-- <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Reports</div>
             <a href="{{ route('reports.approval-metrics') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.approval-metrics') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-chart-pie w-4 text-center text-gray-400 text-xs"></i>
@@ -158,15 +152,16 @@
                 <i class="fas fa-building w-4 text-center text-gray-400 text-xs"></i>
                 <span class="ml-2">Departments</span>
             </a> --}}
-        @endif
+            @endif
 
-        <!-- User Section -->
-        <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Account</div>
-        <a href="#" id="profileLink"
-            class="js-open-profile flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
-            <i class="fas fa-user-cog w-4 text-center text-gray-400 text-xs"></i>
-            <span class="ml-2 text-lg">My Profile</span>
-        </a>
+            <!-- User Section -->
+            <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Account</div>
+            <a href="#" id="profileLink"
+                class="js-open-profile flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
+                <i class="fas fa-user-cog w-4 text-center text-gray-400 text-xs"></i>
+                <span class="ml-2 text-lg">My Profile</span>
+            </a>
+        @endif
         @if (!auth()->user()->is_admin)
             <a href="{{ route('signature.index') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('signature.index') ? 'bg-gray-700' : '' }}">

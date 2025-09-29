@@ -80,8 +80,8 @@
                                             Travel Order Details
                                         </th>
                                         <th
-                                            class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase w-1/5">
-                                            Actions
+                                            class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase w-1/6">
+                                            Action
                                         </th>
                                     </tr>
                                 </thead>
@@ -123,29 +123,28 @@
                                                     <div class="text-sm text-gray-500">
                                                         Created: {{ $order->created_at->format('M d, Y') }}
                                                     </div>
-                                                    <div class="pt-2">
+                                                    <div class="text-xs text-gray-500 mt-2">
                                                         <button onclick="showTravelOrder({{ $order->id }})"
-                                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                                            <i class="fas fa-eye mr-1"></i> View Details
+                                                            class="text-blue-600 hover:text-blue-900">
+                                                            <i class="fas fa-eye"></i>
+                                                            <span class="hidden sm:inline">View Details</span>
                                                         </button>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-3 py-2 whitespace-nowrap text-center">
-                                                <div class="flex justify-center space-x-2">
-                                                    <button onclick="recommend({{ $order->id }})"
-                                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded text-xs sm:text-sm w-full sm:w-auto"
-                                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
-                                                        <i class="fas fa-thumbs-up sm:mr-1"></i>
-                                                        <span class="hidden sm:inline">Recommend</span>
-                                                    </button>
-                                                    <button onclick="reject({{ $order->id }})"
-                                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded text-xs sm:text-sm w-full sm:w-auto"
-                                                        {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
-                                                        <i class="fas fa-thumbs-down sm:mr-1"></i>
-                                                        <span class="hidden sm:inline">Reject</span>
-                                                    </button>
-                                                </div>
+                                                <button onclick="recommend({{ $order->id }})"
+                                                    class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 lg:w-28 md:w-15 sm:w-15"
+                                                    {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
+                                                    <i class="fas fa-thumbs-up sm:hidden"></i>
+                                                    <span class="hidden sm:inline">Recommend</span>
+                                                </button>
+                                                <button onclick="reject({{ $order->id }})"
+                                                    class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 lg:w-28 md:w-15 sm:w-15"
+                                                    {{ $order->status->name === 'For Approval' || $order->status->name === 'Disapproved' ? 'disabled' : '' }}>
+                                                    <i class="fas fa-thumbs-down sm:hidden"></i>
+                                                    <span class="hidden sm:inline">Reject</span>
+                                                </button>
                                             </td>
                                         </tr>
                                     @empty

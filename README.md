@@ -4,8 +4,8 @@
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel)](https://laravel.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php)](https://php.net/)
-[![GitHub last commit](https://img.shields.io/github/last-commit/brandon3sican/denr_travel_order)](https://github.com/brandon3sican/denr_travel_order/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/brandon3sican/denr_travel_order)](https://github.com/brandon3sican/denr_travel_order/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/denr-travel-order)](https://github.com/yourusername/denr-travel-order/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/yourusername/denr-travel-order)](https://github.com/yourusername/denr-travel-order/issues)
 
 A modern, efficient, and secure Travel Order Management System developed for the Department of Environment and Natural Resources (DENR). Built with Laravel 12, Tailwind CSS 3, and Alpine.js, this solution streamlines the entire travel order process from creation to approval and archival.
 
@@ -28,22 +28,19 @@ A modern, efficient, and secure Travel Order Management System developed for the
   - Full system configuration and management
   - User account management and permissions
   - System monitoring and audit logs
-  - Comprehensive approval history across all users
   - Database maintenance tools
 
 - **Approvers**
   - Review and validate travel requests
-  - Digital approval workflow with e-signatures
+  - Digital approval workflow
   - Budget verification tools
   - Departmental reporting
-  - Track approval history
 
 - **Employees**
   - Intuitive travel order submission
   - Real-time status tracking
   - Document upload and management
-  - Personal travel history and reports
-  - View approval status and comments
+  - Travel history and reports
 
 ### 📝 Travel Order Management
 - **Intelligent Forms**
@@ -92,24 +89,24 @@ A modern, efficient, and secure Travel Order Management System developed for the
 
 ## 🛠️ Prerequisites
 
+- PHP 8.2 or higher
 - Composer
 - Node.js & NPM
 - MySQL 5.7+ or MariaDB 10.3+
 - Web server (Apache/Nginx)
 
-## 🛠️ Installation
+## 🚀 Installation
 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/brandon3sican/denr_travel_order.git
-   cd denr_travel_order
+   cd denr-travel-order
    ```
 
 2. **Install PHP dependencies**
    ```bash
    composer install
    ```
-   3. **Install NPM dependencies**
 
 3. **Install NPM dependencies**
    ```bash

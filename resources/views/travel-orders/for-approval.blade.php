@@ -97,9 +97,6 @@
                                                             <span
                                                                 class="text-gray-500 text-sm">({{ $order->employee->position_name }})</span>
                                                         </div>
-                                                        <div class="text-sm text-gray-500">
-                                                            Created: {{ $order->created_at->format('M d, Y') }}
-                                                        </div>
                                                     </div>
                                                     <div class="text-sm">
                                                         <span class="font-medium">Purpose:</span> {{ $order->purpose }}
@@ -116,10 +113,14 @@
                                                             {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
                                                         </div>
                                                     </div>
-                                                    <div class="pt-2">
+                                                    <div class="text-sm text-gray-500">
+                                                        Created: {{ $order->created_at->format('M d, Y') }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-500 mt-2">
                                                         <button onclick="showTravelOrder({{ $order->id }})"
-                                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                                            <i class="fas fa-eye mr-1"></i> View Details
+                                                            class="text-blue-600 hover:text-blue-900">
+                                                            <i class="fas fa-eye"></i>
+                                                            <span class="hidden sm:inline">View Details</span>
                                                         </button>
                                                     </div>
                                                 </div>

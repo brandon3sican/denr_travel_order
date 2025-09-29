@@ -400,30 +400,10 @@ class TravelOrderController extends Controller
             ->withQueryString();
 
         $statuses = TravelOrderStatus::all();
-        
-        // Get the list of employees who can recommend (travel_order_role_id 3 or 5)
-        $recommenders = Employee::whereHas('user.travelOrderRoles', function($query) {
-                $query->whereIn('travel_order_role_id', [3, 5]);
-            })
-            ->with('user')
-            ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get();
-            
-        // Get the list of employees who can approve (travel_order_role_id 4 or 5)
-        $approvers = Employee::whereHas('user.travelOrderRoles', function($query) {
-                $query->whereIn('travel_order_role_id', [4, 5]);
-            })
-            ->with('user')
-            ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get();
 
         return view('travel-orders.admin.index', [
             'travelOrders' => $travelOrders,
             'statuses' => $statuses,
-            'recommenders' => $recommenders,
-            'approvers' => $approvers,
         ]);
     }
 
@@ -507,11 +487,11 @@ class TravelOrderController extends Controller
     public function show($id)
     {
         $travelOrder = TravelOrderModel::with([
-            'employee', 
-            'status', 
-            'recommenderEmployee', 
-            'approverEmployee',
-            'statusHistories.user'
+            'employee.signature',
+            'recommenderEmployee.signature',
+            'approverEmployee.signature',
+            'status',
+            'travelOrderNumber'
         ])->findOrFail($id);
 
         // Helper function to add signature URL
@@ -521,20 +501,19 @@ class TravelOrderController extends Controller
                 $employee->signature->signature_url = asset('storage/' . ltrim($signaturePath, '/'));
                 
                 // Log the signature URL for debugging
-                if (isset($employee->id)) {
-                    Log::info('Signature URL:', [
-                        'employee_id' => $employee->id,
-                        'name' => ($employee->first_name ?? '') . ' ' . ($employee->last_name ?? ''),
-                        'signature_path' => $signaturePath,
-                        'full_url' => $employee->signature->signature_url
-                    ]);
-                }
+                Log::info('Signature URL:', [
+                    'employee_id' => $employee->id,
+                    'name' => $employee->first_name . ' ' . $employee->last_name,
+                    'signature_path' => $signaturePath,
+                    'full_url' => $employee->signature->signature_url
+                ]);
             }
             return $employee;
         };
 
-        // Add signature URLs to the employee data
+        // Add signature URLs for all relevant employees
         $employeeData = [];
+        
         if ($travelOrder->employee) {
             $employeeData['employee'] = $addSignatureUrl($travelOrder->employee);
         }
@@ -552,7 +531,7 @@ class TravelOrderController extends Controller
             return response()->json($travelOrder);
         }
 
-        return view('travel-orders.show', [
+        return view('travel-order.show', [
             'travelOrder' => $travelOrder,
         ]);
     }
@@ -724,78 +703,6 @@ class TravelOrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while updating the travel order status.'
-            ], 500);
-        }
-    }
-
-    /**
-     * Update the recommender and approver of a travel order
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TravelOrder  $travel_order
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function updateApprovers(Request $request, TravelOrderModel $travel_order)
-    {
-        $request->validate([
-            'recommender' => 'required|email|exists:employees,email',
-            'approver' => 'required|email|exists:employees,email'
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            // Store the previous values for the status history
-            $previousRecommender = $travel_order->recommender;
-            $previousApprover = $travel_order->approver;
-
-            // Update the travel order
-            $travel_order->update([
-                'recommender' => $request->recommender,
-                'approver' => $request->approver
-            ]);
-
-            // Refresh the model to get the latest data
-            $travel_order->refresh();
-
-            // Log the change in status history
-            if ($previousRecommender !== $request->recommender || $previousApprover !== $request->approver) {
-                $statusName = $travel_order->status ? $travel_order->status->name : 'Unknown';
-                
-                TravelOrderStatusHistory::create([
-                    'travel_order_id' => $travel_order->id,
-                    'user_id' => auth()->id(),
-                    'action' => 'update_approvers',
-                    'from_status' => $statusName,
-                    'to_status' => $statusName,
-                    'metadata' => json_encode([
-                        'previous_recommender' => $previousRecommender,
-                        'new_recommender' => $request->recommender,
-                        'previous_approver' => $previousApprover,
-                        'new_approver' => $request->approver,
-                        'updated_by' => auth()->id()
-                    ]),
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                    'device' => $request->input('client_meta.device') ?? null,
-                    'browser' => $request->input('client_meta.browser') ?? null,
-                    'location' => $request->input('location') ?? null,
-                    'client_meta' => $request->input('client_meta') ?? null,
-                ]);
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Approvers updated successfully'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error updating approvers: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update approvers: ' . $e->getMessage()
             ], 500);
         }
     }

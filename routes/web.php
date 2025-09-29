@@ -41,7 +41,6 @@ Route::middleware('auth')->group(function () {
     // Travel Order Routes
     Route::resource('travel-orders', TravelOrderController::class);
     Route::post('travel-orders/{travel_order}/complete', [TravelOrderController::class, 'complete'])->name('travel-orders.complete');
-    Route::post('travel-orders/{travel_order}/update-approvers', [TravelOrderController::class, 'updateApprovers'])->name('travel-orders.update-approvers');
 
     Route::get('travel-order-print/{id}', [TravelOrderController::class, 'print'])->name('travel-order.print');
     

@@ -20,11 +20,7 @@
         <main class="flex-1 overflow-y-auto p-4">
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <!-- Filters -->
-                <div class="p-3">
-                    <h3 class="text-base font-semibold text-gray-800">Signature Reset</h3>
-                    <p class="text-xs text-gray-500">Search a user and reset their signature to their profile.</p>
-                </div>
-                <div class="p-4 border-b border-gray-200">
+                <div class="p-4 border-b border-gray-200 bg-gray-50">
                     <div class="flex flex-col sm:flex-row gap-4">
                         <div class="relative flex-1 max-w-md">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
