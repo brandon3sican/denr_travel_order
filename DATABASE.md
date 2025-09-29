@@ -6,12 +6,19 @@
 - [Tables Reference](#-tables-reference)
 - [Relationships](#-relationships)
 - [Indexes](#-indexes)
-- [Data Retention & Auditing](#-data-retention--auditing)
-- [Security Considerations](#-security-considerations)
+- [Audit Trails](#-audit-trails)
+- [Security & Performance](#-security--performance)
 
 ## 🌐 Database Overview
 
-The DENR Travel Order Management System uses a relational database with a well-structured schema designed to efficiently manage travel orders, employee information, and approval workflows. The database follows normalization principles to minimize redundancy while maintaining data integrity.
+The DENR Travel Order Management System uses a MySQL/MariaDB relational database with a well-structured schema designed to efficiently manage travel orders, employee information, and approval workflows. The database follows normalization principles to minimize redundancy while maintaining data integrity.
+
+### Key Features
+- **Version**: MySQL 8.0+ / MariaDB 10.4+
+- **Character Set**: utf8mb4
+- **Collation**: utf8mb4_unicode_ci
+- **Storage Engine**: InnoDB (for transaction support and foreign key constraints)
+- **Backup**: Daily automated backups with 30-day retention
 
 ## 🏗️ Schema Design
 
@@ -21,29 +28,38 @@ The DENR Travel Order Management System uses a relational database with a well-s
 - **Travel Order Processing** (`travel_orders`, `travel_order_status`)
 - **Approval Workflow** (`travel_order_roles`, `employee_signatures`)
 - **Document Management** (`travel_order_numbers`)
+- **Audit Trails** (`travel_order_status_histories`)
 
 ## 📑 Tables Reference
 
 ### 1. `users` - User Accounts
-| Column | Type | Description |
-|--------|------|-------------|
-| id | bigint | Primary key |
-| email | string | Unique email address |
-| email_verified_at | timestamp | Email verification timestamp |
-| password | string | Hashed password |
-| is_admin | boolean | Admin privileges flag |
-| remember_token | string | "Remember me" token |
-| created_at | timestamp | Record creation time |
-| updated_at | timestamp | Last update time |
+| Column | Type | Nullable | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | bigint(20) UNSIGNED | NO | | Primary key, auto-increment |
+| name | varchar(255) | NO | | User's full name |
+| email | varchar(255) | NO | | Unique email address |
+| email_verified_at | timestamp | YES | NULL | Email verification timestamp |
+| password | varchar(255) | NO | | Hashed password |
+| is_admin | tinyint(1) | NO | 0 | Admin privileges flag (0/1) |
+| remember_token | varchar(100) | YES | NULL | "Remember me" token |
+| created_at | timestamp | YES | NULL | Record creation time |
+| updated_at | timestamp | YES | NULL | Last update time |
+
+**Indexes**:
+- PRIMARY KEY (`id`)
+- UNIQUE KEY `users_email_unique` (`email`)
 
 ### 2. `emp_status` - Employment Status
-| Column | Type | Description |
-|--------|------|-------------|
-| id | bigint | Primary key |
-| name | string | Status name (e.g., 'Permanent', 'Contractor') |
-| desc | string | Status description |
-| created_at | timestamp | Record creation time |
-| updated_at | timestamp | Last update time |
+| Column | Type | Nullable | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | bigint(20) UNSIGNED | NO | | Primary key, auto-increment |
+| name | varchar(255) | NO | | Status name (e.g., 'Permanent', 'Contractor') |
+| desc | text | YES | NULL | Status description |
+| created_at | timestamp | YES | NULL | Record creation time |
+| updated_at | timestamp | YES | NULL | Last update time |
+
+**Indexes**:
+- PRIMARY KEY (`id`)
 
 ### 3. `employees` - Employee Records
 | Column | Type | Description |
