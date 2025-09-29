@@ -7,7 +7,7 @@
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto p-6">
         <!-- Signature Required Alert -->
-        @if($showSignatureAlert)
+        @if ($showSignatureAlert)
             <x-alerts.signature-required :show="true" />
         @endif
 
@@ -26,12 +26,11 @@
 </div>
 
 <!-- Modals -->
-@if($showSignatureAlert)
+@if ($showSignatureAlert)
     <x-modals.user-agreement :show="true" />
-    <x-modals.signature-required :show="true" />
 @endif
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
 @endpush

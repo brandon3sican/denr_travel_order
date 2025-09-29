@@ -116,13 +116,15 @@
                                                             {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
                                                         </div>
                                                     </div>
+                                                    <div class="pt-2">
+                                                        <button onclick="showTravelOrder({{ $order->id }})"
+                                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                                            <i class="fas fa-eye mr-1"></i> View Details
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td class="px-3 py-2 whitespace-nowrap text-center">
-                                                <button onclick="showTravelOrder({{ $order->id }})"
-                                                    class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-2 py-1 rounded mr-3 w-20">
-                                                    <i class="fas fa-eye"></i> View
-                                                </button>
                                                 <button onclick="approve({{ $order->id }})"
                                                     class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-25 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
