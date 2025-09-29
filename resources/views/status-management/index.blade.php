@@ -73,7 +73,15 @@
                                                 {{ optional($to->employee)->assignment_name }}
                                             </div>
                                             <div class="text-xs text-gray-600">Division:
-                                                {{ optional($to->employee)->secondary_unit }}
+                                                {{ optional($to->employee)->div_sec_unit }}
+                                            </div>
+                                            <div class="text-xs text-gray-600">
+                                                <div class="pt-2">
+                                                    <button onclick="showTravelOrder({{ $to->id }})"
+                                                        class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                                        <i class="fas fa-eye mr-1"></i> View Details
+                                                    </button>
+                                                </div>
                                             </div>
                                         </td>
                                         <td class="px-4 py-3">
@@ -205,4 +213,5 @@
 
 
     @include('status-management.partials.scripts')
+    @include('components.travel-order.travel-order-modal')
 @endsection
