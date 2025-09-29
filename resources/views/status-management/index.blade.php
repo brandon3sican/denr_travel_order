@@ -26,12 +26,12 @@
         <main class="flex-1 overflow-y-auto p-4">
 
             <!-- Travel Orders Reset -->
-            <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
-                <div class="p-3 border-b bg-gray-50">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="p-3 border-b">
                     <h3 class="text-base font-semibold text-gray-800">Travel Orders Status Reset</h3>
                     <p class="text-xs text-gray-500">Search a travel order and reset its status to For Recommendation or For
                         Approval.</p>
-                    <div class="mt-3">
+                    <div class="mt-4">
                         <form method="GET" action="{{ route('status-management.index') }}" class="max-w-md">
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

@@ -87,6 +87,13 @@
                     <span class="ml-2 text-lg">For Approval</span>
                 </a>
             @endif
+            @if ($user->travelOrderRoles->whereIn('id', [3, 5])->isNotEmpty())
+                <a href=""
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('completion') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">Completion</span>
+                </a>
+            @endif
             <a href="{{ route('history') }}"
                 class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('travel-orders.approval-history') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
