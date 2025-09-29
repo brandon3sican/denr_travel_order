@@ -198,10 +198,13 @@ class TravelOrderController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        // Load travel history actions for the current user
+        // Load travel history actions
         $allHistory = \App\Models\TravelOrderStatusHistory::with(['travelOrder.status', 'user'])
-            ->where('user_id', $user->id) // Only show actions taken by the current user
             ->whereHas('travelOrder') // Ensure the travel order still exists
+            ->when(!$user->is_admin, function($query) use ($user) {
+                // For non-admin users, only show their own actions
+                return $query->where('user_id', $user->id);
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(20)
             ->withQueryString();
