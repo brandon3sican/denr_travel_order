@@ -35,7 +35,8 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="signedDocuments">
                         Upload Signed Documents (PDF only)
                     </label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                    <div
+                        class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                         <div class="space-y-1 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
                                 viewBox="0 0 48 48" aria-hidden="true">
@@ -47,8 +48,8 @@
                                 <label for="file-upload-{{ $order->id }}"
                                     class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                     <span>Upload files</span>
-                                    <input id="file-upload-{{ $order->id }}" name="file-upload-{{ $order->id }}" type="file"
-                                        class="sr-only" multiple accept=".pdf">
+                                    <input id="file-upload-{{ $order->id }}" name="file-upload-{{ $order->id }}"
+                                        type="file" class="sr-only" multiple accept=".pdf">
                                 </label>
                                 <p class="pl-1">or drag and drop</p>
                             </div>

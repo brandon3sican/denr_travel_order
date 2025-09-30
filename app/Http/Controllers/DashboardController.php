@@ -18,7 +18,7 @@ class DashboardController extends Controller
         if (!$user->is_admin && (!$user->employee || !$user->employee->signature)) {
             $showSignatureAlert = true;
         } else {
-            $userSignature = $user->employee->signature;
+            $userSignature = $user->employee?->signature;
         }
         
         // Base query for travel orders

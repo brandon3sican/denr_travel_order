@@ -14,8 +14,12 @@
             <div class="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-white font-semibold">
                 {{ $userInitial }}</div>
             <div>
-                <p class="text-sm font-medium"><i class="fas fa-user"></i> {{ Auth::user()->employee->first_name }} {{ Auth::user()->employee->middle_name ?? '' }} {{ Auth::user()->employee->last_name }}</p>
-                <p class="text-xs text-gray-500"><i class="fas fa-envelope"></i> {{ Auth::user()->employee->email }}</p>
+                <p class="text-sm font-medium"><i class="fas fa-user"></i>
+                    {{ Auth::user()->employee?->first_name }}
+                    {{ Auth::user()->employee?->middle_name ?? '' }}
+                    {{ Auth::user()->employee?->last_name }}
+                </p>
+                <p class="text-xs text-gray-500"><i class="fas fa-envelope"></i> {{ Auth::user()->employee?->email }}</p>
             </div>
         </div>
         <form method="POST" action="{{ route('logout') }}">
