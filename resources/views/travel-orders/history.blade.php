@@ -81,7 +81,8 @@
                                     <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase">Status Change
                                     </th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase">Actor</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase">Location</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase">Where
+                                        (Location)</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase">Where (IP)</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase">How
                                         (Device/Browser)</th>
@@ -91,7 +92,12 @@
                                 @forelse(($allHistory ?? []) as $h)
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-4 py-3 text-xs text-gray-600">
-                                            {{ optional($h->created_at)->format('M d, Y h:i A') ?? '—' }}</td>
+                                            <i class="fas fa-calendar"></i>
+                                            {{ optional($h->created_at)->format('M d, Y') ?? '—' }}
+                                            <br>
+                                            <i class="fas fa-clock"></i>
+                                            {{ optional($h->created_at)->format('h:i A') ?? '—' }}
+                                        </td>
                                         <td class="px-4 py-3">
                                             <span
                                                 class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">{{ ucfirst(str_replace('_', ' ', $h->action)) }}</span>
@@ -99,6 +105,7 @@
                                         <td class="px-4 py-3">
                                             <div class="space-y-1">
                                                 <div class="font-medium text-gray-900">
+                                                    <i class="fas fa-user"></i>
                                                     {{ $h->travelOrder->employee->first_name }}
                                                     {{ $h->travelOrder->employee->middle_name ?: '' }}
                                                     {{ $h->travelOrder->employee->last_name }}
@@ -123,10 +130,31 @@
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 text-xs text-gray-700">{{ $h->from_status ?? '—' }} →
-                                            {{ $h->to_status ?? '—' }}</td>
+                                        <td class="px-4 py-3 text-xs text-gray-700">{{ $h->from_status ?? '—' }} <i
+                                                class="fas fa-long-arrow-alt-right"></i>
+                                            {{ $h->to_status ?? '—' }}
+                                        </td>
+
+                                        @php
+                                            $user = $h->user;
+                                            $fullName = trim(
+                                                sprintf(
+                                                    '%s %s %s %s',
+                                                    $user->employee->first_name ?? '',
+                                                    $user->employee->middle_name ?? '',
+                                                    $user->employee->last_name ?? '',
+                                                    $user->employee->suffix ?? '',
+                                                ),
+                                            );
+                                        @endphp
+
                                         <td class="px-4 py-3 text-xs text-gray-700">
-                                            {{ optional($h->user)->name ?? (optional($h->user)->email ?? '—') }}</td>
+                                            <i class="fas fa-user"></i>
+                                            <span>{{ $fullName ?: '—' }}</span>
+                                            <br>
+                                            <i class="fas fa-envelope"></i>
+                                            <span>{{ $user->email ?? '—' }}</span>
+                                        </td>
                                         <td class="px-4 py-3 text-xs text-gray-700">
                                             @php
                                                 $travelOrder = $h->travelOrder;
@@ -171,15 +199,17 @@
                                             @if (!empty($location))
                                                 <div class="space-y-1">
                                                     @foreach ($location as $loc)
-                                                        <div>{{ $loc }}</div>
+                                                        <div><i class="fas fa-map-marker-alt"></i> {{ $loc }}
+                                                        </div>
                                                     @endforeach
                                                 </div>
                                             @else
                                                 —
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 text-xs text-gray-600">{{ $h->ip_address ?? '—' }}</td>
-                                        <td class="px-4 py-3 text-xs text-gray-600">
+                                        <td class="px-4 py-3 text-xs text-gray-600"><i class="fas fa-location-arrow"></i>
+                                            {{ $h->ip_address ?? '—' }}</td>
+                                        <td class="px-4 py-3 text-xs text-gray-600"><i class="fas fa-desktop"></i>
                                             {{ trim(($h->device ?? '') . ' ' . ($h->browser ? '(' . $h->browser . ')' : '')) ?: '—' }}
                                         </td>
                                     </tr>
