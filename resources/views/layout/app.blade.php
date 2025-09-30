@@ -9,6 +9,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/denr-logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 </head>
@@ -268,18 +269,28 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            showSuccessMessage(
-                                `Travel order has been approved successfully.\nTravel Order Number: ${data.travel_order_number}`
-                            );
-                            window.location.reload();
+                            Swal.fire({
+                                title: 'Approved!',
+                                text: `Travel order has been approved successfully.\nTravel Order Number: ${data.travel_order_number}`,
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.reload();
+                            });
                         } else {
                             throw new Error(data.message || 'Failed to approve travel order');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert(error.message ||
-                            'An error occurred while approving the travel order. Please try again.');
+                        Swal.fire({
+                            title: 'Error!',
+                            text: error.message || 'An error occurred while approving the travel order. Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK'
+                        });
                     });
 
                 closeApproveModal();
@@ -287,6 +298,7 @@
         });
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
 </body>
 

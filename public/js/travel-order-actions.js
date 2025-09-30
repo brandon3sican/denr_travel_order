@@ -1,11 +1,37 @@
 // Function to handle recommendation of a travel order
 function recommend(orderId) {
-    showRecommendModal(orderId);
+    Swal.fire({
+        title: 'Confirm Recommendation',
+        text: 'Are you sure you want to recommend this travel order for approval?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, recommend it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            showRecommendModal(orderId);
+        }
+    });
 }
 
 // Function to handle approval of a travel order
 function approve(orderId) {
-    showApproveModal(orderId);
+    Swal.fire({
+        title: 'Confirm Approval',
+        text: 'Are you sure you want to approve this travel order?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, approve it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            showApproveModal(orderId);
+        }
+    });
 }
 
 // Helpers to gather client metadata and location
@@ -52,45 +78,89 @@ function getLocation() {
 
 // Function to handle rejection of a travel order
 async function reject(orderId) {
-    const reason = prompt('Please provide a reason for rejection (required):');
-    if (reason === null) return; // User cancelled
-    if (!reason.trim()) {
-        alert('Rejection reason is required.');
-        return;
-    }
-
-    if (confirm('Are you sure you want to reject this travel order? This action cannot be undone.')) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const client_meta = getClientMeta();
-        const location = await getLocation();
-        
-        fetch(`/travel-order/${orderId}/reject`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                reason: reason,
-                _token: csrfToken,
-                client_meta,
-                location
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Travel order has been rejected successfully.');
-                window.location.reload();
-            } else {
-                throw new Error(data.message || 'Failed to reject travel order');
+    const { value: reason } = await Swal.fire({
+        title: 'Reject Travel Order',
+        input: 'textarea',
+        inputLabel: 'Reason for rejection',
+        inputPlaceholder: 'Please provide a detailed reason for rejection...',
+        inputAttributes: {
+            'aria-label': 'Type your rejection reason here',
+            required: 'true'
+        },
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Please provide a reason for rejection';
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert(error.message || 'An error occurred while rejecting the travel order. Please try again.');
+            if (value.trim().length < 10) {
+                return 'Please provide a more detailed reason (at least 10 characters)';
+            }
+        }
+    });
+
+    if (reason) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action will reject the travel order and notify the employee.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, reject it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const client_meta = getClientMeta();
+                const location = await getLocation();
+                
+                try {
+                    const response = await fetch(`/travel-order/${orderId}/reject`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            reason: reason.trim(),
+                            _token: csrfToken,
+                            client_meta,
+                            location
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        await Swal.fire({
+                            title: 'Rejected!',
+                            text: 'The travel order has been rejected successfully.',
+                            icon: 'success',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK'
+                        });
+                        window.location.reload();
+                    } else {
+                        throw new Error(data.message || 'Failed to reject travel order');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    await Swal.fire({
+                        title: 'Error!',
+                        text: error.message || 'An error occurred while rejecting the travel order. Please try again.',
+                        icon: 'error',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
         });
     }
 }
@@ -101,65 +171,53 @@ async function updateTravelOrderStatus(orderId, status) {
     const client_meta = getClientMeta();
     const location = await getLocation();
     
-    fetch(`/travel-order/${orderId}/status`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken,
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            status: status,
-            _token: csrfToken,
-            client_meta,
-            location
-        })
-    })
-    .then(response => {
+    try {
+        const response = await fetch(`/travel-order/${orderId}/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                status: status,
+                _token: csrfToken,
+                client_meta,
+                location
+            })
+        });
+
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
-    })
-    .then(data => {
+
+        const data = await response.json();
+
         if (data.success) {
-            // Create and show toast notification
-            const toast = document.createElement('div');
-            toast.className = 'fixed top-4 right-4 z-50 flex items-center p-4 mb-4 text-green-800 bg-green-100 rounded-lg shadow-lg border border-green-200 transition-opacity duration-300';
-            toast.role = 'alert';
-            
-            const icon = document.createElement('i');
-            icon.className = 'fas fa-check-circle text-green-500 text-xl mr-3';
-            
-            const message = document.createElement('div');
-            message.className = 'text-sm font-medium';
-            message.textContent = `Travel order has been ${status === 'for approval' ? 'recommended for approval' : 'rejected'} successfully.`;
-            
-            const closeButton = document.createElement('button');
-            closeButton.type = 'button';
-            closeButton.className = 'ml-4 text-green-600 hover:text-green-800';
-            closeButton.innerHTML = '&times;';
-            closeButton.onclick = () => toast.remove();
-            
-            toast.appendChild(icon);
-            toast.appendChild(message);
-            toast.appendChild(closeButton);
-            document.body.appendChild(toast);
-            
-            // Auto-remove toast after 15 seconds
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 15000);
-            
-            // Reload the page after a short delay to show the toast
-            setTimeout(() => window.location.reload(), 1000);
+            // Show success message with SweetAlert2
+            await Swal.fire({
+                title: 'Success!',
+                text: `Travel order has been ${status === 'for approval' ? 'recommended for approval' : 'updated'} successfully.`,
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                willClose: () => {
+                    window.location.reload();
+                }
+            });
         } else {
             throw new Error(data.message || 'Failed to update status');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while updating the travel order status. Please try again.');
-    });
+        await Swal.fire({
+            title: 'Error!',
+            text: error.message || 'An error occurred while updating the travel order status. Please try again.',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    }
 }
