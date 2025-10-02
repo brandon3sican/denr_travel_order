@@ -625,6 +625,71 @@ class TravelOrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * Cancel a travel order
+     *
+     * @param  \App\Models\TravelOrder  $travel_order
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function cancel(TravelOrderModel $travel_order)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Get the cancelled status
+            $cancelledStatus = TravelOrderStatus::where('name', 'Cancelled')->firstOrFail();
+            
+            // Store the previous status
+            $prevStatusName = $travel_order->status ? $travel_order->status->name : null;
+            
+            // Update the status
+            $travel_order->status_id = $cancelledStatus->id;
+            $travel_order->save();
+
+            // Log the status change
+            TravelOrderStatusHistory::create([
+                'travel_order_id' => $travel_order->id,
+                'user_id' => Auth::id(),
+                'action' => 'cancel',
+                'from_status' => $prevStatusName,
+                'to_status' => $cancelledStatus->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->header('User-Agent'),
+            ]);
+
+            DB::commit();
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Travel order has been cancelled successfully.'
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Travel order has been cancelled successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error cancelling travel order: ' . $e->getMessage());
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to cancel travel order. Please try again.'
+                ], 500);
+            }
+
+            return back()->with('error', 'Failed to cancel travel order. Please try again.');
+        }
+    }
+
+    /**
+     * Update the status of a travel order
+     *
+     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function updateStatus($id, Request $request)
     {
         try {

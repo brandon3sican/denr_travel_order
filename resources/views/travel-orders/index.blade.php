@@ -82,12 +82,8 @@
 
                     <!-- Orders Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-                        @php
-                            $counter = ($travelOrders->currentPage() - 1) * $travelOrders->perPage() + 1;
-                        @endphp
-
-                        @forelse($travelOrders as $order)
-                            <x-travel-orders.order-card :order="$order" :counter="$counter++" />
+                        @forelse($travelOrders as $index => $order)
+                            <x-travel-orders.order-card :order="$order" :counter="$index + 1" />
                         @empty
                             <div class="col-span-3 text-center py-12">
                                 <div class="flex flex-col items-center justify-center">
@@ -116,4 +112,6 @@
 
     <!-- Include JavaScript -->
     <x-travel-orders.scripts />
+
+    @include('components.travel-order.travel-order-modal')
 @endsection
