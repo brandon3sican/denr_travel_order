@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('suffix')->nullable();
             $table->string('sex');
             $table->string('email')->unique();
+            $table->string('contact_no')->unique();
             $table->string('emp_status');
             $table->string('position_name');
             $table->string('assignment_name');

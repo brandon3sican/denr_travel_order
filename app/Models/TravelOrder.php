@@ -4,11 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\User;
-use App\Models\Employee;
-use App\Models\EmployeeSignature;
-use App\Models\TravelOrderStatusHistory;
 
 class TravelOrder extends Model
 {
@@ -27,7 +22,7 @@ class TravelOrder extends Model
         'remarks',
         'recommender',
         'approver',
-        'status_id'
+        'status_id',
     ];
 
     public function employee(): BelongsTo
@@ -107,7 +102,7 @@ class TravelOrder extends Model
     {
         return $this->hasMany(TravelOrderStatusHistory::class, 'travel_order_id')->latest();
     }
-    
+
     /**
      * Get the latest status update for this travel order.
      */

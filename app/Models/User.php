@@ -6,7 +6,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\TravelOrderRole;
 
 class User extends Authenticatable
 {
@@ -72,7 +71,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class, 'email', 'email');
     }
-    
+
     /**
      * Get the travel orders that this user needs to approve
      */
@@ -83,7 +82,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(TravelOrder::class, 'employee_email', 'email');
     }
-    
+
     /**
      * Get the travel orders that this user needs to approve
      */
@@ -103,5 +102,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get travel orders that need this user's recommendation
+     */
+    public function travelOrdersToRecommend()
+    {
+        return $this->hasMany(TravelOrder::class, 'recommender', 'email');
+    }
+
+    /**
+     * Get travel orders that need this user's approval
+     */
+    public function pendingRecommendations()
+    {
+        return $this->travelOrdersToRecommend()
+            ->whereHas('status', function($query) {
+                $query->where('name', 'For Recommendation');
+            });
+    }
+
+    /**
+     * Get travel orders that need this user's approval
+     */
+    public function pendingApprovals()
+    {
+        return $this->travelOrdersToApprove()
+            ->whereHas('status', function($query) {
+                $query->where('name', 'For Approval');
+            });
     }
 }

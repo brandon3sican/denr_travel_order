@@ -20,8 +20,9 @@
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            color: #ffffff6e ;
+            color: #ffffff6e;
         }
+
         .login-box {
             background: rgba(255, 255, 255, 0.5);
             border-radius: 10px;
@@ -30,12 +31,14 @@
             max-width: 400px;
             padding: 2.5rem;
         }
+
         .denr-logo {
             width: 120px;
             height: auto;
             margin: 0 auto 1.5rem;
             display: block;
         }
+
         .login-title {
             color: #1a365d;
             font-weight: 700;
@@ -43,16 +46,19 @@
             margin-bottom: 0.5rem;
             text-align: center;
         }
+
         .login-subtitle {
             color: #4a5568;
             margin-bottom: 2rem;
             text-align: center;
             font-size: 0.95rem;
         }
+
         .input-group {
             position: relative;
             margin-bottom: 1.5rem;
         }
+
         .input-icon {
             position: absolute;
             left: 1rem;
@@ -60,6 +66,7 @@
             transform: translateY(-50%);
             color: #a0aec0;
         }
+
         .form-input {
             width: 100%;
             padding: 0.75rem 1rem 0.75rem 3rem;
@@ -69,11 +76,13 @@
             color: #000000;
             transition: all 0.2s;
         }
+
         .form-input:focus {
             border-color: #3182ce;
             box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
             outline: none;
         }
+
         .btn-login {
             width: 100%;
             background-color: #2b6cb0;
@@ -86,9 +95,11 @@
             border: none;
             cursor: pointer;
         }
+
         .btn-login:hover {
             background-color: #2c5282;
         }
+
         .error-message {
             background-color: #fff5f5;
             border-left: 4px solid #e53e3e;
@@ -122,39 +133,36 @@
                 <span class="input-icon">
                     <i class="fas fa-envelope"></i>
                 </span>
-                <input id="email" name="email" type="email" value="{{ old('email') }}" 
-                    required autofocus
-                    class="form-input"
-                    placeholder="Email">
+                <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="off"
+                    autocomplete="new-email" autocomplete="username" autocomplete="email" autocomplete="off" required
+                    autofocus class="form-input" placeholder="Email">
             </div>
 
             <div class="input-group">
                 <span class="input-icon">
                     <i class="fas fa-lock"></i>
                 </span>
-                <input id="password" name="password" type="password" 
-                    autocomplete="current-password" required
-                    class="form-input pr-10"
-                    placeholder="Password">
-                <button type="button" 
+                <input id="password" name="password" type="password" autocomplete="current-password" required
+                    class="form-input pr-10" placeholder="Password">
+                <button type="button"
                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
                     onclick="togglePassword('password')">
-                    <i class="fas fa-eye" id="togglePassword"></i>
+                    <i class="fas fa-eye-slash" id="togglePassword"></i>
                 </button>
             </div>
-            
+
             <script>
                 function togglePassword(inputId) {
                     const input = document.getElementById(inputId);
                     const icon = document.getElementById('togglePassword');
                     if (input.type === 'password') {
                         input.type = 'text';
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
                     } else {
                         input.type = 'password';
                         icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
+                        icon.classList.add('fa-eye-slash');
                     }
                 }
             </script>
@@ -163,7 +171,13 @@
                 SIGN IN
             </button>
         </form>
-    </div>
+
+        <div class="mt-6 text-center">
+            <a href="https://iis.denrcar.com/" target="_blank"
+                class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
+                <i class="fas fa-external-link-alt mr-1"></i> Visit iis.denrcar.com
+            </a>
+        </div>
     </div>
 
     <script src="js/auth.js"></script>

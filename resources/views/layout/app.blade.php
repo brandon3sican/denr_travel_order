@@ -286,7 +286,8 @@
                         console.error('Error:', error);
                         Swal.fire({
                             title: 'Error!',
-                            text: error.message || 'An error occurred while approving the travel order. Please try again.',
+                            text: error.message ||
+                                'An error occurred while approving the travel order. Please try again.',
                             icon: 'error',
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'OK'
