@@ -1,7 +1,6 @@
 @extends('layout.app')
 
 @push('scripts')
-    <script src="{{ asset('js/approval-filters.js') }}"></script>
     <script src="{{ asset('js/travel-order-actions.js') }}"></script>
 @endpush
 
@@ -13,63 +12,14 @@
                 <div class="flex items-center">
                     <h2 class="text-xl font-semibold text-gray-800">Travel Orders For Recommendation</h2>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button class="relative p-2 text-gray-600 hover:text-gray-900">
-                        <i class="fas fa-bell text-xl"></i>
-                        <span
-                            class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                    </button>
-                </div>
             </div>
         </header>
 
         <!-- Page Content -->
         <main class="flex-1 overflow-y-auto p-6">
-            <div class="bg-white rounded-lg shadow overflow-hidden mt-2">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
                 <div class="px-6 py-4">
-                    <div class="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-                        <div class="sm:mb-0">
-                            <h3 class="text-base sm:text-lg md:text-lg font-bold text-gray-800">Travel Orders For
-                                Recommendation
-                            </h3>
-                            <p class="hidden md:block text-xs sm:text-sm text-gray-600 mt-0.5">View and recommend travel
-                                orders</p>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow overflow-hidden mt-3">
-                        <!-- Search and Filter Section -->
-                        <div class="bg-white rounded-lg border border-gray-200 p-3">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 items-end">
-                                <!-- Enhanced Search with Icon -->
-                                <div class="relative">
-                                    <label for="search" class="sr-only">Search</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-search text-gray-400"></i>
-                                        </div>
-                                        <input type="text" id="search" placeholder="Search travel orders..."
-                                            value="{{ request('search') }}"
-                                            class="block w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
-                                    </div>
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div class="flex space-x-2">
-                                    <button type="button" id="clear-filters"
-                                        class="flex-1 flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
-                                        <i class="fas fa-sync-alt text-gray-500 mr-2"></i>
-                                        <span>Reset</span>
-                                    </button>
-                                    <button type="button" id="apply-filters"
-                                        class="flex-1 flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
-                                        <i class="fas fa-search text-blue-100 mr-2"></i>
-                                        <span>Search</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Travel Orders For Recommendation</h3>
                     <!-- Travel Orders Table -->
                     <div class="shadow rounded overflow-hidden mt-2">
                         <div class="overflow-x-auto">

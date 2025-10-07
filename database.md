@@ -3,6 +3,82 @@
 ## Overview
 This document outlines the database structure for the DENR Travel Order Management System. The database is designed to manage employees, travel orders, approvals, and related data.
 
+## Database Schema Diagram
+
+```mermaid
+erDiagram
+    users ||--|| user_travel_order_roles : "has one"
+    travel_order_roles ||--o{ user_travel_order_roles : "has many"
+    users ||--o{ travel_orders : "creates"
+    travel_orders ||--o{ travel_order_status_histories : "has many"
+    travel_orders ||--|| travel_order_numbers : "has one"
+    travel_orders }|--|| travel_order_status : "has one"
+    employees ||--|| employee_signatures : "has one"
+    
+    users {
+        bigint id PK
+        string email
+        string password
+        boolean is_admin
+        timestamp email_verified_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    employees {
+        bigint id PK
+        string first_name
+        string middle_name
+        string last_name
+        string suffix
+        string email
+        string position_name
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    travel_orders {
+        bigint id PK
+        string employee_email FK
+        string destination
+        text purpose
+        date departure_date
+        date arrival_date
+        string recommender FK
+        string approver FK
+        bigint status_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    travel_order_status_histories {
+        bigint id PK
+        bigint travel_order_id FK
+        bigint user_id FK
+        string action
+        string from_status
+        string to_status
+        string ip_address
+        text user_agent
+        json location
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    employee_signatures {
+        bigint id PK
+        bigint employee_id FK
+        text signature_data
+        string signature_path
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+```
+
+*Note: This diagram shows the main entities and their relationships. For a complete schema reference, see the detailed table documentation below.*
+
+
 ## Database Tables
 
 ### 1. `users`

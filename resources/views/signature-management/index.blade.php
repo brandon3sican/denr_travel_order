@@ -19,28 +19,32 @@
 
         <main class="flex-1 overflow-y-auto p-4">
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                <!-- Filters -->
-                <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <div class="relative flex-1 max-w-md">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
+                <div class="p-3 border-b bg-gray-50">
+                    <h3 class="text-base font-semibold text-gray-800">Signature Management</h3>
+                    <p class="text-xs text-gray-500">Search a user and reset their signature.</p>
+                    <!-- Filters -->
+                    <div class="p-4 border-b border-gray-200 bg-gray-50">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="relative flex-1 max-w-md">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                                <input type="text" id="searchUsers" placeholder="Search by name, email, or position..."
+                                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
                             </div>
-                            <input type="text" id="searchUsers" placeholder="Search by name, email, or position..."
-                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
-                        </div>
 
-                        <div class="relative w-full sm:w-64">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                            <div class="relative w-full sm:w-64">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                                </div>
+                                <select id="assignmentFilter"
+                                    class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
+                                    <option value="">All Assignments</option>
+                                    @foreach ($assignments as $assignment)
+                                        <option value="{{ $assignment }}">{{ $assignment }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <select id="assignmentFilter"
-                                class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
-                                <option value="">All Assignments</option>
-                                @foreach ($assignments as $assignment)
-                                    <option value="{{ $assignment }}">{{ $assignment }}</option>
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                 </div>

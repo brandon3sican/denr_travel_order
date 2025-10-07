@@ -1,11 +1,5 @@
 @extends('layout.app')
 
-@include('travel-orders.partials.approval-filters')
-
-@push('scripts')
-    <script src="{{ asset('js/approval-filters.js') }}"></script>
-@endpush
-
 @section('content')
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Top Navigation -->
@@ -14,247 +8,229 @@
                 <div class="flex items-center">
                     <h2 class="text-xl font-semibold text-gray-800">Travel Orders For Approval</h2>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button class="relative p-2 text-gray-600 hover:text-gray-900">
-                        <i class="fas fa-bell text-xl"></i>
-                        <span
-                            class="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                    </button>
-                </div>
             </div>
         </header>
 
         <!-- Page Content -->
         <main class="flex-1 overflow-y-auto p-6">
-            <div class="bg-white rounded-lg shadow overflow-hidden mt-2">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
                 <div class="px-6 py-4">
-                    <div class="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-                        <div class="sm:mb-0">
-                            <h3 class="text-base sm:text-lg md:text-lg font-bold text-gray-800">Travel Orders For
-                                Approval
-                            </h3>
-                            <p class="hidden md:block text-xs sm:text-sm text-gray-600 mt-0.5">View and approve travel
-                                orders</p>
-                        </div>
-                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Travel Orders For Approval</h3>
+
                     <!-- Travel Orders Table -->
-                    <div class="bg-white rounded shadow overflow-hidden mt-2">
+                    <div class="bg-white rounded shadow overflow-hidden">
                         <div class="overflow-x-auto">
-                            <!-- Desktop Table -->
-                            <div class="hidden md:block">
-                                <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                    <thead class="bg-gray-800">
-                                        <tr>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase">
-                                                Travel Order Details
-                                            </th>
-                                            <th
-                                                class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase w-1/6">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @forelse($travelOrders as $order)
-                                            <tr class="hover:bg-gray-50">
-                                                <td class="px-6 py-4">
-                                                    <div class="space-y-2">
-                                                        <div class="flex items-center justify-between">
-                                                            <div class="font-medium text-gray-900">
-                                                                {{ $order->employee->first_name }}
-                                                                {{ $order->employee->middle_name ?? '' }}
-                                                                {{ $order->employee->last_name }}
-                                                                {{ $order->employee->suffix_name ?? '' }}
-                                                                <span
-                                                                    class="text-gray-500 text-sm">({{ $order->employee->position_name }})</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-sm">
-                                                            <span class="font-medium">Purpose:</span> {{ $order->purpose }}
-                                                        </div>
-                                                        <div class="text-sm">
-                                                            <span class="font-medium">Destination:</span>
-                                                            {{ $order->destination }}
-                                                        </div>
-                                                        <div class="flex items-center space-x-4 text-sm">
-                                                            <div>
-                                                                <span class="font-medium">Travel Dates:</span>
-                                                                {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
-                                                                to
-                                                                {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-sm text-gray-500">
-                                                            Created: {{ $order->created_at->format('M d, Y') }}
-                                                        </div>
-                                                        <div class="text-xs text-gray-500 mt-2">
-                                                            <button onclick="showTravelOrder({{ $order->id }})"
-                                                                class="text-blue-600 hover:text-blue-900">
-                                                                <i class="fas fa-eye"></i>
-                                                                <span class="hidden sm:inline">View Details</span>
-                                                            </button>
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-800">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-white font-bold uppercase">
+                                            Travel Order Details
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-center text-xs font-medium text-white font-bold uppercase w-1/6">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @forelse($travelOrders as $order)
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4">
+                                                <div class="space-y-2">
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="font-medium text-gray-900">
+                                                            {{ $order->employee->first_name }}
+                                                            {{ $order->employee->middle_name ?? '' }}
+                                                            {{ $order->employee->last_name }}
+                                                            {{ $order->employee->suffix_name ?? '' }}
+                                                            <span
+                                                                class="text-gray-500 text-sm">({{ $order->employee->position_name }})</span>
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td class="px-3 py-2 whitespace-nowrap text-center">
+                                                    <div class="text-sm">
+                                                        <span class="font-medium">Purpose:</span> {{ $order->purpose }}
+                                                    </div>
+                                                    <div class="text-sm">
+                                                        <span class="font-medium">Destination:</span>
+                                                        {{ $order->destination }}
+                                                    </div>
+                                                    <div class="flex items-center space-x-4 text-sm">
+                                                        <div>
+                                                            <span class="font-medium">Travel Dates:</span>
+                                                            {{ \Carbon\Carbon::parse($order->departure_date)->format('M d, Y') }}
+                                                            to
+                                                            {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        Created: {{ $order->created_at->format('M d, Y') }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-500 mt-2">
+                                                        <button onclick="showTravelOrder({{ $order->id }})"
+                                                            class="text-blue-600 hover:text-blue-900">
+                                                            <i class="fas fa-eye"></i>
+                                                            <span class="hidden sm:inline">View Details</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-2 whitespace-nowrap text-center">
+                                                <button onclick="approve({{ $order->id }})"
+                                                    class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-25 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
+                                                    <i class="fas fa-check"></i> Approve
+                                                </button>
+                                                <button onclick="reject({{ $order->id }})"
+                                                    class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
+                                                    <i class="fas fa-times"></i> Reject
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" class="px-3 py-8 text-center">
+                                                <div class="flex flex-col items-center justify-center space-y-2">
+                                                    <i class="fas fa-search text-gray-400 text-4xl"></i>
+                                                    <p class="text-gray-500 text-sm font-medium">
+                                                        @if (request()->has('search') && !empty(request('search')))
+                                                            No match found for "{{ request('search') }}"
+                                                        @else
+                                                            No travel orders found.
+                                                        @endif
+                                                    </p>
+                                                    @if (request()->has('search') && !empty(request('search')))
+                                                        <button
+                                                            onclick="document.getElementById('search').value = ''; document.querySelector('form').submit();"
+                                                            class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                            <i class="fas fa-undo-alt mr-1"></i> Clear search
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Cards -->
+                        <div class="md:hidden space-y-4">
+                            @forelse($travelOrders as $order)
+                                <div
+                                    class="bg-gray-50 rounded-lg shadow-lg shadow-gray-200 overflow-hidden border border-gray-200">
+                                    <div class="p-4">
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="font-medium text-gray-900">
+                                                    <i class="fas fa-user mr-1"></i>
+                                                    {{ $order->employee->first_name }}
+                                                    {{ $order->employee->middle_name ?? '' }}
+                                                    {{ $order->employee->last_name }}
+                                                    {{ $order->employee->suffix_name ?? '' }}
+                                                </h3>
+                                                <span
+                                                    class="text-xs px-2 py-1 rounded-full font-bold {{ $order->status->name === 'For Approval' ? 'bg-green-100 text-green-800' : ($order->status->name === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
+                                                    {{ $order->status->name }}
+                                                </span>
+                                            </div>
+                                            <p class="text-sm text-gray-600">
+                                                <span class="font-medium">Position:</span>
+                                                {{ $order->employee->position_name }}
+                                            </p>
+                                            <p class="text-sm">
+                                                <span class="font-medium">Purpose:</span> {{ $order->purpose }}
+                                            </p>
+                                            <p class="text-sm">
+                                                <span class="font-medium">Destination:</span> {{ $order->destination }}
+                                            </p>
+                                            <p class="text-sm">
+                                                <span class="font-medium">Dates:</span>
+                                                {{ \Carbon\Carbon::parse($order->departure_date)->format('M d') }} -
+                                                {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                Created: {{ $order->created_at->format('M d, Y') }}
+                                            </p>
+                                        </div>
+                                        <!-- Action Buttons -->
+                                        <div class="mt-2 pt-3 border-t border-gray-100">
+                                            <div class="flex flex-col space-y-3">
+
+                                                <!-- Action Buttons -->
+                                                <div class="grid grid-cols-2 gap-2">
                                                     <button onclick="approve({{ $order->id }})"
-                                                        class="text-green-600 hover:text-green-900 border border-green-600 px-2 py-1 rounded mr-3 w-25 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                        class="w-full flex items-center justify-center px-3 py-2 border border-green-600 rounded-md text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                         {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
-                                                        <i class="fas fa-check"></i> Approve
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        <span>Approve</span>
                                                     </button>
                                                     <button onclick="reject({{ $order->id }})"
-                                                        class="text-red-600 hover:text-red-900 border border-red-600 px-2 py-1 rounded mr-3 w-20 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                        class="w-full flex items-center justify-center px-3 py-2 border border-red-600 rounded-md text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                         {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
-                                                        <i class="fas fa-times"></i> Reject
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="2" class="px-3 py-8 text-center">
-                                                    <div class="flex flex-col items-center justify-center space-y-2">
-                                                        <i class="fas fa-search text-gray-400 text-4xl"></i>
-                                                        <p class="text-gray-500 text-sm font-medium">
-                                                            @if (request()->has('search') && !empty(request('search')))
-                                                                No match found for "{{ request('search') }}"
-                                                            @else
-                                                                No travel orders found.
-                                                            @endif
-                                                        </p>
-                                                        @if (request()->has('search') && !empty(request('search')))
-                                                            <button
-                                                                onclick="document.getElementById('search').value = ''; document.querySelector('form').submit();"
-                                                                class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                                                                <i class="fas fa-undo-alt mr-1"></i> Clear search
-                                                            </button>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Mobile Cards -->
-                            <div class="md:hidden space-y-4">
-                                @forelse($travelOrders as $order)
-                                    <div
-                                        class="bg-gray-50 rounded-lg shadow-lg shadow-gray-200 overflow-hidden border border-gray-200">
-                                        <div class="p-4">
-                                            <div class="space-y-2">
-                                                <div class="flex justify-between items-start">
-                                                    <h3 class="font-medium text-gray-900">
-                                                        <i class="fas fa-user mr-1"></i>
-                                                        {{ $order->employee->first_name }}
-                                                        {{ $order->employee->middle_name ?? '' }}
-                                                        {{ $order->employee->last_name }}
-                                                        {{ $order->employee->suffix_name ?? '' }}
-                                                    </h3>
-                                                    <span
-                                                        class="text-xs px-2 py-1 rounded-full font-bold {{ $order->status->name === 'For Approval' ? 'bg-green-100 text-green-800' : ($order->status->name === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
-                                                        {{ $order->status->name }}
-                                                    </span>
-                                                </div>
-                                                <p class="text-sm text-gray-600">
-                                                    <span class="font-medium">Position:</span>
-                                                    {{ $order->employee->position_name }}
-                                                </p>
-                                                <p class="text-sm">
-                                                    <span class="font-medium">Purpose:</span> {{ $order->purpose }}
-                                                </p>
-                                                <p class="text-sm">
-                                                    <span class="font-medium">Destination:</span> {{ $order->destination }}
-                                                </p>
-                                                <p class="text-sm">
-                                                    <span class="font-medium">Dates:</span>
-                                                    {{ \Carbon\Carbon::parse($order->departure_date)->format('M d') }} -
-                                                    {{ \Carbon\Carbon::parse($order->arrival_date)->format('M d, Y') }}
-                                                </p>
-                                                <p class="text-xs text-gray-500">
-                                                    Created: {{ $order->created_at->format('M d, Y') }}
-                                                </p>
-                                            </div>
-                                            <!-- Action Buttons -->
-                                            <div class="mt-2 pt-3 border-t border-gray-100">
-                                                <div class="flex flex-col space-y-3">
-
-                                                    <!-- Action Buttons -->
-                                                    <div class="grid grid-cols-2 gap-2">
-                                                        <button onclick="approve({{ $order->id }})"
-                                                            class="w-full flex items-center justify-center px-3 py-2 border border-green-600 rounded-md text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                            {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
-                                                            <i class="fas fa-check mr-1"></i>
-                                                            <span>Approve</span>
-                                                        </button>
-                                                        <button onclick="reject({{ $order->id }})"
-                                                            class="w-full flex items-center justify-center px-3 py-2 border border-red-600 rounded-md text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 {{ $order->status->name !== 'For Approval' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                            {{ $order->status->name !== 'For Approval' ? 'disabled' : '' }}>
-                                                            <i class="fas fa-times mr-1"></i>
-                                                            <span>Reject</span>
-                                                        </button>
-                                                    </div>
-
-                                                    <!-- View Details Button -->
-                                                    <button onclick="showTravelOrder({{ $order->id }})"
-                                                        class="w-full mt-2 flex items-center justify-center px-3 py-2 border border-blue-300 rounded-md text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                                        <i class="fas fa-eye mr-2"></i> View Full Details
+                                                        <i class="fas fa-times mr-1"></i>
+                                                        <span>Reject</span>
                                                     </button>
                                                 </div>
+
+                                                <!-- View Details Button -->
+                                                <button onclick="showTravelOrder({{ $order->id }})"
+                                                    class="w-full mt-2 flex items-center justify-center px-3 py-2 border border-blue-300 rounded-md text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                                    <i class="fas fa-eye mr-2"></i> View Full Details
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                            </div>
-                        @empty
-                            <div class="text-center py-8 text-gray-500">
-                                <i class="fas fa-search text-gray-400 text-4xl mb-2"></i>
-                                <p class="text-sm">
-                                    @if (request()->has('search') && !empty(request('search')))
-                                        No match found for "{{ request('search') }}"
-                                    @else
-                                        No travel orders found.
-                                    @endif
-                                </p>
+                                </div>
+                        </div>
+                    @empty
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-search text-gray-400 text-4xl mb-2"></i>
+                            <p class="text-sm">
                                 @if (request()->has('search') && !empty(request('search')))
-                                    <button
-                                        onclick="document.getElementById('search').value = ''; document.querySelector('form').submit();"
-                                        class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center mx-auto">
-                                        <i class="fas fa-undo-alt mr-1"></i> Clear search
-                                    </button>
+                                    No match found for "{{ request('search') }}"
+                                @else
+                                    No travel orders found.
+                                @endif
+                            </p>
+                            @if (request()->has('search') && !empty(request('search')))
+                                <button
+                                    onclick="document.getElementById('search').value = ''; document.querySelector('form').submit();"
+                                    class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center mx-auto">
+                                    <i class="fas fa-undo-alt mr-1"></i> Clear search
+                                </button>
+                            @endif
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                @if ($travelOrders->hasPages())
+                    <div class="px-3 py-2 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs text-gray-700">
+                                Showing {{ $travelOrders->firstItem() }}-{{ $travelOrders->lastItem() }} of
+                                {{ $travelOrders->total() }}
+                            </div>
+                            <div class="flex space-x-1">
+                                @if ($travelOrders->onFirstPage())
+                                    <span class="px-2 py-1 text-xs text-gray-400 border rounded">Previous</span>
+                                @else
+                                    <a href="{{ $travelOrders->previousPageUrl() }}"
+                                        class="px-2 py-1 text-xs text-gray-700 border rounded hover:bg-gray-50">Previous</a>
+                                @endif
+
+                                @if ($travelOrders->hasMorePages())
+                                    <a href="{{ $travelOrders->nextPageUrl() }}"
+                                        class="px-2 py-1 text-xs text-gray-700 border rounded hover:bg-gray-50">Next</a>
+                                @else
+                                    <span class="px-2 py-1 text-xs text-gray-400 border rounded">Next</span>
                                 @endif
                             </div>
-                            @endforelse
                         </div>
                     </div>
-
-                    <!-- Pagination -->
-                    @if ($travelOrders->hasPages())
-                        <div class="px-3 py-2 border-t border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <div class="text-xs text-gray-700">
-                                    Showing {{ $travelOrders->firstItem() }}-{{ $travelOrders->lastItem() }} of
-                                    {{ $travelOrders->total() }}
-                                </div>
-                                <div class="flex space-x-1">
-                                    @if ($travelOrders->onFirstPage())
-                                        <span class="px-2 py-1 text-xs text-gray-400 border rounded">Previous</span>
-                                    @else
-                                        <a href="{{ $travelOrders->previousPageUrl() }}"
-                                            class="px-2 py-1 text-xs text-gray-700 border rounded hover:bg-gray-50">Previous</a>
-                                    @endif
-
-                                    @if ($travelOrders->hasMorePages())
-                                        <a href="{{ $travelOrders->nextPageUrl() }}"
-                                            class="px-2 py-1 text-xs text-gray-700 border rounded hover:bg-gray-50">Next</a>
-                                    @else
-                                        <span class="px-2 py-1 text-xs text-gray-400 border rounded">Next</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
+                @endif
             </div>
         </main>
 

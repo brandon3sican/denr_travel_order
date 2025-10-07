@@ -22,7 +22,7 @@ class TravelOrderStatusController extends Controller
         $search = $request->input('search');
 
         $toQuery = TravelOrderModel::with(['employee', 'status'])
-            ->orderBy('created_at', 'asc');
+            ->orderBy('created_at', 'desc');
 
         if ($search) {
             $toQuery->where(function ($q) use ($search) {

@@ -66,11 +66,65 @@ A comprehensive web-based solution designed to streamline the travel order proce
 - **NPM** - Node package manager
 - **Git** - Version control system
 
+## 🔄 Workflow
+
+```mermaid
+flowchart TD
+    A[📋 Employee Creates Travel Order] --> B{🔄 Status:\n   For Recommendation}
+    
+    B -->|✅ Recommended by\n    Department Head| C{📝 Status:\n   For Approval}
+    
+    C -->|✅ Approved by\n    HR/Admin| D{✔️ Status:\n   Approved}
+    
+    C -->|❌ Rejected| E[↩️ Returned to Employee\n    for Revision]
+    
+    E --> A
+    D --> F[✈️ Travel is Completed]
+    F --> G[📄 Employee Submits\n    Completion Report]
+    G --> H[🏁 Travel Order\n    Completed]
+
+    %% Styling for better readability
+    classDef default fill:#f8f9fa,stroke:#333,stroke-width:1.5px,color:#333,font-family:Arial
+    classDef process fill:#e9f7fe,stroke:#0288d1,stroke-width:2px,color:#01579b
+    classDef decision fill:#fff8e1,stroke:#ffa000,stroke-width:2px,color:#e65100
+    classDef success fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+    classDef warning fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100
+    classDef danger fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
+    
+    class A,G process
+    class B,C,D decision
+    class H success
+    class E danger
+    class F warning
+```
+
+### Workflow Description
+1. **Travel Order Creation**
+   - Employee fills out the travel order form with trip details
+   - System assigns "For Recommendation" status
+
+2. **Department Review**
+   - Department Head reviews the request
+   - Can either:
+     - **Recommend**: Sends to HR/Admin for approval
+     - **Reject**: Returns to employee with feedback
+
+3. **HR/Admin Approval**
+   - HR/Admin reviews the recommended travel order
+   - Can either:
+     - **Approve**: Travel order is approved
+     - **Reject**: Returns to employee with feedback
+
+4. **Travel Execution**
+   - Employee completes the travel
+   - Submits completion report if required
+   - System marks travel order as completed
+
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/denr-travel-order.git
+   git clone https://github.com/brandon3sican/denr-travel-order.git
    cd denr-travel-order
    ```
 
@@ -109,7 +163,12 @@ A comprehensive web-based solution designed to streamline the travel order proce
    php artisan migrate --seed
    ```
 
-8. Build assets:
+8. Create storage link for file uploads:
+   ```bash
+   php artisan storage:link
+   ```
+
+9. Build assets:
    ```bash
    npm run build
    ```

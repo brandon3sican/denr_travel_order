@@ -22,98 +22,107 @@
         <!-- Page Content -->
         <main class="flex-1 overflow-y-auto p-6">
             <div class="bg-white rounded-lg shadow overflow-hidden">
-                <!-- Search and Filter Section -->
-                <div class="bg-white rounded-lg border border-gray-200 p-3">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
-                        <!-- Search -->
-                        <div>
-                            <label for="search" class="sr-only">Search</label>
-                            <div>
-                                <input type="text" id="search" placeholder="Search..." value="{{ request('search') }}"
-                                    class="block w-full pl-7 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                        </div>
+                <div class="p-3 border-b bg-gray-50">
+                    <h3 class="text-base font-semibold text-gray-800">Travel Order Management</h3>
+                    <p class="text-xs text-gray-500">Search a travel order and change their approver.</p>
 
-                        <!-- Status Filter -->
-                        <div>
-                            <label for="status-filter" class="sr-only">Status</label>
+                    <!-- Search and Filter Section -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-3">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
+                            <!-- Search -->
                             <div>
-                                <select id="status-filter"
-                                    class="block w-full pl-2 pr-6 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">All Statuses</option>
-                                    @foreach ($statuses as $status)
-                                        <option value="{{ strtolower($status->name) }}"
-                                            {{ request('status') == strtolower($status->name) ? 'selected' : '' }}>
-                                            {{ $status->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                                <label for="search" class="sr-only">Search</label>
+                                <div>
+                                    <input type="text" id="search" placeholder="Search..."
+                                        value="{{ request('search') }}"
+                                        class="block w-full pl-7 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Date Range Picker -->
-                        <div>
-                            <label for="date-range-button" class="sr-only">Date Range</label>
-                            <button type="button" id="date-range-button"
-                                class="w-full flex items-center justify-between px-2 py-1.5 border border-gray-300 rounded bg-white text-left text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                <span class="flex items-center">
-                                    <i class="far fa-calendar-alt text-gray-400 mr-1.5 text-xs"></i>
-                                    <span id="date-range-text" class="truncate text-xs">
-                                        @if (request('date_range'))
-                                            {{ request('date_range') }}
-                                        @else
-                                            Date Range
-                                        @endif
+                            <!-- Status Filter -->
+                            <div>
+                                <label for="status-filter" class="sr-only">Status</label>
+                                <div>
+                                    <select id="status-filter"
+                                        class="block w-full pl-2 pr-6 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">All Statuses</option>
+                                        @foreach ($statuses as $status)
+                                            <option value="{{ strtolower($status->name) }}"
+                                                {{ request('status') == strtolower($status->name) ? 'selected' : '' }}>
+                                                {{ $status->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                                        <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Date Range Picker -->
+                            <div>
+                                <label for="date-range-button" class="sr-only">Date Range</label>
+                                <button type="button" id="date-range-button"
+                                    class="w-full flex items-center justify-between px-2 py-1.5 border border-gray-300 rounded bg-white text-left text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                    <span class="flex items-center">
+                                        <i class="far fa-calendar-alt text-gray-400 mr-1.5 text-xs"></i>
+                                        <span id="date-range-text" class="truncate text-xs">
+                                            @if (request('date_range'))
+                                                {{ request('date_range') }}
+                                            @else
+                                                Date Range
+                                            @endif
+                                        </span>
                                     </span>
-                                </span>
-                                <i class="fas fa-chevron-down text-gray-400 text-2xs ml-1"></i>
-                            </button>
-                            <input type="hidden" id="date-range" name="date_range" value="{{ request('date_range') }}">
-                            <!-- Dropdown menu -->
-                            <div id="date-range-dropdown"
-                                class="hidden absolute z-10 w-56 mt-1 bg-white shadow-lg rounded-md py-1 border border-gray-200 text-sm">
-                                <div class="space-y-0.5 p-1">
-                                    <a href="#" data-range="today"
-                                        class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-sun text-yellow-400 mr-2 w-4 text-center"></i> Today
-                                    </a>
-                                    <a href="#" data-range="this-week"
-                                        class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-calendar-week text-blue-400 mr-2 w-4 text-center"></i> This Week
-                                    </a>
-                                    <a href="#" data-range="next-week"
-                                        class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-calendar-plus text-purple-400 mr-2 w-4 text-center"></i> Next Week
-                                    </a>
-                                    <a href="#" data-range="this-month"
-                                        class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="far fa-calendar text-green-400 mr-2 w-4 text-center"></i> This Month
-                                    </a>
-                                    <a href="#" data-range="next-month"
-                                        class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
-                                        <i class="fas fa-calendar-plus text-indigo-400 mr-2 w-4 text-center"></i> Next Month
-                                    </a>
-                                </div>
-                                <div class="border-t border-gray-200 my-1"></div>
-                                <div class="p-1">
-                                    <div id="date-range-picker" class="w-full text-xs"></div>
+                                    <i class="fas fa-chevron-down text-gray-400 text-2xs ml-1"></i>
+                                </button>
+                                <input type="hidden" id="date-range" name="date_range" value="{{ request('date_range') }}">
+                                <!-- Dropdown menu -->
+                                <div id="date-range-dropdown"
+                                    class="hidden absolute z-10 w-56 mt-1 bg-white shadow-lg rounded-md py-1 border border-gray-200 text-sm">
+                                    <div class="space-y-0.5 p-1">
+                                        <a href="#" data-range="today"
+                                            class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                            <i class="far fa-sun text-yellow-400 mr-2 w-4 text-center"></i> Today
+                                        </a>
+                                        <a href="#" data-range="this-week"
+                                            class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                            <i class="far fa-calendar-week text-blue-400 mr-2 w-4 text-center"></i> This
+                                            Week
+                                        </a>
+                                        <a href="#" data-range="next-week"
+                                            class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                            <i class="far fa-calendar-plus text-purple-400 mr-2 w-4 text-center"></i> Next
+                                            Week
+                                        </a>
+                                        <a href="#" data-range="this-month"
+                                            class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                            <i class="far fa-calendar text-green-400 mr-2 w-4 text-center"></i> This Month
+                                        </a>
+                                        <a href="#" data-range="next-month"
+                                            class="flex items-center px-2 py-1.5 text-gray-700 rounded hover:bg-gray-100">
+                                            <i class="fas fa-calendar-plus text-indigo-400 mr-2 w-4 text-center"></i> Next
+                                            Month
+                                        </a>
+                                    </div>
+                                    <div class="border-t border-gray-200 my-1"></div>
+                                    <div class="p-1">
+                                        <div id="date-range-picker" class="w-full text-xs"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Action Buttons -->
-                        <div class="flex space-x-2">
-                            <button type="button" id="clear-filters"
-                                class="flex-1 flex items-center justify-center px-2 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                <i class="fas fa-times text-gray-500 mr-1"></i> Clear
-                            </button>
-                            <button type="button" id="apply-filters"
-                                class="flex-1 flex items-center justify-center px-2 py-1.5 border border-transparent rounded text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                <i class="fas fa-filter text-blue-100 mr-1"></i> Apply
-                            </button>
+                            <!-- Action Buttons -->
+                            <div class="flex space-x-2">
+                                <button type="button" id="clear-filters"
+                                    class="flex-1 flex items-center justify-center px-2 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <i class="fas fa-times text-gray-500 mr-1"></i> Clear
+                                </button>
+                                <button type="button" id="apply-filters"
+                                    class="flex-1 flex items-center justify-center px-2 py-1.5 border border-transparent rounded text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <i class="fas fa-filter text-blue-100 mr-1"></i> Apply
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

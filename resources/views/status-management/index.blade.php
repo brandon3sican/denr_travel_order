@@ -24,7 +24,6 @@
 
         <!-- Page Content -->
         <main class="flex-1 overflow-y-auto p-4">
-
             <!-- Travel Orders Reset -->
             <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
                 <div class="p-3 border-b bg-gray-50">
@@ -44,7 +43,8 @@
                         </form>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
+                <!-- Desktop Table View (hidden on mobile) -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-800">
                             <tr>
@@ -75,14 +75,13 @@
                                             <div class="text-xs text-gray-600">Division:
                                                 {{ optional($to->employee)->div_sec_unit }}
                                             </div>
-                                            <div class="text-xs text-gray-600 mt-2"><button
-                                                    onclick="showTravelOrder({{ $to->id }})"
+                                            <div class="text-xs text-gray-600 mt-2">
+                                                <button onclick="showTravelOrder({{ $to->id }})"
                                                     class="text-blue-600 hover:text-blue-900">
                                                     <i class="fas fa-eye"></i>
                                                     <span class="hidden sm:inline">View Details</span>
                                                 </button>
                                             </div>
-
                                         </td>
                                         <td class="px-4 py-3">
                                             <div class="flex flex-wrap gap-2">
@@ -94,9 +93,9 @@
                                                         @csrf
                                                         <input type="hidden" name="target" value="for recommendation">
                                                         <button type="submit"
-                                                            class="px-3 py-1.5 text-xs font-medium rounded text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200"><i
-                                                                class="fas fa-redo mr-1"></i>For
-                                                            Recommendation</button>
+                                                            class="px-3 py-1.5 text-xs font-medium rounded text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200">
+                                                            <i class="fas fa-redo mr-1"></i>For Recommendation
+                                                        </button>
                                                     </form>
                                                 @endif
                                                 @if ($currentStatus !== 'for approval' && $currentStatus !== 'for recommendation')
@@ -106,21 +105,23 @@
                                                         @csrf
                                                         <input type="hidden" name="target" value="for approval">
                                                         <button type="submit"
-                                                            class="px-3 py-1.5 text-xs font-medium rounded text-green-700 bg-green-50 hover:bg-green-100 border border-green-200"><i
-                                                                class="fas fa-redo mr-1"></i>For
-                                                            Approval</button>
+                                                            class="px-3 py-1.5 text-xs font-medium rounded text-green-700 bg-green-50 hover:bg-green-100 border border-green-200">
+                                                            <i class="fas fa-redo mr-1"></i>For Approval
+                                                        </button>
                                                     </form>
                                                 @endif
                                             </div>
                                             <span
-                                                class="inline-flex items-center px-2 py-0.5 text-xs font-medium text-gray-500 mt-2">Current
-                                                Status: {{ optional($to->status)->name }}</span>
+                                                class="inline-flex items-center px-2 py-0.5 text-xs font-medium text-gray-500 mt-2">
+                                                Current Status: {{ optional($to->status)->name }}
+                                            </span>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No travel orders
-                                            found.</td>
+                                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                                            No travel orders found.
+                                        </td>
                                     </tr>
                                 @endforelse
                             @endisset
@@ -128,23 +129,114 @@
                     </table>
                 </div>
 
-                @if (isset($travelOrders) && $travelOrders->hasPages())
-                    <div class="bg-white px-3 py-2 flex items-center justify-between border-t border-gray-200">
-                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                            <div>
-                                <p class="text-xs text-gray-600">
-                                    Showing <span class="font-medium">{{ $travelOrders->firstItem() }}</span>
-                                    to <span class="font-medium">{{ $travelOrders->lastItem() }}</span>
-                                    of <span class="font-medium">{{ $travelOrders->total() }}</span> results
-                                </p>
+                <!-- Mobile Card View (hidden on desktop) -->
+                <div class="md:hidden space-y-4">
+                    @isset($travelOrders)
+                        @forelse($travelOrders as $to)
+                            @php
+                                $currentStatus = strtolower(optional($to->status)->name ?? '');
+                                $statusColor =
+                                    [
+                                        'for recommendation' => 'blue',
+                                        'for approval' => 'yellow',
+                                        'approved' => 'green',
+                                        'disapproved' => 'red',
+                                    ][$currentStatus] ?? 'gray';
+                            @endphp
+
+                            <div class="bg-white shadow-lg border border-gray-600 overflow-hidden">
+                                <!-- Card Header -->
+                                <div class="px-4 py-3 border-b bg-gray-50">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="font-medium text-gray-900">
+                                            {{ optional($to->employee)->first_name }} {{ optional($to->employee)->last_name }}
+                                        </h3>
+                                        <span
+                                            class="px-2 py-1 text-xs font-medium rounded-full bg-{{ $statusColor }}-100 text-{{ $statusColor }}-800">
+                                            {{ ucfirst(str_replace('-', ' ', $currentStatus)) }}
+                                        </span>
+                                    </div>
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ $to->departure_date }} to {{ $to->arrival_date }}
+                                    </div>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="p-4">
+                                    <div class="space-y-2 text-sm">
+                                        <div>
+                                            <span class="font-medium text-gray-700">Destination:</span>
+                                            <span class="text-gray-600">{{ $to->destination }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="font-medium text-gray-700">Purpose:</span>
+                                            <span class="text-gray-600">{{ $to->purpose }}</span>
+                                        </div>
+                                        <div class="pt-2">
+                                            <button onclick="showTravelOrder({{ $to->id }})"
+                                                class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium rounded text-blue-700">
+                                                <i class="fas fa-eye mr-2"></i>
+                                                View Full Details
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="pt-2 border-t border-gray-100">
+                                        <form id="statusForm{{ $to->id }}" method="POST"
+                                            onsubmit="return confirm('Reset TO #{{ $to->id }} status?');">
+                                            @csrf
+                                            <input type="hidden" name="target" id="statusTarget{{ $to->id }}">
+
+                                            <div class="space-y-2">
+                                                @if ($currentStatus !== 'for recommendation')
+                                                    <button type="button"
+                                                        onclick="document.getElementById('statusTarget{{ $to->id }}').value='for recommendation'; document.getElementById('statusForm{{ $to->id }}').submit();"
+                                                        class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium rounded text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200">
+                                                        <i class="fas fa-redo mr-2"></i>
+                                                        Set to For Recommendation
+                                                    </button>
+                                                @endif
+
+                                                @if ($currentStatus !== 'for approval' && $currentStatus !== 'for recommendation')
+                                                    <button type="button"
+                                                        onclick="document.getElementById('statusTarget{{ $to->id }}').value='for approval'; document.getElementById('statusForm{{ $to->id }}').submit();"
+                                                        class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium rounded text-green-700 bg-green-50 hover:bg-green-100 border border-green-200">
+                                                        <i class="fas fa-redo mr-2"></i>
+                                                        Set to For Approval
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                {{ $travelOrders->links() }}
+
+                        @empty
+                            <div class="text-center py-6">
+                                <p class="text-gray-500">No travel orders found.</p>
                             </div>
+                        @endforelse
+                    @endisset
+                </div>
+            </div>
+
+            @if (isset($travelOrders) && $travelOrders->hasPages())
+                <div class="bg-white px-3 py-2 flex items-center justify-between border-t border-gray-200">
+                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-xs text-gray-600">
+                                Showing <span class="font-medium">{{ $travelOrders->firstItem() }}</span>
+                                to <span class="font-medium">{{ $travelOrders->lastItem() }}</span>
+                                of <span class="font-medium">{{ $travelOrders->total() }}</span> results
+                            </p>
+                        </div>
+                        <div>
+                            {{ $travelOrders->links() }}
                         </div>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
         </main>
 
         <!-- Add/Edit Modal -->

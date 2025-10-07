@@ -38,14 +38,11 @@ class TravelOrderController extends Controller
             ->whereHas('status', function($query) {
                 $query->where('name', 'For Approval');
             })
-            ->oldest()
+            ->orderBy('created_at', 'asc')
             ->paginate(10);
             
-        $statuses = TravelOrderStatus::all();
-            
         return view('travel-orders.for-approval', [
-            'travelOrders' => $travelOrders,
-            'statuses' => $statuses
+            'travelOrders' => $travelOrders
         ]);
     }
 
@@ -292,14 +289,11 @@ class TravelOrderController extends Controller
             ->whereHas('status', function($query) {
                 $query->where('name', 'For Recommendation');
             })
-            ->oldest()
+            ->orderBy('created_at', 'asc')
             ->paginate(10);
             
-        $statuses = TravelOrderStatus::all();
-            
         return view('travel-orders.for-recommendation', [
-            'travelOrders' => $travelOrders,
-            'statuses' => $statuses
+            'travelOrders' => $travelOrders
         ]);
     }
     
