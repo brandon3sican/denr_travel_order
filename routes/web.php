@@ -25,6 +25,11 @@ Route::middleware('guest')->group(function () {
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
+// Session keep-alive route
+Route::get('/session/keep-alive', function () {
+    return response()->json(['status' => 'ok']);
+})->name('session.keep-alive');
+
 // Protected Routes - Require Authentication
 Route::middleware('auth')->group(function () {
     // Dashboard

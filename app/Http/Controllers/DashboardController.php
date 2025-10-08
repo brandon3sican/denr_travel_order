@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\TravelOrder;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -13,16 +12,16 @@ class DashboardController extends Controller
         $user = Auth::user();
         $showSignatureAlert = false;
         $userSignature = null;
-        
+
         // Check if user needs to upload a signature
-        if (!$user->is_admin && (!$user->employee || !$user->employee->signature)) {
+        if (! $user->is_admin && (! $user->employee || ! $user->employee->signature)) {
             $showSignatureAlert = true;
         } else {
             $userSignature = $user->employee?->signature;
         }
-        
+
         // Base query for travel orders
-        $baseQuery = $user->is_admin 
+        $baseQuery = $user->is_admin
             ? TravelOrder::query()
             : TravelOrder::where('employee_email', $user->email);
 
@@ -31,25 +30,25 @@ class DashboardController extends Controller
         if ($search) {
             $searchTerm = trim($search);
             $searchTerm = strtolower($searchTerm);
-            
+
             // Split the search term into parts
             $nameParts = explode(' ', $searchTerm);
-            
-            $baseQuery->whereHas('employee', function($q) use ($nameParts) {
+
+            $baseQuery->whereHas('employee', function ($q) use ($nameParts) {
                 // If search has multiple parts, treat as first and last name
                 if (count($nameParts) > 1) {
                     $firstName = $nameParts[0];
                     $lastName = end($nameParts);
-                    
-                    $q->where(function($query) use ($firstName, $lastName) {
+
+                    $q->where(function ($query) use ($firstName, $lastName) {
                         $query->whereRaw('LOWER(first_name) = ?', [$firstName])
-                              ->whereRaw('LOWER(last_name) = ?', [$lastName]);
+                            ->whereRaw('LOWER(last_name) = ?', [$lastName]);
                     });
                 } else {
                     // Single word search - check first or last name
-                    $q->where(function($query) use ($nameParts) {
+                    $q->where(function ($query) use ($nameParts) {
                         $query->whereRaw('LOWER(first_name) = ?', [$nameParts[0]])
-                              ->orWhereRaw('LOWER(last_name) = ?', [$nameParts[0]]);
+                            ->orWhereRaw('LOWER(last_name) = ?', [$nameParts[0]]);
                     });
                 }
             });
@@ -57,11 +56,11 @@ class DashboardController extends Controller
 
         // Apply status filter if provided
         $status = request()->input('status');
-        
+
         if ($status) {
             // Get the status ID from the database based on the status name
             $statusId = \App\Models\TravelOrderStatus::where('name', $status)->value('id');
-            
+
             if ($statusId) {
                 $baseQuery->where('status_id', $statusId);
             }
@@ -69,7 +68,7 @@ class DashboardController extends Controller
 
         // Get paginated travel orders for the user (5 per page) with employee data
         $travelOrders = (clone $baseQuery)
-            ->with(['employee' => function($query) {
+            ->with(['employee' => function ($query) {
                 $query->select('id', 'email', 'first_name', 'last_name');
             }])
             ->latest()
@@ -95,9 +94,11 @@ class DashboardController extends Controller
             'userSignature' => $userSignature,
         ]);
     }
+
     public function show($id)
     {
         $travelOrder = TravelOrder::findOrFail($id);
+
         return view('travel-order.show', [
             'travelOrder' => $travelOrder,
         ]);

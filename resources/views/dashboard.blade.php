@@ -22,9 +22,6 @@
                 <p class="mt-2 max-w-4xl text-sm text-gray-500">Quickly view and manage your travel orders and requests.</p>
             </div>
 
-            <!-- Stats Cards -->
-            <x-dashboard.stats-cards :totalTravelOrders="$totalTravelOrders" :pendingRequests="$pendingRequests" :completedRequests="$completedRequests" :cancelledRequests="$cancelledRequests" />
-
             @if (auth()->user()->pendingApprovals()->exists() || auth()->user()->pendingRecommendations()->exists())
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md shadow-sm">
                     <div class="flex items-center">
@@ -59,7 +56,8 @@
                 </div>
 
                 <!-- Pending Actions Modal -->
-                <div id="pendingActionsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div id="pendingActionsModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
                     <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-4">
@@ -71,32 +69,44 @@
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                            
+
                             <div class="mt-4">
                                 @if (auth()->user()->pendingApprovals()->exists() && auth()->user()->pendingRecommendations()->exists())
-                                    <p class="text-gray-700 mb-4">You have pending travel orders that require your attention:</p>
+                                    <p class="text-gray-700 mb-4">You have pending travel orders that require your
+                                        attention:</p>
                                     <ul class="list-disc pl-5 space-y-2 mb-6">
-                                        <li><a href="{{ route('for-recommendation', ['status' => 'For Recommendation']) }}" class="text-blue-600 hover:underline">{{ auth()->user()->pendingRecommendations()->count() }} travel orders need your recommendation</a></li>
-                                        <li><a href="{{ route('for-approval', ['status' => 'For Approval']) }}" class="text-blue-600 hover:underline">{{ auth()->user()->pendingApprovals()->count() }} travel orders need your approval</a></li>
+                                        <li><a href="{{ route('for-recommendation', ['status' => 'For Recommendation']) }}"
+                                                class="text-blue-600 hover:underline">{{ auth()->user()->pendingRecommendations()->count() }}
+                                                travel orders need your recommendation</a></li>
+                                        <li><a href="{{ route('for-approval', ['status' => 'For Approval']) }}"
+                                                class="text-blue-600 hover:underline">{{ auth()->user()->pendingApprovals()->count() }}
+                                                travel orders need your approval</a></li>
                                     </ul>
                                 @elseif(auth()->user()->pendingRecommendations()->exists())
-                                    <p class="text-gray-700 mb-4">You have <span class="font-semibold">{{ auth()->user()->pendingRecommendations()->count() }} travel orders</span> waiting for your recommendation.</p>
+                                    <p class="text-gray-700 mb-4">You have <span
+                                            class="font-semibold">{{ auth()->user()->pendingRecommendations()->count() }}
+                                            travel orders</span> waiting for your recommendation.</p>
                                 @else
-                                    <p class="text-gray-700 mb-4">You have <span class="font-semibold">{{ auth()->user()->pendingApprovals()->count() }} travel orders</span> waiting for your approval.</p>
+                                    <p class="text-gray-700 mb-4">You have <span
+                                            class="font-semibold">{{ auth()->user()->pendingApprovals()->count() }} travel
+                                            orders</span> waiting for your approval.</p>
                                 @endif
                             </div>
 
                             <div class="mt-6 flex justify-end space-x-3">
-                                <button type="button" onclick="closePendingActionsModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+                                <button type="button" onclick="closePendingActionsModal()"
+                                    class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
                                     Remind Me Later
                                 </button>
                                 @if (auth()->user()->pendingRecommendations()->exists())
-                                    <a href="{{ route('for-recommendation', ['status' => 'For Recommendation']) }}" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                    <a href="{{ route('for-recommendation', ['status' => 'For Recommendation']) }}"
+                                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
                                         View Recommendations
                                     </a>
                                 @endif
                                 @if (auth()->user()->pendingApprovals()->exists())
-                                    <a href="{{ route('for-approval', ['status' => 'For Approval']) }}" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <a href="{{ route('for-approval', ['status' => 'For Approval']) }}"
+                                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                         View Approvals
                                     </a>
                                 @endif
@@ -122,12 +132,17 @@
                     #pendingActionsModal {
                         transition: opacity 0.3s ease-in-out;
                     }
+
                     #pendingActionsModal.hidden {
                         opacity: 0;
                         pointer-events: none;
                     }
                 </style>
             @endif
+
+            <!-- Stats Cards -->
+            <x-dashboard.stats-cards :totalTravelOrders="$totalTravelOrders" :pendingRequests="$pendingRequests" :completedRequests="$completedRequests" :cancelledRequests="$cancelledRequests" />
+
 
             <!-- Recent Travel Orders -->
             <div class="bg-white rounded-lg shadow overflow-hidden">

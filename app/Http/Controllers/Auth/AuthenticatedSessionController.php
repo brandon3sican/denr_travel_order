@@ -30,6 +30,9 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
+        
+        // Set the initial last activity time
+        session(['last_activity' => time()]);
 
         return redirect()->intended(route('dashboard'));
     }

@@ -300,6 +300,76 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (auth()->check())
+        <script>
+            let timeout;
+            const timeoutInMinutes = 4; // 1 minute before server-side timeout (10 minutes total)
+            let isWarningShown = false;
+
+            function startInactivityTimer() {
+                // Reset timer on any activity
+                window.onload = resetTimer;
+                document.onmousemove = resetTimer;
+                document.onkeypress = resetTimer;
+                document.onclick = resetTimer;
+                document.onscroll = resetTimer;
+            }
+
+            function showTimeoutWarning() {
+                if (!isWarningShown) {
+                    isWarningShown = true;
+                    // Show a warning modal or notification
+                    const modal = document.createElement('div');
+                    modal.id = 'session-timeout-warning';
+                    modal.style.position = 'fixed';
+                    modal.style.top = '20px';
+                    modal.style.right = '20px';
+                    modal.style.backgroundColor = '#f8d7da';
+                    modal.style.padding = '15px';
+                    modal.style.borderRadius = '5px';
+                    modal.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                    modal.style.zIndex = '9999';
+                    modal.innerHTML = `
+                    <p>Your session will expire in 1 minute due to inactivity.</p>
+                    <button onclick="extendSession()" style="margin-top: 10px; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                        Stay Logged In
+                    </button>
+                `;
+                    document.body.appendChild(modal);
+                }
+            }
+
+            function resetTimer() {
+                clearTimeout(timeout);
+                timeout = setTimeout(showTimeoutWarning, timeoutInMinutes * 60 * 1000);
+            }
+
+            function extendSession() {
+                // Remove the warning
+                const warning = document.getElementById('session-timeout-warning');
+                if (warning) {
+                    warning.remove();
+                }
+                isWarningShown = false;
+
+                // Ping the server to extend the session
+                fetch('{{ route('session.keep-alive') }}', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        resetTimer();
+                    }
+                });
+            }
+
+            // Start the timer when the page loads
+            document.addEventListener('DOMContentLoaded', startInactivityTimer);
+        </script>
+    @endif
     @stack('scripts')
 </body>
 
