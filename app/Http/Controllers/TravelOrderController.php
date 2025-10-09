@@ -3,25 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Models\EmployeeSignature;
 use App\Models\TravelOrder as TravelOrderModel;
 use App\Models\TravelOrderNumber;
-use App\Models\TravelOrderRole;
 use App\Models\TravelOrderStatus;
 use App\Models\TravelOrderStatusHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class TravelOrderController extends Controller
 {
     /**
      * Get travel order details for AJAX requests
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     /**
@@ -32,18 +28,88 @@ class TravelOrderController extends Controller
     public function forApproval()
     {
         $user = Auth::user();
-        
+
         $travelOrders = TravelOrderModel::with(['employee', 'status'])
             ->where('approver', $user->email)
-            ->whereHas('status', function($query) {
+            ->whereHas('status', function ($query) {
                 $query->where('name', 'For Approval');
             })
             ->orderBy('created_at', 'asc')
             ->paginate(10);
-            
+
         return view('travel-orders.for-approval', [
-            'travelOrders' => $travelOrders
+            'travelOrders' => $travelOrders,
         ]);
+    }
+
+    /**
+     * Recommend a travel order for approval
+     */
+    public function recommend(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|string',
+            'client_meta' => 'nullable|array',
+            'location' => 'nullable|array',
+        ]);
+
+        // Verify password
+        if (! \Hash::check($request->password, Auth::user()->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect password.',
+            ], 422);
+        }
+
+        $travelOrder = TravelOrderModel::with('status')->findOrFail($id);
+
+        // Check if already recommended
+        if ($travelOrder->status->name === 'For Approval') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This travel order has already been recommended.',
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Capture previous status, then update to For Approval
+            $prevStatusName = optional($travelOrder->status)->name ?? null;
+            $forApprovalStatus = TravelOrderStatus::where('name', 'For Approval')->firstOrFail();
+            $travelOrder->status_id = $forApprovalStatus->id;
+            $travelOrder->save();
+
+            // Log metadata
+            TravelOrderStatusHistory::create([
+                'travel_order_id' => $travelOrder->id,
+                'user_id' => Auth::id(),
+                'action' => 'recommend',
+                'from_status' => $prevStatusName,
+                'to_status' => 'For Approval',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+                'device' => $request->input('client_meta.device') ?? null,
+                'browser' => $request->input('client_meta.browser') ?? null,
+                'location' => $request->input('location') ?? null,
+                'client_meta' => $request->input('client_meta') ?? null,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Travel order recommended for approval successfully.',
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error recommending travel order: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to recommend travel order. Please try again.',
+            ], 500);
+        }
     }
 
     /**
@@ -51,21 +117,43 @@ class TravelOrderController extends Controller
      */
     public function approve(Request $request, $id)
     {
-        $travelOrder = TravelOrderModel::findOrFail($id);
-        
+        $request->validate([
+            'password' => 'required|string',
+            'client_meta' => 'nullable|array',
+            'location' => 'nullable|array',
+        ]);
+
+        // Verify password
+        if (! \Hash::check($request->password, Auth::user()->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect password.',
+            ], 422);
+        }
+
+        $travelOrder = TravelOrderModel::with('status')->findOrFail($id);
+
         // Check if already approved
         if ($travelOrder->status->name === 'Approved') {
             return response()->json([
                 'success' => false,
-                'message' => 'This travel order has already been approved.'
+                'message' => 'This travel order has already been approved.',
             ]);
+        }
+
+        // Check if the travel order is in the correct status for approval
+        if ($travelOrder->status->name !== 'For Approval') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This travel order cannot be approved in its current status.',
+            ], 422);
         }
 
         DB::beginTransaction();
         try {
             // Capture previous status, then update to Approved
-            $prevStatusName = optional($travelOrder->status)->name ?? null;
-            $approvedStatus = TravelOrderStatus::where('name', 'Approved')->first();
+            $prevStatusName = $travelOrder->status->name;
+            $approvedStatus = TravelOrderStatus::where('name', 'Approved')->firstOrFail();
             $travelOrder->status_id = $approvedStatus->id;
             $travelOrder->save();
 
@@ -87,13 +175,13 @@ class TravelOrderController extends Controller
             // Generate travel order number (format: TO-YYYYMMDD-XXXX)
             $datePrefix = now()->format('Ymd');
             $lastOrder = TravelOrderNumber::orderBy('id', 'desc')->first();
-            $sequence = $lastOrder ? (int)substr($lastOrder->travel_order_number, -4) + 1 : 1;
-            $travelOrderNumber = 'TO-' . $datePrefix . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+            $sequence = $lastOrder ? (int) substr($lastOrder->travel_order_number, -4) + 1 : 1;
+            $travelOrderNumber = 'TO-'.$datePrefix.'-'.str_pad($sequence, 4, '0', STR_PAD_LEFT);
 
             // Save travel order number
             TravelOrderNumber::create([
                 'travel_order_number' => $travelOrderNumber,
-                'travel_order_id' => $travelOrder->id
+                'travel_order_id' => $travelOrder->id,
             ]);
 
             DB::commit();
@@ -101,15 +189,16 @@ class TravelOrderController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Travel order approved successfully.',
-                'travel_order_number' => $travelOrderNumber
+                'travel_order_number' => $travelOrderNumber,
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error approving travel order: ' . $e->getMessage());
+            Log::error('Error approving travel order: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to approve travel order. Please try again.'
+                'message' => 'Failed to approve travel order. Please try again.',
             ], 500);
         }
     }
@@ -120,16 +209,16 @@ class TravelOrderController extends Controller
     public function reject(Request $request, $id)
     {
         $request->validate([
-            'reason' => 'required|string|max:500'
+            'reason' => 'required|string|max:500',
         ]);
 
         $travelOrder = TravelOrderModel::findOrFail($id);
-        
+
         // Check if already rejected
         if ($travelOrder->status->name === 'Disapproved') {
             return response()->json([
                 'success' => false,
-                'message' => 'This travel order has already been rejected.'
+                'message' => 'This travel order has already been rejected.',
             ]);
         }
 
@@ -158,18 +247,19 @@ class TravelOrderController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Travel order has been rejected.'
+                'message' => 'Travel order has been rejected.',
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error rejecting travel order: ' . $e->getMessage());
+            Log::error('Error rejecting travel order: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to reject travel order. Please try again.'
+                'message' => 'Failed to reject travel order. Please try again.',
             ], 500);
         }
     }
-    
+
     /**
      * Display travel orders history
      *
@@ -187,7 +277,7 @@ class TravelOrderController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('destination', 'like', "%{$search}%")
-                  ->orWhere('purpose', 'like', "%{$search}%");
+                    ->orWhere('purpose', 'like', "%{$search}%");
             });
         }
 
@@ -198,7 +288,7 @@ class TravelOrderController extends Controller
         // Load travel history actions
         $allHistory = \App\Models\TravelOrderStatusHistory::with(['travelOrder.status', 'user'])
             ->whereHas('travelOrder') // Ensure the travel order still exists
-            ->when(!$user->is_admin, function($query) use ($user) {
+            ->when(! $user->is_admin, function ($query) use ($user) {
                 // For non-admin users, only show their own actions
                 return $query->where('user_id', $user->id);
             })
@@ -211,12 +301,10 @@ class TravelOrderController extends Controller
             'allHistory' => $allHistory,
         ]);
     }
-    
+
     /**
      * Mark a travel order as completed
      *
-     * @param  \App\Models\TravelOrder  $travel_order
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function complete(TravelOrderModel $travel_order, Request $request)
@@ -227,22 +315,22 @@ class TravelOrderController extends Controller
                 'documents' => 'required|array|min:1',
                 'documents.*' => 'required|file|mimes:pdf|max:10240', // 10MB max per file
             ]);
-            
+
             // Check if the travel order can be marked as completed
             if ($travel_order->status->name !== 'Approved') {
                 return response()->json([
-                    'message' => 'Only approved travel orders can be marked as completed.'
+                    'message' => 'Only approved travel orders can be marked as completed.',
                 ], 422);
             }
-            
+
             // Process file uploads
             $uploadedFiles = [];
-            
+
             if ($request->hasFile('documents')) {
                 $path = "travel-orders/{$travel_order->id}/documents";
-                
+
                 foreach ($request->file('documents') as $file) {
-                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $fileName = time().'_'.$file->getClientOriginalName();
                     $filePath = $file->storeAs($path, $fileName, 'public');
                     $uploadedFiles[] = [
                         'name' => $file->getClientOriginalName(),
@@ -252,7 +340,7 @@ class TravelOrderController extends Controller
                     ];
                 }
             }
-            
+
             // Update travel order status to completed
             $completedStatus = TravelOrderStatus::where('name', 'Completed')->firstOrFail();
             $travel_order->update([
@@ -261,20 +349,21 @@ class TravelOrderController extends Controller
                 'completed_by' => Auth::user()->id,
                 'documents' => $uploadedFiles,
             ]);
-            
+
             return response()->json([
                 'message' => 'Travel order has been marked as completed successfully.',
-                'data' => $travel_order->fresh()
+                'data' => $travel_order->fresh(),
             ]);
-            
+
         } catch (\Exception $e) {
-            Log::error('Error completing travel order: ' . $e->getMessage());
+            Log::error('Error completing travel order: '.$e->getMessage());
+
             return response()->json([
-                'message' => 'Failed to complete travel order. ' . $e->getMessage()
+                'message' => 'Failed to complete travel order. '.$e->getMessage(),
             ], 500);
         }
     }
-    
+
     /**
      * Display travel orders that need recommendation
      *
@@ -283,24 +372,24 @@ class TravelOrderController extends Controller
     public function forRecommendation()
     {
         $user = Auth::user();
-        
+
         $travelOrders = TravelOrderModel::with(['employee', 'status'])
             ->where('recommender', $user->email)
-            ->whereHas('status', function($query) {
+            ->whereHas('status', function ($query) {
                 $query->where('name', 'For Recommendation');
             })
             ->orderBy('created_at', 'asc')
             ->paginate(10);
-            
+
         return view('travel-orders.for-recommendation', [
-            'travelOrders' => $travelOrders
+            'travelOrders' => $travelOrders,
         ]);
     }
-    
+
     /**
      * Get travel order details for AJAX requests
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function getDetails($id)
@@ -311,23 +400,23 @@ class TravelOrderController extends Controller
                 'employee.signature',
                 'status',
                 'recommenderEmployee',
-                'approverEmployee'
+                'approverEmployee',
             ])->findOrFail($id);
 
             // Add signature URL if it exists
             if ($travelOrder->employee && $travelOrder->employee->signature) {
-                $travelOrder->employee->signature_url = asset('storage/' . $travelOrder->employee->signature->signature_path);
+                $travelOrder->employee->signature_url = asset('storage/'.$travelOrder->employee->signature->signature_path);
             }
 
             return response()->json([
                 'success' => true,
-                'data' => $travelOrder
+                'data' => $travelOrder,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch travel order details.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -354,19 +443,19 @@ class TravelOrderController extends Controller
 
         // Apply search filter
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('travel_orders.destination', 'like', "%{$search}%")
-                  ->orWhere('travel_orders.purpose', 'like', "%{$search}%")
-                  ->orWhereHas('employee', function($q) use ($search) {
-                      $q->where('first_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('travel_orders.purpose', 'like', "%{$search}%")
+                    ->orWhereHas('employee', function ($q) use ($search) {
+                        $q->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Apply status filter
         if ($status) {
-            $query->whereHas('status', function($q) use ($status) {
+            $query->whereHas('status', function ($q) use ($status) {
                 $q->where('name', 'like', "%{$status}%");
             });
         }
@@ -377,14 +466,14 @@ class TravelOrderController extends Controller
             if (count($dates) === 2) {
                 $startDate = \Carbon\Carbon::parse(trim($dates[0]))->startOfDay();
                 $endDate = \Carbon\Carbon::parse(trim($dates[1]))->endOfDay();
-                
-                $query->where(function($q) use ($startDate, $endDate) {
+
+                $query->where(function ($q) use ($startDate, $endDate) {
                     $q->whereBetween('departure_date', [$startDate, $endDate])
-                      ->orWhereBetween('arrival_date', [$startDate, $endDate])
-                      ->orWhere(function($q) use ($startDate, $endDate) {
-                          $q->where('departure_date', '<=', $startDate)
-                            ->where('arrival_date', '>=', $endDate);
-                      });
+                        ->orWhereBetween('arrival_date', [$startDate, $endDate])
+                        ->orWhere(function ($q) use ($startDate, $endDate) {
+                            $q->where('departure_date', '<=', $startDate)
+                                ->where('arrival_date', '>=', $endDate);
+                        });
                 });
             }
         }
@@ -405,41 +494,41 @@ class TravelOrderController extends Controller
     {
         // Get the currently authenticated user
         $user = Auth::user();
-        
+
         // Check if user has a signature
-        if (!$user->employee || !$user->employee->signature) {
+        if (! $user->employee || ! $user->employee->signature) {
             return redirect()->route('signature.index')
                 ->with('error', 'Please upload your signature before creating a travel order.');
         }
-        
+
         // Get the employee record for the current user
         $employee = $user->employee;
-        
-        if (!$employee) {
+
+        if (! $employee) {
             return redirect()->route('dashboard')
                 ->with('error', 'Employee record not found. Please contact the administrator.');
         }
-        
+
         // Get the list of employees who can recommend (travel_order_role_id 3 or 5)
         $recommenders = Employee::where('id', '!=', $employee->id)
-            ->whereHas('user.travelOrderRoles', function($query) {
+            ->whereHas('user.travelOrderRoles', function ($query) {
                 $query->whereIn('travel_order_role_id', [3, 5]);
             })
             ->with('user')
             ->orderBy('first_name')
             ->orderBy('last_name')
             ->get();
-            
+
         // Get the list of employees who can approve (travel_order_role_id 4 or 5)
         $approvers = Employee::where('id', '!=', $employee->id)
-            ->whereHas('user.travelOrderRoles', function($query) {
+            ->whereHas('user.travelOrderRoles', function ($query) {
                 $query->whereIn('travel_order_role_id', [4, 5]);
             })
             ->with('user')
             ->orderBy('first_name')
             ->orderBy('last_name')
             ->get();
-            
+
         return view('travel-orders.create', compact('employee', 'recommenders', 'approvers'));
     }
 
@@ -447,7 +536,7 @@ class TravelOrderController extends Controller
     {
         // Check if user has a signature
         $user = Auth::user();
-        if (!$user->employee || !$user->employee->signature) {
+        if (! $user->employee || ! $user->employee->signature) {
             return redirect()->route('signature.index')
                 ->with('error', 'Please upload your signature before creating a travel order.');
         }
@@ -485,29 +574,30 @@ class TravelOrderController extends Controller
             'recommenderEmployee.signature',
             'approverEmployee.signature',
             'status',
-            'travelOrderNumber'
+            'travelOrderNumber',
         ])->findOrFail($id);
 
         // Helper function to add signature URL
         $addSignatureUrl = function ($employee) {
             if ($employee && $employee->signature) {
                 $signaturePath = $employee->signature->signature_path;
-                $employee->signature->signature_url = asset('storage/' . ltrim($signaturePath, '/'));
-                
+                $employee->signature->signature_url = asset('storage/'.ltrim($signaturePath, '/'));
+
                 // Log the signature URL for debugging
                 Log::info('Signature URL:', [
                     'employee_id' => $employee->id,
-                    'name' => $employee->first_name . ' ' . $employee->last_name,
+                    'name' => $employee->first_name.' '.$employee->last_name,
                     'signature_path' => $signaturePath,
-                    'full_url' => $employee->signature->signature_url
+                    'full_url' => $employee->signature->signature_url,
                 ]);
             }
+
             return $employee;
         };
 
         // Add signature URLs for all relevant employees
         $employeeData = [];
-        
+
         if ($travelOrder->employee) {
             $employeeData['employee'] = $addSignatureUrl($travelOrder->employee);
         }
@@ -517,9 +607,9 @@ class TravelOrderController extends Controller
         if ($travelOrder->approverEmployee) {
             $employeeData['approver_employee'] = $addSignatureUrl($travelOrder->approverEmployee);
         }
-        
+
         // Add the employee data to the travel order as a new property
-        $travelOrder->employee_data = (object)$employeeData;
+        $travelOrder->employee_data = (object) $employeeData;
 
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json($travelOrder);
@@ -539,7 +629,7 @@ class TravelOrderController extends Controller
     {
         try {
             Log::info('Update request data:', $request->all());
-            
+
             $validated = $request->validate([
                 'employee_email' => 'required|email',
                 'employee_salary' => 'required|numeric|min:0',
@@ -555,33 +645,36 @@ class TravelOrderController extends Controller
             ]);
 
             Log::info('Validated data:', $validated);
-            
+
             $updated = $travelOrder->update($validated);
-            
-            if (!$updated) {
+
+            if (! $updated) {
                 Log::error('Failed to update travel order. Model update returned false.');
+
                 return response()->json(['message' => 'Failed to update travel order in database'], 500);
             }
 
             return response()->json(['message' => 'Travel order updated successfully']);
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation error during travel order update:', [
                 'errors' => $e->errors(),
-                'input' => $request->all()
+                'input' => $request->all(),
             ]);
+
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
             ], 422);
-            
+
         } catch (\Exception $e) {
-            Log::error('Error updating travel order: ' . $e->getMessage(), [
+            Log::error('Error updating travel order: '.$e->getMessage(), [
                 'exception' => get_class($e),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
+
             return response()->json([
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -595,7 +688,7 @@ class TravelOrderController extends Controller
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Travel order has been deleted successfully.'
+                    'message' => 'Travel order has been deleted successfully.',
                 ]);
             }
 
@@ -604,7 +697,7 @@ class TravelOrderController extends Controller
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to delete travel order. Please try again.'
+                    'message' => 'Failed to delete travel order. Please try again.',
                 ], 500);
             }
 
@@ -622,7 +715,6 @@ class TravelOrderController extends Controller
     /**
      * Cancel a travel order
      *
-     * @param  \App\Models\TravelOrder  $travel_order
      * @return \Illuminate\Http\JsonResponse
      */
     public function cancel(TravelOrderModel $travel_order)
@@ -632,10 +724,10 @@ class TravelOrderController extends Controller
 
             // Get the cancelled status
             $cancelledStatus = TravelOrderStatus::where('name', 'Cancelled')->firstOrFail();
-            
+
             // Store the previous status
             $prevStatusName = $travel_order->status ? $travel_order->status->name : null;
-            
+
             // Update the status
             $travel_order->status_id = $cancelledStatus->id;
             $travel_order->save();
@@ -656,7 +748,7 @@ class TravelOrderController extends Controller
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Travel order has been cancelled successfully.'
+                    'message' => 'Travel order has been cancelled successfully.',
                 ]);
             }
 
@@ -664,12 +756,12 @@ class TravelOrderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Error cancelling travel order: ' . $e->getMessage());
+            \Log::error('Error cancelling travel order: '.$e->getMessage());
 
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to cancel travel order. Please try again.'
+                    'message' => 'Failed to cancel travel order. Please try again.',
                 ], 500);
             }
 
@@ -681,7 +773,6 @@ class TravelOrderController extends Controller
      * Update the status of a travel order
      *
      * @param  int  $id
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateStatus($id, Request $request)
@@ -695,12 +786,12 @@ class TravelOrderController extends Controller
 
             $travelOrder = TravelOrderModel::with('status')->findOrFail($id);
             $user = Auth::user();
-            
+
             // Check if the user is authorized to update the status
             if ($travelOrder->recommender !== $user->email) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'You are not authorized to update this travel order status.'
+                    'message' => 'You are not authorized to update this travel order status.',
                 ], 403);
             }
 
@@ -713,25 +804,25 @@ class TravelOrderController extends Controller
             $requested = strtolower($request->status);
             $normalized = $map[$requested] ?? null;
             $status = $normalized ? TravelOrderStatus::where('name', $normalized)->first() : null;
-            
-            if (!$status) {
+
+            if (! $status) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid status provided.'
+                    'message' => 'Invalid status provided.',
                 ], 422);
             }
 
             // Capture previous status, then update the status
             $prevStatusName = optional($travelOrder->status)->name ?? null;
             $travelOrder->status_id = $status->id;
-            
+
             // If recommending for approval, update the approver if not set
-            if ($request->status === 'for approval' && !$travelOrder->approver) {
+            if ($request->status === 'for approval' && ! $travelOrder->approver) {
                 // Get the default approver from the database or config
                 $defaultApprover = 'approver@example.com'; // Replace with your logic to get the default approver
                 $travelOrder->approver = $defaultApprover;
             }
-            
+
             $travelOrder->save();
 
             // Log metadata
@@ -753,15 +844,15 @@ class TravelOrderController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Travel order status updated successfully.',
-                'status' => $status->name
+                'status' => $status->name,
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error updating travel order status: ' . $e->getMessage());
-            
+            Log::error('Error updating travel order status: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while updating the travel order status.'
+                'message' => 'An error occurred while updating the travel order status.',
             ], 500);
         }
     }

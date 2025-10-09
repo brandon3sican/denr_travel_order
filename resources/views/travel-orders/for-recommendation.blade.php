@@ -1,9 +1,5 @@
 @extends('layout.app')
 
-@push('scripts')
-    <script src="{{ asset('js/travel-order-actions.js') }}"></script>
-@endpush
-
 @section('content')
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Top Navigation -->
@@ -20,6 +16,7 @@
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <div class="px-6 py-4">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">Travel Orders For Recommendation</h3>
+
                     <!-- Travel Orders Table -->
                     <div class="shadow rounded overflow-hidden mt-2">
                         <div class="overflow-x-auto">
