@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\TravelOrder;
+use App\Models\TravelOrderStatus;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -102,5 +105,166 @@ class DashboardController extends Controller
         return view('travel-order.show', [
             'travelOrder' => $travelOrder,
         ]);
+    }
+
+    public function analytics(Request $request)
+    {
+        $range = $request->input('range', 'week');
+        $now = Carbon::now();
+        $user = Auth::user();
+
+        // Base query for travel orders
+        $baseQuery = $user->is_admin
+            ? TravelOrder::query()
+            : TravelOrder::where('employee_email', $user->email);
+
+        // Get start date based on selected range
+        $startDate = match($range) {
+            'day' => $now->copy()->startOfDay(),
+            'month' => $now->copy()->startOfMonth(),
+            'year' => $now->copy()->startOfYear(),
+            default => $now->copy()->startOfWeek(),
+        };
+
+        // Initialize chart data structure
+        $chartData = [
+            'labels' => [],
+            'datasets' => [
+                'total' => [],
+                'pending' => [],
+                'completed' => [],
+                'cancelled' => []
+            ]
+        ];
+
+        // Get interval based on range
+        $interval = match($range) {
+            'day' => 'hour',
+            'month' => 'day',
+            'year' => 'month',
+            default => 'day', // week
+        };
+
+        // Generate date periods
+        $endDate = Carbon::now();
+        $period = new \DatePeriod(
+            $startDate,
+            new \DateInterval('P1' . strtoupper(substr($interval, 0, 1))),
+            $endDate
+        );
+
+        // Get data for each period
+        foreach ($period as $date) {
+            // Format label based on interval
+            $label = match($interval) {
+                'hour' => $date->format('H:00'),
+                'day' => $date->format('M j'),
+                'month' => $date->format('M Y'),
+                default => $date->format('D'),
+            };
+            $chartData['labels'][] = $label;
+
+            // Total orders
+            $chartData['datasets']['total'][] = (clone $baseQuery)
+                ->whereDate('created_at', $date)
+                ->count();
+
+            // Pending/For Approval orders
+            $chartData['datasets']['pending'][] = (clone $baseQuery)
+                ->whereIn('status_id', [1, 4]) // Pending and For Approval
+                ->whereDate('created_at', $date)
+                ->count();
+
+            // Completed orders
+            $chartData['datasets']['completed'][] = (clone $baseQuery)
+                ->whereIn('status_id', [2, 3]) // Approved and Completed
+                ->whereDate('created_at', $date)
+                ->count();
+
+            // Cancelled orders
+            $chartData['datasets']['cancelled'][] = (clone $baseQuery)
+                ->where('status_id', 5) // Cancelled
+                ->whereDate('created_at', $date)
+                ->count();
+        }
+
+        // Get status distribution for pie chart
+        $statusData = $this->getStatusDistribution($baseQuery, $startDate);
+
+        return response()->json([
+            'chartData' => $chartData,
+            'statusData' => $statusData,
+        ]);
+    }
+
+    private function getPendingOrdersData($query, $startDate, $range)
+    {
+        $endDate = Carbon::now();
+        $interval = match($range) {
+            'day' => 'hour',
+            'month' => 'day',
+            'year' => 'month',
+            default => 'day', // week
+        };
+
+        // Get pending/for approval orders
+        $pendingQuery = (clone $query)
+            ->whereIn('status_id', [1, 4]) // Pending and For Approval
+            ->where('created_at', '>=', $startDate);
+
+        // Group by time interval
+        $grouped = $pendingQuery->get()
+            ->groupBy(function($item) use ($interval) {
+                return $item->created_at->format($interval === 'hour' ? 'H:00' : 
+                    ($interval === 'day' ? 'M j' : 
+                    ($interval === 'month' ? 'M Y' : 'Y')));
+            });
+
+        // Generate labels and data
+        $period = new \DatePeriod(
+            $startDate,
+            new \DateInterval('P1' . strtoupper(substr($interval, 0, 1))),
+            $endDate
+        );
+
+        $labels = [];
+        $data = [];
+
+        foreach ($period as $date) {
+            $key = $date->format($interval === 'hour' ? 'H:00' : 
+                    ($interval === 'day' ? 'M j' : 
+                    ($interval === 'month' ? 'M Y' : 'Y')));
+            $labels[] = $key;
+            $data[] = $grouped->has($key) ? $grouped[$key]->count() : 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data
+        ];
+    }
+
+    private function getStatusDistribution($query, $startDate)
+    {
+        $statuses = TravelOrderStatus::all();
+        $statusData = [];
+        $statusLabels = [];
+
+        foreach ($statuses as $status) {
+            $count = (clone $query)
+                ->where('status_id', $status->id)
+                ->where('created_at', '>=', $startDate)
+                ->count();
+
+            if ($count > 0) {
+                $statusLabels[] = $status->name;
+                $statusData[] = $count;
+            }
+        }
+
+        return [
+            'labels' => $statusLabels,
+            'data' => $statusData
+        ];
     }
 }

@@ -143,6 +143,79 @@
             <!-- Stats Cards -->
             <x-dashboard.stats-cards :totalTravelOrders="$totalTravelOrders" :pendingRequests="$pendingRequests" :completedRequests="$completedRequests" :cancelledRequests="$cancelledRequests" />
 
+            <!-- Travel Order Analytics -->
+            @php
+                // Get initial data for the graphs
+                $now = now();
+                $startOfWeek = $now->copy()->startOfWeek();
+                
+                // Base query for travel orders
+                $baseQuery = auth()->user()->is_admin 
+                    ? \App\Models\TravelOrder::query()
+                    : \App\Models\TravelOrder::where('employee_email', auth()->user()->email);
+                
+                // Initialize chart data structure
+                $chartData = [
+                    'labels' => [],
+                    'datasets' => [
+                        'total' => [],
+                        'pending' => [],
+                        'completed' => [],
+                        'cancelled' => []
+                    ]
+                ];
+
+                // Get data for each day of the week
+                for ($i = 0; $i < 7; $i++) {
+                    $date = $startOfWeek->copy()->addDays($i);
+                    $chartData['labels'][] = $date->format('D');
+                    
+                    // Total orders
+                    $chartData['datasets']['total'][] = (clone $baseQuery)
+                        ->whereDate('created_at', $date)
+                        ->count();
+                        
+                    // Pending orders (status 1: Pending, 4: For Approval)
+                    $chartData['datasets']['pending'][] = (clone $baseQuery)
+                        ->whereIn('status_id', [1, 4])
+                        ->whereDate('created_at', $date)
+                        ->count();
+                        
+                    // Completed orders (assuming status 2: Approved, 3: Completed)
+                    $chartData['datasets']['completed'][] = (clone $baseQuery)
+                        ->whereIn('status_id', [2, 3])
+                        ->whereDate('created_at', $date)
+                        ->count();
+                        
+                    // Cancelled orders (assuming status 5: Cancelled)
+                    $chartData['datasets']['cancelled'][] = (clone $baseQuery)
+                        ->where('status_id', 5)
+                        ->whereDate('created_at', $date)
+                        ->count();
+                }
+                
+                // Status distribution for pie chart (current week)
+                $statuses = \App\Models\TravelOrderStatus::all();
+                $statusData = [
+                    'labels' => [],
+                    'data' => []
+                ];
+                
+                foreach ($statuses as $status) {
+                    $count = (clone $baseQuery)
+                        ->where('status_id', $status->id)
+                        ->where('created_at', '>=', $startOfWeek)
+                        ->count();
+                        
+                    if ($count > 0) {
+                        $statusData['labels'][] = $status->name;
+                        $statusData['data'][] = $count;
+                    }
+                }
+            @endphp
+            
+            <x-dashboard.travel-order-graphs :chartData="$chartData" :statusData="$statusData" />
+
 
             <!-- Recent Travel Orders -->
             <div class="bg-white rounded-lg shadow overflow-hidden">
