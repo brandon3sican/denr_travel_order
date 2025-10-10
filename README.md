@@ -124,8 +124,8 @@ flowchart TD
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/brandon3sican/denr-travel-order.git
-   cd denr-travel-order
+   git clone https://github.com/brandon3sican/denr_travel_order.git
+   cd denr_travel_order
    ```
 
 2. Install PHP dependencies:
