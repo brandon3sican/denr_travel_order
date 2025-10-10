@@ -547,7 +547,7 @@ class TravelOrderController extends Controller
             'destination' => 'required',
             'purpose' => 'required',
             'departure_date' => 'required|date',
-            'arrival_date' => 'required|date|after:departure_date',
+            'arrival_date' => 'required|date|after_or_equal:departure_date',
             'appropriation' => 'required',
             'per_diem' => 'required|numeric',
             'laborer_assistant' => 'required|numeric',

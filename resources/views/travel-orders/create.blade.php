@@ -260,3 +260,54 @@
 
     @include('components.travel-order.create-preview-modal')
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const departureDateInput = document.getElementById('departure_date');
+        const arrivalDateInput = document.getElementById('arrival_date');
+        
+        // Set minimum date for both inputs to today
+        const today = new Date().toISOString().split('T')[0];
+        departureDateInput.min = today;
+        arrivalDateInput.min = today;
+        
+        // When departure date changes, update arrival date min value
+        departureDateInput.addEventListener('change', function() {
+            const departureDate = new Date(this.value);
+            arrivalDateInput.min = this.value;
+            
+            // If current arrival date is before new departure date, reset it
+            if (new Date(arrivalDateInput.value) < departureDate) {
+                arrivalDateInput.value = this.value;
+            }
+        });
+        
+        // When arrival date changes, validate it's not before departure date
+        arrivalDateInput.addEventListener('change', function() {
+            const departureDate = new Date(departureDateInput.value);
+            const arrivalDate = new Date(this.value);
+            
+            if (arrivalDate < departureDate) {
+                alert('Arrival date cannot be earlier than departure date');
+                this.value = departureDateInput.value; // Reset to departure date
+            }
+        });
+        
+        // Form validation before submission
+        document.getElementById('travelOrderForm').addEventListener('submit', function(e) {
+            const departureDate = new Date(departureDateInput.value);
+            const arrivalDate = new Date(arrivalDateInput.value);
+            
+            if (arrivalDate < departureDate) {
+                e.preventDefault();
+                alert('Error: Arrival date cannot be earlier than departure date');
+                arrivalDateInput.focus();
+                return false;
+            }
+            
+            return true;
+        });
+    });
+</script>
+@endpush
