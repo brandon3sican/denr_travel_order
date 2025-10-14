@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Employee;
 use App\Models\TravelOrderRole;
-use App\Models\TravelOrderStatus;
+use App\Models\User;
 use App\Models\UserTravelOrderRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +17,7 @@ class TableSeeder extends Seeder
      */
     public function run(): void
     {
-        //Users and Employees
+        // Users and Employees
         $email = 'admin@denr.gov.ph';
         User::create([
             'email' => $email,
@@ -139,7 +138,7 @@ class TableSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        //Travel Order Role
+        // Travel Order Role
         TravelOrderRole::create([
             'name' => 'Admin',
             'description' => 'Super account',
@@ -160,8 +159,12 @@ class TableSeeder extends Seeder
             'name' => 'Recommender and Approver',
             'description' => 'Can recommend and approve travel orders',
         ]);
-        
-        //Travel Order Status
+        TravelOrderRole::create([
+            'name' => 'Numbering',
+            'description' => 'Can confirm and assign travel order numbers after approval',
+        ]);
+
+        // Travel Order Status
         DB::table('travel_order_status')->insert([
             ['name' => 'For Recommendation', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'For Approval', 'created_at' => now(), 'updated_at' => now()],
@@ -171,7 +174,7 @@ class TableSeeder extends Seeder
             ['name' => 'Completed', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        //User Travel Order Role
+        // User Travel Order Role
         UserTravelOrderRole::create([
             'user_email' => 'admin@denr.gov.ph',
             'travel_order_role_id' => 1,

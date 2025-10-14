@@ -143,6 +143,57 @@
             <!-- Stats Cards -->
             <x-dashboard.stats-cards :totalTravelOrders="$totalTravelOrders" :pendingRequests="$pendingRequests" :completedRequests="$completedRequests" :cancelledRequests="$cancelledRequests" />
 
+            <!-- Charts Section -->
+            <div class="bg-white p-4 rounded-lg shadow mb-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Travel Order Analytics</h3>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600">View by:</span>
+                            <select id="timePeriod" class="block w-32 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                        <div id="monthSelector" class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600">Month:</span>
+                            <select id="selectedMonth" class="block w-32 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                @for($i = 1; $i <= 12; $i++)
+                                    <option value="{{ $i }}" {{ $i == date('n') ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div id="yearSelector" class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600">Year:</span>
+                            <select id="selectedYear" class="block w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                @for($year = date('Y') - 5; $year <= date('Y') + 1; $year++)
+                                    <option value="{{ $year }}" {{ $year == date('Y') ? 'selected' : '' }}>{{ $year }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Line Chart -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <h4 class="text-md font-medium text-gray-700 mb-3">Travel Orders Trend</h4>
+                        <div class="h-80">
+                            <canvas id="travelOrdersLineChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Pie Chart -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <h4 class="text-md font-medium text-gray-700 mb-3">Status Distribution</h4>
+                        <div class="h-80">
+                            <canvas id="statusPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Recent Travel Orders -->
             <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -228,4 +279,402 @@
         @include('components.travel-order.travel-order-modal')
 
     </x-dashboard.layout>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart instances
+            let lineChart, pieChart;
+            
+            // DOM Elements
+            const timePeriodSelect = document.getElementById('timePeriod');
+            const monthSelect = document.getElementById('selectedMonth');
+            const yearSelect = document.getElementById('selectedYear');
+            const monthSelector = document.getElementById('monthSelector');
+            const yearSelector = document.getElementById('yearSelector');
+            
+            // Toggle visibility of selectors based on period
+            function updateSelectorVisibility() {
+                const period = timePeriodSelect.value;
+                
+                if (period === 'monthly') {
+                    monthSelector.style.display = 'flex';
+                    yearSelector.style.display = 'flex';
+                } else if (period === 'yearly') {
+                    monthSelector.style.display = 'none';
+                    yearSelector.style.display = 'flex';
+                } else {
+                    monthSelector.style.display = 'flex';
+                    yearSelector.style.display = 'flex';
+                }
+            }
+            
+            // Initialize charts
+            function initCharts() {
+                const lineCtx = document.getElementById('travelOrdersLineChart')?.getContext('2d');
+                const pieCtx = document.getElementById('statusPieChart')?.getContext('2d');
+                
+                if (!lineCtx || !pieCtx) return;
+                
+                // Destroy existing charts if they exist
+                if (lineChart) lineChart.destroy();
+                if (pieChart) pieChart.destroy();
+                
+                // Get filter values
+                const timePeriod = timePeriodSelect.value;
+                const month = monthSelect.value;
+                const year = yearSelect.value;
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                
+                // Show loading state
+                $('.chart-container').addClass('opacity-50');
+                
+                // Build query parameters
+                const params = new URLSearchParams({
+                    period: timePeriod,
+                    timezone: timezone,
+                    month: timePeriod === 'monthly' ? month : '',
+                    year: year
+                });
+                
+                // Fetch data based on selected filters
+                fetch(`/api/travel-orders/analytics?${params.toString()}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('API Response:', data); // Debug log
+                    
+                    // Ensure we have data
+                    if (!data || !data.lineChart || !data.pieChart) {
+                        throw new Error('Invalid data format received from server');
+                    }
+                    
+                    // Update line chart
+                    if (document.getElementById('travelOrdersLineChart')) {
+                        if (lineChart) lineChart.destroy();
+                        
+                        const lineCtx = document.getElementById('travelOrdersLineChart').getContext('2d');
+                        lineChart = new Chart(lineCtx, {
+                            type: 'line',
+                            data: {
+                                labels: data.lineChart.labels || [],
+                                datasets: [
+                                    {
+                                        label: 'Pending',
+                                        data: data.lineChart.pendingData || [],
+                                        borderColor: 'rgb(249, 168, 37)',
+                                        backgroundColor: 'rgba(249, 168, 37, 0.1)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        fill: false
+                                    },
+                                    {
+                                        label: 'Completed',
+                                        data: data.lineChart.completedData || [],
+                                        borderColor: 'rgb(16, 185, 129)',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        fill: false
+                                    },
+                                    {
+                                        label: 'Cancelled',
+                                        data: data.lineChart.cancelledData || [],
+                                        borderColor: 'rgb(107, 114, 128)',
+                                        backgroundColor: 'rgba(107, 114, 128, 0.1)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        fill: false
+                                    },
+                                    {
+                                        label: 'Disapproved',
+                                        data: data.lineChart.disapprovedData || [],
+                                        borderColor: 'rgb(239, 68, 68)',
+                                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        fill: false
+                                    }
+                                ]
+                            },
+                            options: getLineChartOptions(timePeriod)
+                        });
+                    }
+                    
+                    // Update pie chart
+                    if (document.getElementById('statusPieChart')) {
+                        if (pieChart) pieChart.destroy();
+                        
+                        const pieCtx = document.getElementById('statusPieChart').getContext('2d');
+                        // Define colors for all statuses
+                        const statusColors = {
+                            'For Recommendation': {
+                                bg: 'rgba(249, 168, 37, 0.7)',
+                                border: 'rgba(249, 168, 37, 1)'
+                            },
+                            'For Approval': {
+                                bg: 'rgba(59, 130, 246, 0.7)',
+                                border: 'rgba(59, 130, 246, 1)'
+                            },
+                            'Approved': {
+                                bg: 'rgba(16, 185, 129, 0.7)',
+                                border: 'rgba(16, 185, 129, 1)'
+                            },
+                            'Completed': {
+                                bg: 'rgba(139, 92, 246, 0.7)',
+                                border: 'rgba(139, 92, 246, 1)'
+                            },
+                            'Cancelled': {
+                                bg: 'rgba(107, 114, 128, 0.7)',
+                                border: 'rgba(107, 114, 128, 1)'
+                            },
+                            'Disapproved': {
+                                bg: 'rgba(239, 68, 68, 0.7)',
+                                border: 'rgba(239, 68, 68, 1)'
+                            }
+                        };
+
+                        // Prepare data for the chart
+                        const labels = data.pieChart.labels || [];
+                        const chartData = {
+                            labels: labels,
+                            datasets: [{
+                                data: data.pieChart.data || [],
+                                backgroundColor: data.pieChart.backgroundColors || labels.map(label => statusColors[label]?.bg || '#cccccc'),
+                                borderColor: data.pieChart.borderColors || labels.map(label => statusColors[label]?.border || '#999999'),
+                                borderWidth: 1
+                            }]
+                        };
+
+                        pieChart = new Chart(pieCtx, {
+                            type: 'doughnut',
+                            data: chartData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'right',
+                                        labels: {
+                                            usePointStyle: true,
+                                            padding: 15,
+                                            font: {
+                                                size: 12
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.raw || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                                return `${label}: ${value} (${percentage}%)`;
+                                            }
+                                        }
+                                    }
+                                },
+                                cutout: '60%',
+                                animation: {
+                                    animateScale: true,
+                                    animateRotate: true
+                                }
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching analytics data:', error);
+                    // Show error message to user
+                    alert('Failed to load analytics data. Please try again later.');
+                })
+                .finally(() => {
+                    // Always remove loading state
+                    $('.chart-container').removeClass('opacity-50');
+                });
+            }
+            
+            // Get appropriate chart options based on time period
+            function getLineChartOptions(period) {
+                return {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12
+                            }
+                        },
+                        tooltip: { 
+                            mode: 'index', 
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: getChartTitle(period),
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: { top: 10, bottom: 15 }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { 
+                                display: true, 
+                                color: 'rgba(0, 0, 0, 0.05)' 
+                            },
+                            title: { 
+                                display: true, 
+                                text: 'Number of Orders',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                precision: 0
+                            }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            title: {
+                                display: true,
+                                text: getXAxisTitle(period),
+                                font: {
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+            
+            // Get X-axis title based on period
+            function getXAxisTitle(period) {
+                const month = monthSelect.options[monthSelect.selectedIndex].text;
+                const year = yearSelect.value;
+                
+                switch(period) {
+                    case 'daily':
+                        return `Days of ${month} ${year}`;
+                    case 'weekly':
+                        return `Weeks of ${month} ${year}`;
+                    case 'monthly':
+                        return `Months of ${year}`;
+                    case 'yearly':
+                        return 'Years';
+                    default:
+                        return 'Timeline';
+                }
+            }
+            
+            // Update chart title based on period and selected date
+            function getChartTitle(period) {
+                const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+                
+                const month = parseInt(monthSelect.value) - 1; // Convert to 0-indexed month
+                const year = yearSelect.value;
+                
+                switch(period) {
+                    case 'daily':
+                        return `Daily Travel Orders - ${monthNames[month]} ${year}`;
+                    case 'weekly':
+                        return `Weekly Travel Orders - ${monthNames[month]} ${year}`;
+                    case 'monthly':
+                        return `Monthly Travel Orders - ${year}`;
+                    case 'yearly':
+                        return `Yearly Travel Orders - ${year}`;
+                    default:
+                        return 'Travel Orders Overview';
+                }
+            }
+            
+            // Initialize selectors visibility
+            updateSelectorVisibility();
+            
+            // Initialize charts on page load
+            initCharts();
+            
+            // Add event listeners
+            timePeriodSelect.addEventListener('change', function() {
+                updateSelectorVisibility();
+                initCharts();
+            });
+            
+            monthSelect.addEventListener('change', function() {
+                if (timePeriodSelect.value === 'monthly') {
+                    initCharts();
+                }
+            });
+            
+            yearSelect.addEventListener('change', function() {
+                initCharts();
+            });
+            
+            // Update chart title based on period
+            function getChartTitle(period, month = null, year = null) {
+                const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+                
+                switch(period) {
+                    case 'daily':
+                        return `Daily Travel Orders` + (year ? ` ${year}` : '');
+                    case 'weekly':
+                        return `Weekly Travel Orders` + (year ? ` ${year}` : '');
+                    case 'monthly':
+                        if (month && year) {
+                            return `Monthly Travel Orders - ${monthNames[month-1]} ${year}`;
+                        }
+                        return 'Monthly Travel Orders';
+                    case 'yearly':
+                        return `Yearly Travel Orders` + (year ? ` (${year})` : '');
+                    default:
+                        return 'Travel Orders Overview';
+                }
+            }
+        });
+    </script>
+    <style>
+        .chart-container {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .chart-container.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+    @endpush
 @endsection

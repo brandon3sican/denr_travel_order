@@ -47,11 +47,94 @@ class TravelOrderController extends Controller
     }
 
     /**
+     * Recommend a travel order for approval
+     */
+    public function recommend(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|string',
+            'client_meta' => 'nullable|array',
+            'location' => 'nullable|array'
+        ]);
+
+        // Verify password
+        if (!\Hash::check($request->password, Auth::user()->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect password.'
+            ], 422);
+        }
+
+        $travelOrder = TravelOrderModel::with('status')->findOrFail($id);
+        
+        // Check if already recommended
+        if ($travelOrder->status->name === 'For Approval') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This travel order has already been recommended.'
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Capture previous status, then update to For Approval
+            $prevStatusName = optional($travelOrder->status)->name ?? null;
+            $forApprovalStatus = TravelOrderStatus::where('name', 'For Approval')->firstOrFail();
+            $travelOrder->status_id = $forApprovalStatus->id;
+            $travelOrder->save();
+
+            // Log metadata
+            TravelOrderStatusHistory::create([
+                'travel_order_id' => $travelOrder->id,
+                'user_id' => Auth::id(),
+                'action' => 'recommend',
+                'from_status' => $prevStatusName,
+                'to_status' => 'For Approval',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+                'device' => $request->input('client_meta.device') ?? null,
+                'browser' => $request->input('client_meta.browser') ?? null,
+                'location' => $request->input('location') ?? null,
+                'client_meta' => $request->input('client_meta') ?? null,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Travel order recommended for approval successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error recommending travel order: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to recommend travel order. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
      * Approve a travel order
      */
     public function approve(Request $request, $id)
     {
-        $travelOrder = TravelOrderModel::findOrFail($id);
+        $request->validate([
+            'password' => 'required|string',
+            'client_meta' => 'nullable|array',
+            'location' => 'nullable|array'
+        ]);
+
+        // Verify password
+        if (!\Hash::check($request->password, Auth::user()->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect password.'
+            ], 422);
+        }
+
+        $travelOrder = TravelOrderModel::with('status')->findOrFail($id);
         
         // Check if already approved
         if ($travelOrder->status->name === 'Approved') {
@@ -61,11 +144,19 @@ class TravelOrderController extends Controller
             ]);
         }
 
+        // Check if the travel order is in the correct status for approval
+        if ($travelOrder->status->name !== 'For Approval') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This travel order cannot be approved in its current status.'
+            ], 422);
+        }
+
         DB::beginTransaction();
         try {
             // Capture previous status, then update to Approved
-            $prevStatusName = optional($travelOrder->status)->name ?? null;
-            $approvedStatus = TravelOrderStatus::where('name', 'Approved')->first();
+            $prevStatusName = $travelOrder->status->name;
+            $approvedStatus = TravelOrderStatus::where('name', 'Approved')->firstOrFail();
             $travelOrder->status_id = $approvedStatus->id;
             $travelOrder->save();
 

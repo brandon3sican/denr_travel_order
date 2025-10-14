@@ -22,6 +22,7 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
 });
+
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
@@ -30,8 +31,19 @@ Route::get('/session/keep-alive', function () {
     return response()->json(['status' => 'ok']);
 })->name('session.keep-alive');
 
+Route::post('/travel-order/{id}/approve', [TravelOrderController::class, 'approve'])
+    ->name('travel-order.approve')
+    ->middleware('auth'); // Ensure this is protected by auth middleware
+
 // Protected Routes - Require Authentication
 Route::middleware('auth')->group(function () {
+    // Password verification route
+    Route::post('/verify-password', function (\Illuminate\Http\Request $request) {
+        return response()->json([
+            'valid' => \Illuminate\Support\Facades\Hash::check($request->password, $request->user()->password)
+        ]);
+    })->name('verify-password');
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -50,6 +62,8 @@ Route::middleware('auth')->group(function () {
 
     // Travel Order Approval/Rejection Routes
     Route::prefix('travel-order')->group(function () {
+        // Recommend travel order for approval
+        Route::post('/{id}/recommend', [TravelOrderController::class, 'recommend'])->name('travel-orders.recommend');
 
         // Approve travel order
         Route::post('/{id}/approve', [TravelOrderController::class, 'approve'])->name('travel-orders.approve');
@@ -105,6 +119,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/approval-metrics', [\App\Http\Controllers\ReportController::class, 'approvalMetrics'])->name('reports.approval-metrics');
     Route::get('/employee-travel', [\App\Http\Controllers\ReportController::class, 'employeeTravelPatterns'])->name('reports.employee-travel');
     Route::get('/department', [\App\Http\Controllers\ReportController::class, 'departmentReports'])->name('reports.department');
+
+    // Analytics API Route
+    Route::get('/api/travel-orders/analytics', [\App\Http\Controllers\Api\AnalyticsController::class, 'getTravelOrderAnalytics'])
+        ->name('api.travel-orders.analytics');
 
     // Reports Routes
     Route::prefix('reports')->group(function () {

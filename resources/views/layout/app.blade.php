@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>DENR Travel Order System</title>
+    <title>Travel Order Information System</title>
     <link rel="icon" type="image/png" href="{{ asset('images/denr-logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS removed - Using Tailwind alerts instead -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body class="bg-gray-100">
@@ -26,48 +28,113 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Success Message Container -->
-    <div id="successMessage" class="fixed top-4 right-4 z-50 hidden">
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg flex items-center"
-            role="alert">
-            <div class="flex-shrink-0">
-                <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b bg-green-50 rounded-t-lg flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                    <h3 class="text-lg font-medium text-gray-900">Success</h3>
+                </div>
+                <button type="button" onclick="hideModal('successModal')"
+                    class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div>
-                <p class="font-bold">Success</p>
-                <p id="successMessageText" class="text-sm"></p>
+            <div class="px-6 py-4">
+                <p id="successMessageText" class="text-gray-700"></p>
             </div>
-            <button type="button" onclick="document.getElementById('successMessage').classList.add('hidden')"
-                class="ml-4 text-green-700 hover:text-green-900">
-                <i class="fas fa-times"></i>
-            </button>
+            <div class="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
+                <button type="button" onclick="hideModal('successModal')"
+                    class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    OK
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Flash Messages -->
+    <!-- Error Modal -->
+    <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b bg-red-50 rounded-t-lg flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3"></i>
+                    <h3 class="text-lg font-medium text-gray-900">Error</h3>
+                </div>
+                <button type="button" onclick="hideModal('errorModal')"
+                    class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="px-6 py-4">
+                <p id="errorMessageText" class="text-gray-700"></p>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
+                <button type="button" onclick="hideModal('errorModal')"
+                    class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
     @if (session('success'))
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                showSuccessMessage('{{ session('success') }}');
+                showModal('success', '{{ session('success') }}');
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showModal('error', '{{ session('error') }}');
             });
         </script>
     @endif
 
     <script>
-        // Show success message function
-        function showSuccessMessage(message) {
-            const successMessage = document.getElementById('successMessage');
-            const messageText = document.getElementById('successMessageText');
+        // Show modal function
+        function showModal(type, message) {
+            const modal = document.getElementById(`${type}Modal`);
+            const messageElement = document.getElementById(`${type}MessageText`);
 
-            messageText.textContent = message;
-            successMessage.classList.remove('hidden');
+            if (modal && messageElement) {
+                messageElement.textContent = message;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
 
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                successMessage.classList.add('hidden');
-            }, 5000);
+                // Auto-hide after 5 seconds for success messages
+                if (type === 'success') {
+                    setTimeout(() => {
+                        hideModal(`${type}Modal`);
+                    }, 5000);
+                }
+            }
         }
+
+        // Hide modal function
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('[id$="Modal"]');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    hideModal(modal.id);
+                }
+            });
+        };
     </script>
 
     <script src="{{ asset('js/app.js') }}"></script>
@@ -88,24 +155,23 @@
                 </div>
             </div>
             <div class="px-6 py-4">
-                <p class="text-gray-700 mb-4">You are about to recommend this travel order for approval. This action
-                    cannot be undone.</p>
-                <p class="text-sm text-gray-600 mb-4">By recommending, you confirm that all details are accurate and
-                    complete.</p>
+                <p class="text-gray-700 mb-4">You are about to recommend this travel order for approval. Please enter
+                    your password to confirm.</p>
                 <div class="mt-2">
-                    <p class="text-sm text-gray-500">Type <span
-                            class="font-mono bg-gray-100 px-2 py-1 rounded">RECOMMEND</span> to confirm</p>
-                    <input type="text" id="confirmRecommendInput"
+                    <label for="recommendPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="recommendPassword"
                         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Type RECOMMEND to confirm">
+                        placeholder="Enter your password">
+                    <p id="recommendPasswordError" class="mt-1 text-sm text-red-600 hidden">Incorrect password. Please
+                        try again.</p>
                 </div>
                 <div class="flex justify-end space-x-3 mt-4">
                     <button type="button" onclick="closeRecommendModal()"
                         class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
                         Cancel
                     </button>
-                    <button type="button" id="confirmRecommendBtn" disabled
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium opacity-50 cursor-not-allowed focus:outline-none">
+                    <button type="button" id="confirmRecommendBtn"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none">
                         Confirm Recommendation
                     </button>
                 </div>
@@ -125,24 +191,23 @@
                 </div>
             </div>
             <div class="px-6 py-4">
-                <p class="text-gray-700 mb-4">You are about to approve this travel order. This action is irreversible.
-                </p>
-                <p class="text-sm text-gray-600 mb-4">By approving, you confirm that all requirements are met and budget
-                    is available.</p>
+                <p class="text-gray-700 mb-4">You are about to approve this travel order. Please enter your password to
+                    confirm.</p>
                 <div class="mt-2">
-                    <p class="text-sm text-gray-500">Type <span
-                            class="font-mono bg-gray-100 px-2 py-1 rounded">APPROVE</span> to confirm</p>
-                    <input type="text" id="confirmApproveInput"
+                    <label for="approvePassword" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="approvePassword"
                         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        placeholder="Type APPROVE to confirm">
+                        placeholder="Enter your password">
+                    <p id="approvePasswordError" class="mt-1 text-sm text-red-600 hidden">Incorrect password. Please try
+                        again.</p>
                 </div>
                 <div class="flex justify-end space-x-3 mt-4">
                     <button type="button" onclick="closeApproveModal()"
                         class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
                         Cancel
                     </button>
-                    <button type="button" id="confirmApproveBtn" disabled
-                        class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium opacity-50 cursor-not-allowed focus:outline-none">
+                    <button type="button" id="confirmApproveBtn"
+                        class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium focus:outline-none">
                         Confirm Approval
                     </button>
                 </div>
@@ -269,29 +334,18 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            Swal.fire({
-                                title: 'Approved!',
-                                text: `Travel order has been approved successfully.\nTravel Order Number: ${data.travel_order_number}`,
-                                icon: 'success',
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                window.location.reload();
-                            });
+                            showModal('success',
+                                `Travel order has been approved successfully.\nTravel Order Number: ${data.travel_order_number}`
+                            );
+                            setTimeout(() => window.location.reload(), 3000);
                         } else {
                             throw new Error(data.message || 'Failed to approve travel order');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: error.message ||
-                                'An error occurred while approving the travel order. Please try again.',
-                            icon: 'error',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
+                        showModal('error', error.message ||
+                            'An error occurred while approving the travel order. Please try again.');
                     });
 
                 closeApproveModal();
@@ -299,7 +353,7 @@
         });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 removed - Using custom Tailwind modals -->
     @if (auth()->check())
         <script>
             let timeout;

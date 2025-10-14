@@ -79,17 +79,45 @@ class DashboardController extends Controller
 
         // Calculate statistics
         $totalTravelOrders = $allTravelOrders->count();
-        $pendingRequests = $allTravelOrders->whereIn('status_id', [1, 4])->count(); // Including both Pending (1) and For Approval (4) statuses
-        $completedRequests = $allTravelOrders->whereIn('status_id', [2, 3])->count(); // Assuming 2=Approved, 3=Completed
-        $cancelledRequests = $allTravelOrders->where('status_id', 5)->count();
+        
+        // Get counts for each status
+        $statusCounts = [
+            'pendingRecommendations' => $allTravelOrders->where('status_id', 1)->count(), // Pending/For Recommendation
+            'pendingApprovals' => $allTravelOrders->where('status_id', 4)->count(),      // For Approval
+            'approvedRequests' => $allTravelOrders->where('status_id', 2)->count(),      // Approved
+            'disapprovedRequests' => $allTravelOrders->where('status_id', 6)->count(),   // Disapproved
+            'cancelledRequests' => $allTravelOrders->where('status_id', 5)->count(),     // Cancelled
+            'completedRequests' => $allTravelOrders->where('status_id', 3)->count(),     // Completed
+        ];
+
+        // Get monthly data for the line chart (last 6 months)
+        $monthlyData = [];
+        $months = collect(range(0, 5))->map(function ($monthsAgo) use ($allTravelOrders) {
+            $date = now()->subMonths($monthsAgo);
+            $start = $date->copy()->startOfMonth();
+            $end = $date->copy()->endOfMonth();
+            
+            return [
+                'month' => $date->format('M Y'),
+                'total' => $allTravelOrders->whereBetween('created_at', [$start, $end])->count(),
+                'completed' => $allTravelOrders->where('status_id', 3)
+                    ->whereBetween('created_at', [$start, $end])
+                    ->count()
+            ];
+        })->reverse()->values();
 
         return view('dashboard', [
             'travelOrders' => $travelOrders,
             'isAdmin' => $user->is_admin,
             'totalTravelOrders' => $totalTravelOrders,
-            'pendingRequests' => $pendingRequests,
-            'completedRequests' => $completedRequests,
-            'cancelledRequests' => $cancelledRequests,
+            'pendingRequests' => $statusCounts['pendingRecommendations'] + $statusCounts['pendingApprovals'],
+            'completedRequests' => $statusCounts['completedRequests'],
+            'cancelledRequests' => $statusCounts['cancelledRequests'],
+            'pendingRecommendations' => $statusCounts['pendingRecommendations'],
+            'pendingApprovals' => $statusCounts['pendingApprovals'],
+            'approvedRequests' => $statusCounts['approvedRequests'],
+            'disapprovedRequests' => $statusCounts['disapprovedRequests'],
+            'monthlyData' => $months,
             'showSignatureAlert' => $showSignatureAlert,
             'userSignature' => $userSignature,
         ]);
