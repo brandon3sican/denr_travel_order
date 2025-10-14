@@ -417,82 +417,149 @@
                         if (pieChart) pieChart.destroy();
                         
                         const pieCtx = document.getElementById('statusPieChart').getContext('2d');
-                        // Define colors for all statuses
-                        const statusColors = {
-                            'For Recommendation': {
-                                bg: 'rgba(249, 168, 37, 0.7)',
-                                border: 'rgba(249, 168, 37, 1)'
-                            },
-                            'For Approval': {
-                                bg: 'rgba(59, 130, 246, 0.7)',
-                                border: 'rgba(59, 130, 246, 1)'
-                            },
-                            'Approved': {
-                                bg: 'rgba(16, 185, 129, 0.7)',
-                                border: 'rgba(16, 185, 129, 1)'
-                            },
-                            'Completed': {
-                                bg: 'rgba(139, 92, 246, 0.7)',
-                                border: 'rgba(139, 92, 246, 1)'
-                            },
-                            'Cancelled': {
-                                bg: 'rgba(107, 114, 128, 0.7)',
-                                border: 'rgba(107, 114, 128, 1)'
-                            },
-                            'Disapproved': {
-                                bg: 'rgba(239, 68, 68, 0.7)',
-                                border: 'rgba(239, 68, 68, 1)'
-                            }
-                        };
+                        
+                        // Check if there's any data to display
+                        const hasData = data.pieChart && data.pieChart.data && data.pieChart.data.length > 0 && 
+                                     data.pieChart.data.some(value => value > 0);
+                        
+                        if (!hasData) {
+                            // Display "No Data" message
+                            // Get the container element
+                            const chartContainer = document.getElementById('statusPieChart').parentNode;
+                            
+                            // Create a wrapper div for the chart and button
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'relative w-full h-full flex items-center justify-center';
+                            
+                            // Create the chart canvas
+                            const canvas = document.createElement('canvas');
+                            canvas.id = 'statusPieChart';
+                            wrapper.appendChild(canvas);
+                            
+                            // Create the no-data content
+                            const noDataContent = document.createElement('div');
+                            noDataContent.className = 'absolute inset-0 flex flex-col items-center justify-center text-center p-4';
+                            
+                            const noDataText = document.createElement('p');
+                            noDataText.className = 'text-gray-500 mb-4 text-sm';
+                            noDataText.textContent = 'No travel order data available';
+                            
+                            const createButton = document.createElement('a');
+                            createButton.href = '{{ route("travel-orders.create") }}';
+                            createButton.className = 'inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150';
+                            createButton.innerHTML = `
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Create Travel Order
+                            `;
+                            
+                            noDataContent.appendChild(noDataText);
+                            noDataContent.appendChild(createButton);
+                            wrapper.appendChild(noDataContent);
+                            
+                            // Replace the existing canvas with our wrapper
+                            document.getElementById('statusPieChart').replaceWith(wrapper);
+                            
+                            // Initialize the chart with minimal data
+                            pieChart = new Chart(canvas, {
+                                type: 'doughnut',
+                                data: {
+                                    datasets: [{
+                                        data: [1],
+                                        backgroundColor: ['rgba(200, 200, 200, 0.2)'],
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    cutout: '60%',
+                                    plugins: {
+                                        legend: { display: false },
+                                        tooltip: { enabled: false }
+                                    },
+                                    animation: { animateRotate: false, animateScale: false }
+                                }
+                            });
+                        } else {
+                            // Define colors for all statuses
+                            const statusColors = {
+                                'For Recommendation': {
+                                    bg: 'rgba(249, 168, 37, 0.7)',
+                                    border: 'rgba(249, 168, 37, 1)'
+                                },
+                                'For Approval': {
+                                    bg: 'rgba(59, 130, 246, 0.7)',
+                                    border: 'rgba(59, 130, 246, 1)'
+                                },
+                                'Approved': {
+                                    bg: 'rgba(16, 185, 129, 0.7)',
+                                    border: 'rgba(16, 185, 129, 1)'
+                                },
+                                'Completed': {
+                                    bg: 'rgba(139, 92, 246, 0.7)',
+                                    border: 'rgba(139, 92, 246, 1)'
+                                },
+                                'Cancelled': {
+                                    bg: 'rgba(107, 114, 128, 0.7)',
+                                    border: 'rgba(107, 114, 128, 1)'
+                                },
+                                'Disapproved': {
+                                    bg: 'rgba(239, 68, 68, 0.7)',
+                                    border: 'rgba(239, 68, 68, 1)'
+                                }
+                            };
 
-                        // Prepare data for the chart
-                        const labels = data.pieChart.labels || [];
-                        const chartData = {
-                            labels: labels,
-                            datasets: [{
-                                data: data.pieChart.data || [],
-                                backgroundColor: data.pieChart.backgroundColors || labels.map(label => statusColors[label]?.bg || '#cccccc'),
-                                borderColor: data.pieChart.borderColors || labels.map(label => statusColors[label]?.border || '#999999'),
-                                borderWidth: 1
-                            }]
-                        };
+                            // Prepare data for the chart
+                            const labels = data.pieChart.labels || [];
+                            const chartData = {
+                                labels: labels,
+                                datasets: [{
+                                    data: data.pieChart.data || [],
+                                    backgroundColor: data.pieChart.backgroundColors || labels.map(label => statusColors[label]?.bg || '#cccccc'),
+                                    borderColor: data.pieChart.borderColors || labels.map(label => statusColors[label]?.border || '#999999'),
+                                    borderWidth: 1
+                                }]
+                            };
 
-                        pieChart = new Chart(pieCtx, {
-                            type: 'doughnut',
-                            data: chartData,
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        position: 'right',
-                                        labels: {
-                                            usePointStyle: true,
-                                            padding: 15,
-                                            font: {
-                                                size: 12
+                            pieChart = new Chart(pieCtx, {
+                                type: 'doughnut',
+                                data: chartData,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                            labels: {
+                                                usePointStyle: true,
+                                                padding: 15,
+                                                font: {
+                                                    size: 12
+                                                }
+                                            }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    const label = context.label || '';
+                                                    const value = context.raw || 0;
+                                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                    const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                                    return `${label}: ${value} (${percentage}%)`;
+                                                }
                                             }
                                         }
                                     },
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function(context) {
-                                                const label = context.label || '';
-                                                const value = context.raw || 0;
-                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                                                return `${label}: ${value} (${percentage}%)`;
-                                            }
-                                        }
+                                    cutout: '60%',
+                                    animation: {
+                                        animateScale: true,
+                                        animateRotate: true
                                     }
-                                },
-                                cutout: '60%',
-                                animation: {
-                                    animateScale: true,
-                                    animateRotate: true
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 })
                 .catch(error => {
