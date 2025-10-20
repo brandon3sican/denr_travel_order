@@ -68,9 +68,9 @@
                     <span class="ml-2 text-lg">My Travel Orders</span>
                 </a>
                 @if ($user->travelOrderRoles->whereIn('id', [6])->isNotEmpty())
-                    <a href=""
-                        class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
-                        <i class="fas fa-suitcase w-4 text-center text-gray-400 text-xs"></i>
+                    <a href="{{ route('numbering') }}"
+                        class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('numbering') ? 'bg-gray-700' : '' }}">
+                        <i class="fas fa-list-ol w-4 text-center text-gray-400 text-xs"></i>
                         <span class="ml-2 text-lg">Travel Order Numbering</span>
                     </a>
                 @endif
@@ -117,9 +117,9 @@
                     <span class="ml-2 text-lg">All Approvals History</span>
                 </a>
 
-                <a href=""
-                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5">
-                    <i class="fas fa-clipboard-list w-4 text-center text-gray-400 text-xs"></i>
+                <a href="{{ route('numbering') }}"
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('numbering') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-list-ol w-4 text-center text-gray-400 text-xs"></i>
                     <span class="ml-2 text-lg">Travel Order Numbering</span>
                 </a>
 

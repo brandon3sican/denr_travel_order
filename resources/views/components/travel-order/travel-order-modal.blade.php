@@ -466,11 +466,11 @@
                             </td>
                             <td style="width:173.7pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
-                                    ${order.status_id !== 1 && order.status_id !== 4 || order.status_id !== 5 ? 
+                                    ${order.travel_order_number?.is_confirmed === 1 || order.travel_order_number?.is_confirmed === true ? 
                                         (order.recommender_employee?.signature?.signature_url ? 
                                             `<img src="${order.recommender_employee.signature.signature_url}" alt="Recommender Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                             `<!-- No signature found for ${order.recommender_employee?.first_name} ${order.recommender_employee?.middle_name} ${order.recommender_employee?.last_name} -->
-                                                                                                                                <p>signature</p>`
+                                                                                                                                                <p>signature</p>`
                                         ) : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
@@ -485,13 +485,13 @@
                             </td>
                             <td style="width:163.15pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
-                                    ${order.status_id !== 1 && order.status_id !== 2 && order.status_id !== 4 && order.status_id !== 5 ? `
-                                                                                                                            ${order.approver_employee?.signature?.signature_url ? 
-                                                                                                                                `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
-                                                                                                                                `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} ${order.approver_employee?.suffix} -->
-                                            <p>signature</p>`
-                                                                                                                            }
-                                                                                                                        ` : '<br><br>'
+                                    ${order.travel_order_number?.is_confirmed === 1 || order.travel_order_number?.is_confirmed === true ? `
+                                                                                                                                            ${order.approver_employee?.signature?.signature_url ? 
+                                                                                                                                                `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
+                                                                                                                                                `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} ${order.approver_employee?.suffix} -->
+                                            `
+                                                                                                                                            }
+                                                                                                                                        ` : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
                                         <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
@@ -572,10 +572,10 @@
                             </td>
                             <td style="width:145.05pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div class="text-center">
-                                    ${order.employee?.signature?.signature_url ? 
+                                    ${(order.travel_order_number?.is_confirmed === 1 || order.travel_order_number?.is_confirmed === true) && order.employee?.signature?.signature_url ? 
                                         `<img src="${order.employee.signature.signature_url}" class="text-center" alt="Employee Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                         `<!-- No signature found for ${order.employee?.first_name} ${order.employee?.middle_name} ${order.employee?.last_name} -->
-                                                                                                                            <p>signature</p>`
+                                                                                                                                            `
                                     }
                                     <p style="margin-top: 0px; line-height:normal; font-size:10pt;">
                                         <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">

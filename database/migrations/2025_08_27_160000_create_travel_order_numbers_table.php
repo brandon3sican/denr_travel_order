@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('travel_order_numbers', function (Blueprint $table) {
             $table->id();
             $table->string('travel_order_number')->unique();
+            $table->boolean('is_confirmed')->default(false);
             $table->foreignId('travel_order_id')->constrained('travel_orders')->onDelete('cascade');
             $table->timestamps();
         });

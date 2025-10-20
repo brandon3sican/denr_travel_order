@@ -87,6 +87,15 @@ Route::middleware('auth')->group(function () {
 
         // Travel Orders History
         Route::get('/history', [TravelOrderController::class, 'history'])->name('history');
+        
+        // Travel Order Numbering
+        Route::get('/numbering', [TravelOrderController::class, 'numbering'])->name('numbering');
+        
+        // Confirm Travel Order Number (API)
+        Route::post('/{id}/confirm', [TravelOrderController::class, 'confirm'])->name('confirm');
+        
+        // Reset Travel Order Confirmation (API)
+        Route::post('/{id}/reset-confirmation', [TravelOrderController::class, 'resetConfirmation'])->name('reset-confirmation');
     });
 
     // Role Management Routes
