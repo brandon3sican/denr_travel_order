@@ -28,6 +28,7 @@ erDiagram
     travel_orders ||--|| travel_order_numbers : "has one"
     travel_orders }|--|| travel_order_status : "has one"
     employees ||--|| employee_signatures : "has one"
+    employees ||--|| users : "has one"
     
     users {
         bigint id PK
@@ -262,7 +263,7 @@ This section provides detailed information about the data stored in each table, 
 ### Core Tables
 
 #### 1. `users`
-Stores user authentication and basic information.
+Stores user authentication and basic information. Each user is linked to exactly one employee record.
 
 | Field | Type | Null | Key | Default | Description |
 |-------|------|------|-----|---------|-------------|
@@ -280,6 +281,7 @@ Stores user authentication and basic information.
 - Unique: `email`
 
 **Relationships:**
+- Belongs to `employees` (one-to-one relationship)
 - Has many `travel_orders` (as employee)
 - Has many `user_travel_order_roles`
 - Has many `travel_order_roles` through `user_travel_order_roles`
@@ -310,6 +312,7 @@ Stores detailed employee information.
 
 **Relationships:**
 - Has one `employee_signatures`
+- Has one `users` (account credentials)
 - Has many `travel_orders` (through email)
 
 ### Transaction Tables
