@@ -24,15 +24,16 @@
 
                             <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                                 <!-- Search -->
-                                <div class="relative flex-1">
-                                    <input type="text" id="searchInput" placeholder="Search..."
-                                        class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    <svg class="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
+                                <form method="GET" action="{{ route('history') }}" class="max-w-md">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                        <input type="text" name="search" value="{{ request('search') }}"
+                                            placeholder="Search travel order history..."
+                                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
+                                    </div>
+                                </form>
 
                                 <!-- Date Range Picker -->
                                 <div class="relative" id="dateRangePicker">
@@ -251,15 +252,16 @@
 
                             <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                                 <!-- Search -->
-                                <div class="relative flex-1">
-                                    <input type="text" id="searchInput" placeholder="Search..."
-                                        class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    <svg class="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
+                                <form method="GET" action="{{ route('history') }}" class="max-w-md">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                        <input type="text" name="search" value="{{ request('search') }}"
+                                            placeholder="Search travel order history..."
+                                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
+                                    </div>
+                                </form>
 
                                 <!-- Date Range Picker -->
                                 <div class="relative" id="dateRangePicker">

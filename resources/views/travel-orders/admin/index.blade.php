@@ -30,13 +30,17 @@
                     <div class="bg-white rounded-lg border border-gray-200 p-3">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
                             <!-- Search -->
-                            <div>
-                                <label for="search" class="sr-only">Search</label>
-                                <div>
-                                    <input type="text" id="search" placeholder="Search..."
-                                        value="{{ request('search') }}"
-                                        class="block w-full pl-7 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                </div>
+                            <div class="mt-3">
+                                <form method="GET" action="{{ route('admin.index') }}" class="max-w-md">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                        <input type="text" name="search" value="{{ request('search') }}"
+                                            placeholder="Search travel orders..."
+                                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
+                                    </div>
+                                </form>
                             </div>
 
                             <!-- Status Filter -->

@@ -25,13 +25,16 @@
                     <!-- Filters -->
                     <div class="p-4 border-b border-gray-200 bg-gray-50">
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <div class="relative flex-1 max-w-md">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-search text-gray-400"></i>
+                            <form method="GET" action="{{ route('signature-management.index') }}" class="max-w-md">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-search text-gray-400"></i>
+                                    </div>
+                                    <input type="text" name="search" value="{{ request('search') }}"
+                                        placeholder="Search by name, email, or position..."
+                                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
                                 </div>
-                                <input type="text" id="searchUsers" placeholder="Search by name, email, or position..."
-                                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition duration-150">
-                            </div>
+                            </form>
 
                             <div class="relative w-full sm:w-64">
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
