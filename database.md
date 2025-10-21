@@ -196,13 +196,22 @@ Main table for travel order records, storing all travel request details and work
 ### 7. `travel_order_numbers`
 Manages unique travel order numbers.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | bigint | Primary key |
-| travel_order_number | string | Unique travel order number |
-| travel_order_id | bigint | Foreign key to travel_orders |
-| created_at | timestamp | Record creation timestamp |
-| updated_at | timestamp | Record update timestamp |
+| Field | Type | Null | Key | Default | Description |
+|-------|------|------|-----|---------|-------------|
+| id | bigint | NO | PRI | | Auto-incrementing primary key |
+| travel_order_number | varchar(255) | NO | UNI | | Unique travel order number |
+| is_confirmed | boolean | NO | | 0 | Whether the travel order number has been confirmed |
+| travel_order_id | bigint | NO | MUL | | Foreign key to travel_orders |
+| created_at | timestamp | YES | | NULL | Record creation timestamp |
+| updated_at | timestamp | YES | | NULL | Record last update timestamp |
+
+**Indexes:**
+- Primary key: `id`
+- Unique: `travel_order_number`
+- Foreign key: `travel_order_id` references `travel_orders.id` (cascade delete)
+
+**Relationships:**
+- Belongs to `travel_orders`
 
 ### 8. `user_travel_order_roles`
 Junction table for user-role relationships.
@@ -359,7 +368,7 @@ Tracks different statuses of travel orders.
 | Field | Type | Null | Key | Default | Description |
 |-------|------|------|-----|---------|-------------|
 | id | bigint | NO | PRI | | Auto-incrementing primary key |
-| name | varchar(50) | NO | UNI | | Status name (e.g., 'Pending', 'Approved', 'Rejected') |
+| name | varchar(255) | NO | UNI | | Status name (e.g., 'Pending', 'Approved', 'Rejected') |
 | created_at | timestamp | YES | | NULL | Record creation timestamp |
 | updated_at | timestamp | YES | | NULL | Record last update timestamp |
 
@@ -376,7 +385,7 @@ Defines different roles in the travel order workflow.
 | Field | Type | Null | Key | Default | Description |
 |-------|------|------|-----|---------|-------------|
 | id | bigint | NO | PRI | | Auto-incrementing primary key |
-| name | varchar(50) | NO | UNI | | Role name (e.g., 'approver', 'recommender') |
+| name | varchar(255) | NO | UNI | | Role name (e.g., 'approver', 'recommender', 'requester') |
 | description | text | YES | | NULL | Role description |
 | created_at | timestamp | YES | | NULL | Record creation timestamp |
 | updated_at | timestamp | YES | | NULL | Record last update timestamp |
@@ -397,18 +406,20 @@ Links users to their travel order roles.
 | Field | Type | Null | Key | Default | Description |
 |-------|------|------|-----|---------|-------------|
 | id | bigint | NO | PRI | | Auto-incrementing primary key |
-| user_id | bigint | NO | MUL | | Foreign key to users.id |
+| user_email | varchar(255) | NO | MUL | | Foreign key to users.email |
 | travel_order_role_id | bigint | NO | MUL | | Foreign key to travel_order_roles.id |
 | created_at | timestamp | YES | | NULL | Record creation timestamp |
 | updated_at | timestamp | YES | | NULL | Record last update timestamp |
 
 **Indexes:**
 - Primary key: `id`
-- Foreign keys: `user_id`, `travel_order_role_id`
-- Unique: `user_id` + `travel_order_role_id` (composite key)
+- Foreign keys: 
+  - `user_email` references `users.email` (cascade delete)
+  - `travel_order_role_id` references `travel_order_roles.id` (cascade delete)
+- Unique constraint on (`user_email`, `travel_order_role_id`) to prevent duplicate role assignments
 
 **Relationships:**
-- Belongs to `users`
+- Belongs to `users` (via email)
 - Belongs to `travel_order_roles`
 
 ## Data Types and Constraints
