@@ -228,7 +228,7 @@
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
                             </td>
                             <td style="width:82.7pt; padding:0pt 5.4pt; vertical-align:top;">
-                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">No. ${order.travel_order_number?.travel_order_number || 'N/A'}</span></p>
+                                <p style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">No. ${order.travel_order_number?.travel_order_number ? (order.travel_order_number.is_confirmed === 1 || order.travel_order_number.is_confirmed === true ? order.travel_order_number.travel_order_number : order.travel_order_number.travel_order_number + ' (temporary)') : 'N/A'}</span></p>
                             </td>
                             <td style="width:82.7pt; padding:0pt 5.4pt; vertical-align:top;">
                                 <p style="margin-bottom:0pt; line-height:normal; font-size:10pt;"><span style="font-family:'Times New Roman';">&nbsp;</span></p>
@@ -470,7 +470,7 @@
                                         (order.recommender_employee?.signature?.signature_url ? 
                                             `<img src="${order.recommender_employee.signature.signature_url}" alt="Recommender Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                             `<!-- No signature found for ${order.recommender_employee?.first_name} ${order.recommender_employee?.middle_name} ${order.recommender_employee?.last_name} -->
-                                                                                                                                                <p>signature</p>`
+                                                                                                                                                    <p>signature</p>`
                                         ) : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
@@ -486,12 +486,12 @@
                             <td style="width:163.15pt; border-bottom:0.75pt solid #000000; padding:0pt 5.4pt; vertical-align:top;">
                                 <div style="text-align: center;">
                                     ${order.travel_order_number?.is_confirmed === 1 || order.travel_order_number?.is_confirmed === true ? `
-                                                                                                                                            ${order.approver_employee?.signature?.signature_url ? 
-                                                                                                                                                `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
-                                                                                                                                                `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} ${order.approver_employee?.suffix} -->
+                                                                                                                                                ${order.approver_employee?.signature?.signature_url ? 
+                                                                                                                                                    `<img src="${order.approver_employee.signature.signature_url}" alt="Approver Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
+                                                                                                                                                    `<!-- No signature found for ${order.approver_employee?.first_name} ${order.approver_employee?.middle_name} ${order.approver_employee?.last_name} ${order.approver_employee?.suffix} -->
                                             `
-                                                                                                                                            }
-                                                                                                                                        ` : '<br><br>'
+                                                                                                                                                }
+                                                                                                                                            ` : '<br><br>'
                                     }
                                     <p style="margin-top: 5px; line-height:normal; font-size:10pt;">
                                         <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
@@ -575,7 +575,7 @@
                                     ${(order.travel_order_number?.is_confirmed === 1 || order.travel_order_number?.is_confirmed === true) && order.employee?.signature?.signature_url ? 
                                         `<img src="${order.employee.signature.signature_url}" class="text-center" alt="Employee Signature" style="max-width: 150px; max-height: 60px; display: inline-block;" />` : 
                                         `<!-- No signature found for ${order.employee?.first_name} ${order.employee?.middle_name} ${order.employee?.last_name} -->
-                                                                                                                                            `
+                                                                                                                                                `
                                     }
                                     <p style="margin-top: 0px; line-height:normal; font-size:10pt;">
                                         <strong><span style="font-family:'Times New Roman'; text-transform: uppercase">
