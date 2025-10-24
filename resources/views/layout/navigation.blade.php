@@ -74,6 +74,11 @@
                         <span class="ml-2 text-lg">Travel Order Numbering</span>
                     </a>
                 @endif
+                <a href=""
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('attachment.index') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-paperclip w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">Attachment Management</span>
+                </a>
             @endif
 
             @if ($hasApprovalRole && ($user->employee && $user->employee->signature))
@@ -143,28 +148,11 @@
                     <span class="ml-2 text-lg">Signature Management</span>
                 </a>
 
-                <!-- Reports Section -->
-                {{-- <div class="px-3 py-1 mt-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider">Reports</div>
-            <a href="{{ route('reports.approval-metrics') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.approval-metrics') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-chart-pie w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">Metrics</span>
-            </a>
-            <a href="{{ route('reports.travel-volume') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.travel-volume') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-chart-line w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">Volume</span>
-            </a>
-            <a href="{{ route('reports.employee-travel') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.employee-travel') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-users w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">Employees</span>
-            </a>
-            <a href="{{ route('reports.department') }}"
-                class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('reports.department') ? 'bg-gray-700' : '' }}">
-                <i class="fas fa-building w-4 text-center text-gray-400 text-xs"></i>
-                <span class="ml-2">Departments</span>
-            </a> --}}
+                <a href=""
+                    class="flex items-center px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700/60 rounded mx-1.5 mb-0.5 {{ request()->routeIs('attachment.index') ? 'bg-gray-700' : '' }}">
+                    <i class="fas fa-paperclip w-4 text-center text-gray-400 text-xs"></i>
+                    <span class="ml-2 text-lg">Attachment Management</span>
+                </a>
             @endif
 
             <!-- User Section -->

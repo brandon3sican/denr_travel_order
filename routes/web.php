@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     // Password verification route
     Route::post('/verify-password', function (\Illuminate\Http\Request $request) {
         return response()->json([
-            'valid' => \Illuminate\Support\Facades\Hash::check($request->password, $request->user()->password)
+            'valid' => \Illuminate\Support\Facades\Hash::check($request->password, $request->user()->password),
         ]);
     })->name('verify-password');
 
@@ -87,13 +87,13 @@ Route::middleware('auth')->group(function () {
 
         // Travel Orders History
         Route::get('/history', [TravelOrderController::class, 'history'])->name('history');
-        
+
         // Travel Order Numbering
         Route::get('/numbering', [TravelOrderController::class, 'numbering'])->name('numbering');
-        
+
         // Confirm Travel Order Number (API)
         Route::post('/{id}/confirm', [TravelOrderController::class, 'confirm'])->name('confirm');
-        
+
         // Reset Travel Order Confirmation (API)
         Route::post('/{id}/reset-confirmation', [TravelOrderController::class, 'resetConfirmation'])->name('reset-confirmation');
     });
@@ -132,15 +132,6 @@ Route::middleware('auth')->group(function () {
     // Analytics API Route
     Route::get('/api/travel-orders/analytics', [\App\Http\Controllers\Api\AnalyticsController::class, 'getTravelOrderAnalytics'])
         ->name('api.travel-orders.analytics');
-
-    // Reports Routes
-    Route::prefix('reports')->group(function () {
-        Route::get('/', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
-        Route::get('/travel-volume', [\App\Http\Controllers\ReportController::class, 'travelVolume'])->name('reports.travel-volume');
-        Route::get('/approval-metrics', [\App\Http\Controllers\ReportController::class, 'approvalMetrics'])->name('reports.approval-metrics');
-        Route::get('/employee-travel', [\App\Http\Controllers\ReportController::class, 'employeeTravelPatterns'])->name('reports.employee-travel');
-        Route::get('/department', [\App\Http\Controllers\ReportController::class, 'departmentReports'])->name('reports.department');
-    });
 });
 
 require __DIR__.'/auth.php';

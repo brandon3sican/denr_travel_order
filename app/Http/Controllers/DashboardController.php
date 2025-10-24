@@ -79,15 +79,15 @@ class DashboardController extends Controller
 
         // Calculate statistics
         $totalTravelOrders = $allTravelOrders->count();
-        
+
         // Get counts for each status
         $statusCounts = [
             'pendingRecommendations' => $allTravelOrders->where('status_id', 1)->count(), // Pending/For Recommendation
-            'pendingApprovals' => $allTravelOrders->where('status_id', 4)->count(),      // For Approval
-            'approvedRequests' => $allTravelOrders->where('status_id', 2)->count(),      // Approved
-            'disapprovedRequests' => $allTravelOrders->where('status_id', 6)->count(),   // Disapproved
+            'pendingApprovals' => $allTravelOrders->where('status_id', 2)->count(),      // For Approval
+            'approvedRequests' => $allTravelOrders->where('status_id', 3)->count(),      // Approved
+            'disapprovedRequests' => $allTravelOrders->where('status_id', 4)->count(),   // Disapproved
             'cancelledRequests' => $allTravelOrders->where('status_id', 5)->count(),     // Cancelled
-            'completedRequests' => $allTravelOrders->where('status_id', 3)->count(),     // Completed
+            'completedRequests' => $allTravelOrders->where('status_id', 6)->count(),     // Completed
         ];
 
         // Get monthly data for the line chart (last 6 months)
@@ -96,13 +96,13 @@ class DashboardController extends Controller
             $date = now()->subMonths($monthsAgo);
             $start = $date->copy()->startOfMonth();
             $end = $date->copy()->endOfMonth();
-            
+
             return [
                 'month' => $date->format('M Y'),
                 'total' => $allTravelOrders->whereBetween('created_at', [$start, $end])->count(),
                 'completed' => $allTravelOrders->where('status_id', 3)
                     ->whereBetween('created_at', [$start, $end])
-                    ->count()
+                    ->count(),
             ];
         })->reverse()->values();
 

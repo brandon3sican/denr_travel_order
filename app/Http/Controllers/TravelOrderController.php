@@ -52,16 +52,17 @@ class TravelOrderController extends Controller
      */
     public function resetConfirmation($id)
     {
-        \Log::info('Starting resetConfirmation for travel order ID: ' . $id);
-        
+        \Log::info('Starting resetConfirmation for travel order ID: '.$id);
+
         try {
             DB::beginTransaction();
 
             $travelOrder = TravelOrderModel::with('travelOrderNumber')->findOrFail($id);
             \Log::info('Found travel order:', ['id' => $travelOrder->id]);
-            
-            if (!$travelOrder->travelOrderNumber) {
-                \Log::warning('No travel order number found for travel order ID: ' . $id);
+
+            if (! $travelOrder->travelOrderNumber) {
+                \Log::warning('No travel order number found for travel order ID: '.$id);
+
                 return response()->json([
                     'success' => false,
                     'message' => 'No travel order number found to reset',
@@ -71,7 +72,7 @@ class TravelOrderController extends Controller
             \Log::info('Current travel order number:', [
                 'id' => $travelOrder->travelOrderNumber->id,
                 'current_is_confirmed' => $travelOrder->travelOrderNumber->is_confirmed,
-                'travel_order_number' => $travelOrder->travelOrderNumber->travel_order_number
+                'travel_order_number' => $travelOrder->travelOrderNumber->travel_order_number,
             ]);
 
             // Update using direct DB query to bypass any potential model events
@@ -79,17 +80,17 @@ class TravelOrderController extends Controller
                 ->where('id', $travelOrder->travelOrderNumber->id)
                 ->update([
                     'is_confirmed' => 0,
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
 
             \Log::info('Update result:', ['rows_affected' => $updated]);
 
             // Refresh the model to get the updated data
             $travelOrder->load('travelOrderNumber');
-            
+
             \Log::info('After update - travel order number:', [
                 'is_confirmed' => $travelOrder->travelOrderNumber->is_confirmed,
-                'updated_at' => $travelOrder->travelOrderNumber->updated_at
+                'updated_at' => $travelOrder->travelOrderNumber->updated_at,
             ]);
 
             DB::commit();
@@ -97,14 +98,14 @@ class TravelOrderController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Travel order confirmation has been reset successfully',
-                'data' => $travelOrder->travelOrderNumber->refresh() // Ensure we have the latest data
+                'data' => $travelOrder->travelOrderNumber->refresh(), // Ensure we have the latest data
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Error resetting travel order confirmation: ' . $e->getMessage(), [
+            \Log::error('Error resetting travel order confirmation: '.$e->getMessage(), [
                 'exception' => $e,
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
@@ -127,7 +128,7 @@ class TravelOrderController extends Controller
         \Log::info('Confirming travel order', [
             'travel_order_id' => $id,
             'request_data' => $request->all(),
-            'request_headers' => $request->headers->all()
+            'request_headers' => $request->headers->all(),
         ]);
 
         try {
@@ -140,17 +141,17 @@ class TravelOrderController extends Controller
                     'string',
                     'max:255',
                     \Illuminate\Validation\Rule::unique('travel_order_numbers', 'travel_order_number')
-                        ->ignore($id, 'travel_order_id')
+                        ->ignore($id, 'travel_order_id'),
                 ],
             ]);
 
             // Get the travel order with its number
             $travelOrder = TravelOrderModel::with('travelOrderNumber')->findOrFail($id);
-            
+
             // Log current state before update
             \Log::info('Before update', [
                 'travel_order' => $travelOrder->toArray(),
-                'existing_number' => $travelOrder->travelOrderNumber ? $travelOrder->travelOrderNumber->toArray() : null
+                'existing_number' => $travelOrder->travelOrderNumber ? $travelOrder->travelOrderNumber->toArray() : null,
             ]);
 
             // Direct database update to ensure it works
@@ -162,31 +163,31 @@ class TravelOrderController extends Controller
                         'travel_order_number' => $validated['travel_order_number'],
                         'is_confirmed' => 1,
                         'updated_at' => $now,
-                        'created_at' => $travelOrder->travelOrderNumber->created_at ?? $now
+                        'created_at' => $travelOrder->travelOrderNumber->created_at ?? $now,
                     ]
                 );
 
             // Get the updated record
             $travelOrderNumber = TravelOrderNumber::where('travel_order_id', $id)->first();
-            
+
             // Log the raw database result and updated record
             \Log::info('Database update result', [
                 'result' => $result,
                 'updated_record' => $travelOrderNumber ? $travelOrderNumber->toArray() : null,
-                'query' => DB::getQueryLog()
+                'query' => DB::getQueryLog(),
             ]);
 
             // If using model events, also update through the model
             if ($travelOrder->travelOrderNumber) {
                 $travelOrder->travelOrderNumber->update([
                     'travel_order_number' => $validated['travel_order_number'],
-                    'is_confirmed' => true
+                    'is_confirmed' => true,
                 ]);
             } else {
                 $travelOrderNumber = TravelOrderNumber::create([
                     'travel_order_id' => $id,
                     'travel_order_number' => $validated['travel_order_number'],
-                    'is_confirmed' => true
+                    'is_confirmed' => true,
                 ]);
             }
 
@@ -199,7 +200,7 @@ class TravelOrderController extends Controller
                 'travel_order' => $travelOrder->toArray(),
                 'travel_order_number' => $travelOrderNumber ? $travelOrderNumber->toArray() : null,
                 'is_confirmed_set' => $travelOrderNumber ? $travelOrderNumber->is_confirmed : null,
-                'updated_at' => $travelOrderNumber ? $travelOrderNumber->updated_at : null
+                'updated_at' => $travelOrderNumber ? $travelOrderNumber->updated_at : null,
             ]);
 
             DB::commit();
