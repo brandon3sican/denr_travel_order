@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TravelOrderStatus;
 use App\Models\TravelOrder as TravelOrderModel;
+use App\Models\TravelOrderStatus;
+use App\Models\TravelOrderStatusHistory;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -149,8 +150,33 @@ class TravelOrderStatusController extends Controller
             return back()->with('error', 'Target status not found: ' . $targetName);
         }
 
+        // Get client metadata
+        $client_meta = [
+            'device' => $request->input('client_meta.device') ?? null,
+            'browser' => $request->input('client_meta.browser') ?? null,
+        ];
+
+        // Get the previous status name
+        $prevStatusName = $travelOrder->status ? $travelOrder->status->name : null;
+
+        // Update the status
         $travelOrder->status_id = $targetStatus->id;
         $travelOrder->save();
+
+        // Log the status reset
+        TravelOrderStatusHistory::create([
+            'travel_order_id' => $travelOrder->id,
+            'user_id' => auth()->id(),
+            'action' => 'reset',
+            'from_status' => $prevStatusName,
+            'to_status' => $targetName,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'),
+            'device' => $client_meta['device'],
+            'browser' => $client_meta['browser'],
+            'location' => $request->input('location'),
+            'client_meta' => $client_meta,
+        ]);
 
         return back()->with('success', 'Travel order #'.$travelOrder->id.' status reset to '.$targetName.'.');
     }

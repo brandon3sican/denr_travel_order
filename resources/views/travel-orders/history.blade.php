@@ -100,8 +100,25 @@
                                             {{ optional($h->created_at)->format('h:i A') ?? '—' }}
                                         </td>
                                         <td class="px-4 py-3">
-                                            <span
-                                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">{{ ucfirst(str_replace('_', ' ', $h->action)) }}</span>
+                                            @if($h->action === 'reset')
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
+                                                    <i class="fas fa-undo-alt mr-1"></i>
+                                                    {{ ucfirst($h->action) }}
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                                    @if($h->action === 'approve')
+                                                        <i class="fas fa-check-circle mr-1"></i>
+                                                    @elseif($h->action === 'recommend')
+                                                        <i class="fas fa-thumbs-up mr-1"></i>
+                                                    @elseif($h->action === 'reject')
+                                                        <i class="fas fa-times-circle mr-1"></i>
+                                                    @elseif($h->action === 'create')
+                                                        <i class="fas fa-plus-circle mr-1"></i>
+                                                    @endif
+                                                    {{ ucfirst(str_replace('_', ' ', $h->action)) }}
+                                                </span>
+                                            @endif
                                         </td>
                                         <td class="px-4 py-3">
                                             <div class="space-y-1">
@@ -131,9 +148,23 @@
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 text-xs text-gray-700">{{ $h->from_status ?? '—' }} <i
-                                                class="fas fa-long-arrow-alt-right"></i>
-                                            {{ $h->to_status ?? '—' }}
+                                        <td class="px-4 py-3 text-xs">
+                                            @if($h->action === 'reset')
+                                                <div class="text-yellow-700 font-medium">
+                                                    <span class="line-through">{{ $h->from_status ?? '—' }}</span>
+                                                    <i class="fas fa-sync-alt mx-1 text-yellow-500"></i>
+                                                    <span class="text-green-600">{{ $h->to_status ?? '—' }}</span>
+                                                    <div class="text-yellow-600 text-xs mt-1">
+                                                        <i class="fas fa-info-circle"></i> Status was reset by administrator
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="text-gray-700">
+                                                    {{ $h->from_status ?? '—' }}
+                                                    <i class="fas fa-long-arrow-alt-right mx-1"></i>
+                                                    {{ $h->to_status ?? '—' }}
+                                                </div>
+                                            @endif
                                         </td>
 
                                         @php
