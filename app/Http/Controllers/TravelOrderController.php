@@ -535,6 +535,15 @@ class TravelOrderController extends Controller
                 foreach ($request->file('documents') as $file) {
                     $fileName = time().'_'.$file->getClientOriginalName();
                     $filePath = $file->storeAs($path, $fileName, 'public');
+                    
+                    // Save to attachments table
+                    $travel_order->attachments()->create([
+                        'file_path' => $filePath,
+                        'original_name' => $file->getClientOriginalName(),
+                        'mime_type' => $file->getClientMimeType(),
+                        'file_size' => $file->getSize(),
+                    ]);
+
                     $uploadedFiles[] = [
                         'name' => $file->getClientOriginalName(),
                         'path' => $filePath,
@@ -550,7 +559,6 @@ class TravelOrderController extends Controller
                 'status_id' => $completedStatus->id,
                 'completed_at' => now(),
                 'completed_by' => Auth::user()->id,
-                'documents' => $uploadedFiles,
             ]);
 
             return response()->json([
@@ -879,6 +887,56 @@ class TravelOrderController extends Controller
             return response()->json([
                 'message' => 'Server error: '.$e->getMessage(),
             ], 500);
+        }
+    }
+
+    /**
+     * Download an attachment
+     *
+     * @param  int  $id
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse|\Illuminate\Http\JsonResponse
+     */
+    /**
+     * Get all attachments for a travel order
+     *
+     * @param  int  $id Travel Order ID
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAttachments($id)
+    {
+        try {
+            $travelOrder = TravelOrderModel::findOrFail($id);
+            $attachments = $travelOrder->attachments()->get(['id', 'original_name', 'file_path', 'file_size', 'mime_type']);
+            
+            return response()->json($attachments);
+            
+        } catch (\Exception $e) {
+            Log::error('Error fetching attachments: '.$e->getMessage());
+            return response()->json(['message' => 'Failed to fetch attachments'], 500);
+        }
+    }
+
+    /**
+     * Download an attachment
+     *
+     * @param  int  $id Attachment ID
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse|\Illuminate\Http\JsonResponse
+     */
+    public function downloadAttachment($id)
+    {
+        try {
+            $attachment = \App\Models\Attachment::findOrFail($id);
+            
+            // Check if file exists in storage
+            if (!\Storage::disk('public')->exists($attachment->file_path)) {
+                return response()->json(['message' => 'File not found'], 404);
+            }
+            
+            return \Storage::disk('public')->download($attachment->file_path, $attachment->original_name);
+            
+        } catch (\Exception $e) {
+            Log::error('Error downloading attachment: '.$e->getMessage());
+            return response()->json(['message' => 'Failed to download file'], 500);
         }
     }
 

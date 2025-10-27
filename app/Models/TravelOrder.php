@@ -30,6 +30,14 @@ class TravelOrder extends Model
         return $this->belongsTo(Employee::class, 'employee_email', 'email');
     }
 
+    /**
+     * Get all attachments for the travel order.
+     */
+    public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Attachment::class, 'travel_order_id');
+    }
+
     public function recommenderEmployee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'recommender', 'email');

@@ -53,7 +53,7 @@
     $statusSlug = str_replace(' ', '-', strtolower($statusName));
 @endphp
 
-<div class="{{ $status['bg'] }} rounded-lg shadow-md overflow-hidden border {{ $status['border'] }} hover:shadow-lg transition-shadow duration-300 relative pt-8 pl-5 pr-8"
+<div class="{{ $status['bg'] }} rounded-lg shadow-xxl overflow-hidden border {{ $status['border'] }} hover:shadow-lg transition-shadow duration-300 relative pt-8 pl-5 pr-8"
     data-status="{{ $statusSlug }}">
 
     <!-- Order counter badge -->
@@ -148,6 +148,18 @@
                         <i class="fas fa-times-circle mr-2"></i> Cancel
                     </button>
                 </form>
+            @endif
+
+            @if ($order->status_id == 6)
+                <!-- Attachments button - Full width below view button -->
+                <div class="w-full mt-2">
+                    <button onclick="showAttachments({{ $order->id }}, event)"
+                        class="w-full flex justify-center items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-gray-600 bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+                        <i class="far fa-file-pdf mr-2 text-red-500"></i>
+                        <span>Download Attachments</span>
+                        <i class="fas fa-download ml-2 text-sm"></i>
+                    </button>
+                </div>
             @endif
         </div>
     </div>

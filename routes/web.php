@@ -124,6 +124,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Attachment download route
+    Route::get('/attachments/{id}/download', [TravelOrderController::class, 'downloadAttachment'])
+        ->name('attachments.download')
+        ->middleware('auth');
+
     Route::get('/travel-volume', [\App\Http\Controllers\ReportController::class, 'travelVolume'])->name('reports.travel-volume');
     Route::get('/approval-metrics', [\App\Http\Controllers\ReportController::class, 'approvalMetrics'])->name('reports.approval-metrics');
     Route::get('/employee-travel', [\App\Http\Controllers\ReportController::class, 'employeeTravelPatterns'])->name('reports.employee-travel');
@@ -132,6 +137,11 @@ Route::middleware('auth')->group(function () {
     // Analytics API Route
     Route::get('/api/travel-orders/analytics', [\App\Http\Controllers\Api\AnalyticsController::class, 'getTravelOrderAnalytics'])
         ->name('api.travel-orders.analytics');
+        
+    // Attachments API Route
+    Route::get('/api/travel-orders/{id}/attachments', [TravelOrderController::class, 'getAttachments'])
+        ->name('api.travel-orders.attachments')
+        ->middleware('auth');
 });
 
 require __DIR__.'/auth.php';

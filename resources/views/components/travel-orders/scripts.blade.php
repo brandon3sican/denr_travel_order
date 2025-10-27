@@ -219,6 +219,64 @@
         }
     });
 
+    // Function to show and handle attachments
+    async function showAttachments(orderId, event) {
+        let button = null;
+        let originalHtml = '';
+        
+        try {
+            // Show loading state if event is provided
+            if (event) {
+                button = event.target.closest('button');
+                if (button) {
+                    originalHtml = button.innerHTML;
+                    button.disabled = true;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Downloading...';
+                }
+            }
+            
+            // Fetch the attachments for this order
+            const response = await fetch(`/api/travel-orders/${orderId}/attachments`);
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to fetch attachments');
+            }
+            
+            if (data.length === 0) {
+                alert('No attachments found for this travel order');
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = originalHtml;
+                }
+                return;
+            }
+            
+            // Download each attachment
+            for (const attachment of data) {
+                const link = document.createElement('a');
+                link.href = `/attachments/${attachment.id}/download`;
+                link.download = attachment.original_name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Add a small delay between downloads to avoid browser issues
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+        } catch (error) {
+            console.error('Error downloading attachments:', error);
+            alert('Failed to download attachments: ' + error.message);
+        } finally {
+            // Reset button state if button was found
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            }
+        }
+    }
+
     // Enable/disable delete button based on confirmation input
     const confirmDeleteInput = document.getElementById('confirmDeleteInput');
     if (confirmDeleteInput) {

@@ -195,9 +195,14 @@
                     confirm.</p>
                 <div class="mt-2">
                     <label for="approvePassword" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="approvePassword"
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        placeholder="Enter your password">
+                    <input type="password" 
+                           id="approvePassword"
+                           name="approvePassword"
+                           autocomplete="new-password"
+                           autocomplete="off"
+                           data-lpignore="true"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                           placeholder="Enter your password">
                     <p id="approvePasswordError" class="mt-1 text-sm text-red-600 hidden">Incorrect password. Please try
                         again.</p>
                 </div>
