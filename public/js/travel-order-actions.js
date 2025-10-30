@@ -27,7 +27,13 @@ function recommend(orderId) {
         modal.dataset.orderId = orderId;
         
         // Reset the modal state
-        document.getElementById('recommendPassword').value = '';
+        const passwordInput = document.querySelector('input[name="recommendPassword"], input[id^="pwd_"]');
+        if (passwordInput) {
+            passwordInput.value = '';
+            passwordInput.type = 'text';
+            passwordInput.setAttribute('name', 'pwd_' + Math.random().toString(36).substr(2, 9));
+            passwordInput.setAttribute('id', 'pwd_' + Math.random().toString(36).substr(2, 9));
+        }
         document.getElementById('recommendPasswordError').classList.add('hidden');
         
         // Show the modal
@@ -35,7 +41,12 @@ function recommend(orderId) {
         
         // Set up the confirm button handler
         document.getElementById('confirmRecommendBtn').onclick = async function() {
-            const password = document.getElementById('recommendPassword').value.trim();
+            const passwordInput = document.querySelector('input[name="recommendPassword"]');
+            if (!passwordInput) {
+                console.error('Password input not found');
+                return;
+            }
+            const password = passwordInput.value.trim();
             if (!password) {
                 document.getElementById('recommendPasswordError').textContent = 'Password is required';
                 document.getElementById('recommendPasswordError').classList.remove('hidden');
@@ -105,7 +116,13 @@ function approve(orderId) {
         modal.dataset.orderId = orderId;
         
         // Reset the modal state
-        document.getElementById('approvePassword').value = '';
+        const passwordInput = document.querySelector('input[name="approvePassword"], input[id^="pwd_"][id$="_approve"]');
+        if (passwordInput) {
+            passwordInput.value = '';
+            passwordInput.type = 'text';
+            passwordInput.setAttribute('name', 'pwd_' + Math.random().toString(36).substr(2, 9) + '_approve');
+            passwordInput.setAttribute('id', 'pwd_' + Math.random().toString(36).substr(2, 9) + '_approve');
+        }
         document.getElementById('approvePasswordError').classList.add('hidden');
         
         // Show the modal
@@ -121,8 +138,13 @@ function approve(orderId) {
         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
         
         // Set up the confirm button handler
-        newConfirmBtn.onclick = async function() {
-            const password = document.getElementById('approvePassword').value.trim();
+        document.getElementById('confirmApproveBtn').onclick = async function() {
+            const passwordInput = document.querySelector('input[name="approvePassword"]');
+            if (!passwordInput) {
+                console.error('Password input not found');
+                return;
+            }
+            const password = passwordInput.value.trim();
             if (!password) {
                 document.getElementById('approvePasswordError').textContent = 'Password is required';
                 document.getElementById('approvePasswordError').classList.remove('hidden');
